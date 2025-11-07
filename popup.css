@@ -156,6 +156,50 @@ footer p {
   margin-top: 20px;
 }
 
+/* Refined tab styling for traditional look */
+.nav-tabs {
+  border-bottom: 2px solid #c9d1da;
+  background: linear-gradient(180deg, #f4f6f8 0%, #e7ebf0 100%);
+  padding: 0.15rem 0.4rem 0 0.4rem;
+  border-radius: 0;
+}
+
+.nav-tabs .nav-item {
+  margin-bottom: -2px;
+}
+
+.nav-tabs .nav-link {
+  color: #4a5464;
+  font-weight: 500;
+  border: 1px solid #bbc5d1;
+  border-bottom: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  padding: 0.3rem 0.9rem;
+  margin-right: 0.25rem;
+  background: linear-gradient(180deg, #f1f3f6 0%, #d9dfe6 100%);
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #0d6efd;
+  background: linear-gradient(180deg, #ffffff 0%, #e6ecf3 100%);
+  border-color: #aeb8c6 #aeb8c6 #ffffff;
+}
+
+.nav-tabs .nav-link.active {
+  color: #0d47a1;
+  font-weight: 600;
+  background-color: #ffffff;
+  border-color: #c9d1da #c9d1da #ffffff;
+  box-shadow: 0 -2px 6px rgba(13, 71, 161, 0.15);
+}
+
+.nav-tabs .nav-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
 #save-paths {
   display: block;
   width: 100%;
