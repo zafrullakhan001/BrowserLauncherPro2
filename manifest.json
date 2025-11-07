@@ -1,0 +1,64 @@
+﻿{
+    "manifest_version":  3,
+    "name":  "Browser Launcher Pro",
+    "description":  "Launch the apps in the multiple browsers with ease. Features include browser update tracking, WSL Linux integration, and quick search across multiple searchengines.",
+    "version":  "2.0",
+    "author":  "Browser Launcher",
+    "homepage_url":  "https://browserlauncher.pro",
+    "permissions":  [
+                        "contextMenus",
+                        "nativeMessaging",
+                        "activeTab",
+                        "scripting",
+                        "storage",
+                        "notifications",
+                        "alarms"
+                    ],
+    "background":  {
+                       "service_worker":  "background.js"
+                   },
+    "action":  {
+                   "default_icon":  {
+                                        "16":  "icons/icon16.png",
+                                        "128":  "icons/icon128.png",
+                                        "48":  "icons/icon48.png",
+                                        "32":  "icons/icon32.png"
+                                    },
+                   "default_popup":  "popup.html",
+                   "default_title":  "Browser Launcher Pro"
+               },
+    "content_security_policy":  {
+                                    "extension_pages":  "script-src \u0027self\u0027; object-src \u0027self\u0027"
+                                },
+    "icons":  {
+                  "16":  "icons/icon16.png",
+                  "128":  "icons/icon128.png",
+                  "48":  "icons/icon48.png",
+                  "32":  "icons/icon32.png"
+              },
+    "key":  "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmzDTNZRajd5KPfP0DVmZGpeVW6CkkpWs2dyAWgyu9/oNFeJlzo492M0xwxkFISYHrSF0lWzENsoMs2yI/N7Qdk6eCLAc5pMSKfniERdVU3aUw+1o6U5fdxJuW5EZeujQRigwE+Ij86LLQuspk8XU2bK35QVOYZrg6ABUFDE023mSJh8Jvw9Sg7eWscS8vH7mwbT5n3MKMyRgHTecZLYeYRr+uEK8zmJeOCq8/LxncPXYqVeNQRBQj/0Oz/qttVXDv0JnGa68xVB4HBbvDT2wVMH3SERALA7C+6EhuFKAd1QNw+7qmkNF91I8/nkuUW2+3/dDG4mRnHOKmfcmo9WF3wIDAQAB",
+    "content_scripts":  [
+                            {
+                                "matches":  [
+                                                "\u003call_urls\u003e"
+                                            ],
+                                "js":  [
+                                           "content.js"
+                                       ]
+                            }
+                        ],
+    "commands":  {
+                     "open-youtube-incognito":  {
+                                                    "suggested_key":  {
+                                                                          "default":  "Ctrl+Shift+Z"
+                                                                      },
+                                                    "description":  "Open YouTube search in incognito mode for the selected text"
+                                                },
+                     "open-youtube-search":  {
+                                                 "suggested_key":  {
+                                                                       "default":  "Ctrl+Y"
+                                                                   },
+                                                 "description":  "Open YouTube search for the selected text"
+                                             }
+                 }
+}

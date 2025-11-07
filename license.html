@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>License Management</title>
+  <link rel="stylesheet" href="popup.css">
+  <style>
+    .license-container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      background-color: #f9f9f9;
+    }
+    
+    .license-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .license-status {
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 5px;
+      text-align: center;
+    }
+    
+    .status-trial {
+      background-color: #fff8e1;
+      border: 1px solid #ffd54f;
+    }
+    
+    .status-licensed {
+      background-color: #e8f5e9;
+      border: 1px solid #66bb6a;
+    }
+    
+    .status-expired {
+      background-color: #ffebee;
+      border: 1px solid #ef5350;
+    }
+    
+    .license-form {
+      margin-top: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: inherit;
+    }
+    
+    .hardware-id {
+      font-family: monospace;
+      font-size: 14px;
+      word-break: break-all;
+      background-color: #f0f0f0;
+      padding: 5px;
+      border-radius: 4px;
+    }
+    
+    .submit-btn {
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    .submit-btn:hover {
+      background-color: #3367d6;
+    }
+    
+    .submit-btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    
+    .license-message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 4px;
+      display: none;
+    }
+    
+    .message-success {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #66bb6a;
+    }
+    
+    .message-error {
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1px solid #ef5350;
+    }
+    
+    /* New styles for enhanced license information */
+    .license-details {
+      text-align: left;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 10px 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .license-detail-row {
+      display: flex;
+      margin-bottom: 5px;
+      padding: 3px 0;
+    }
+    
+    .license-detail-label {
+      font-weight: bold;
+      width: 120px;
+      flex-shrink: 0;
+    }
+    
+    .license-detail-value {
+      flex-grow: 1;
+    }
+    
+    .form-columns {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .form-column {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="license-container">
+    <div class="license-header">
+      <h2>Browser Launcher Pro</h2>
+      <h3>License Management</h3>
+    </div>
+    
+    <div id="licenseStatus" class="license-status">
+      <p><strong>Loading license information...</strong></p>
+    </div>
+    
+    <div id="licenseForm" class="license-form">
+      <div class="form-group">
+        <label for="hardwareId">Your Hardware ID:</label>
+        <div id="hardwareId" class="hardware-id">Loading...</div>
+        <p><small>Your license key is tied to this hardware ID. Please provide this ID when purchasing a license.</small></p>
+        <button id="diagnosticsButton" class="btn btn-small" style="margin-top: 5px;">Show Diagnostics</button>
+        <button id="regenerateButton" class="btn btn-small" style="margin-top: 5px;">Regenerate ID</button>
+      </div>
+      
+      <!-- Hardware ID diagnostics section -->
+      <div id="hardwareIdDiagnostics" class="hardware-id-diagnostics" style="display:none; margin-top: 10px; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: #f5f5f5;">
+        <h4 style="margin-top: 0;">Hardware ID Diagnostics</h4>
+        <div class="license-detail-row">
+          <div class="license-detail-label">Hardware ID:</div>
+          <div id="diagnosticsHardwareId" class="license-detail-value">Loading...</div>
+        </div>
+        <div class="license-detail-row">
+          <div class="license-detail-label">Using Fallback:</div>
+          <div id="diagnosticsUsingFallback" class="license-detail-value">Unknown</div>
+        </div>
+        <div class="license-detail-row">
+          <div class="license-detail-label">Native Messaging:</div>
+          <div id="diagnosticsNativeMessaging" class="license-detail-value">Unknown</div>
+        </div>
+        <div class="license-detail-row">
+          <div class="license-detail-label">Error:</div>
+          <div id="diagnosticsError" class="license-detail-value">None</div>
+        </div>
+        <div class="license-detail-row">
+          <div class="license-detail-label">Platform:</div>
+          <div id="diagnosticsPlatform" class="license-detail-value">Unknown</div>
+        </div>
+        <p style="margin-top: 10px; font-size: 0.9em;">
+          <strong>Hardware ID Requirements:</strong><br>
+          1. Native messaging host must be properly installed<br>
+          2. Python 3.7+ with required modules (uuid, socket, platform)<br>
+          3. WMIC available on Windows systems<br>
+          4. Proper registry access permissions
+        </p>
+        <p style="font-size: 0.9em; color: #555;">
+          If you're experiencing issues with license activation, please run the <strong>CheckDependencies.ps1</strong> script to verify all requirements are met.
+        </p>
+      </div>
+      
+      <div class="form-columns">
+        <div class="form-column">
+          <div class="form-group">
+            <label for="licenseKey">License Key:</label>
+            <input type="text" id="licenseKey" placeholder="Enter your license key here">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Enhanced license information fields -->
+      <!-- Removed redundant license information fields that are already in the license key -->
+      
+      <button id="activateBtn" class="submit-btn">Activate License</button>
+    </div>
+    
+    <div id="licenseMessage" class="license-message" style="display: block;"></div>
+  </div>
+  
+  <script src="license.js"></script>
+  <script src="license-ui.js"></script>
+  <script src="license-error-handler.js"></script>
+</body>
+</html> 

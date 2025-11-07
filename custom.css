@@ -1,0 +1,39 @@
+/* Custom styles to improve license section appearance */
+.license-box {
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 20px;
+  align-items: center;
+  text-align: center;
+}
+
+.license-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.license-status {
+  font-weight: 500;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 15px !important;
+  width: auto;
+  display: inline-block !important;
+  min-width: 200px;
+}
+
+#license-status.status-licensed {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+#manage-license-btn {
+  min-width: 200px;
+} 

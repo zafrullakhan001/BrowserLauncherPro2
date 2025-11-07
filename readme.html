@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Launcher Extension Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 25px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        ul, ol {
+            padding-left: 20px;
+        }
+        .key-combo {
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .note {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Browser Launcher Extension</h1>
+
+        <h2>Overview</h2>
+        <p>Browser Launcher is a powerful browser extension designed to launch web applications in different browser versions. It's built for Chrome and Edge browsers using Manifest V3 and includes native messaging capabilities for enhanced system integration.</p>
+
+        <h2>Key Features</h2>
+        <ul>
+            <li><strong>Multi-Browser Support:</strong> Ability to launch web applications in different browser versions</li>
+            <li><strong>Native Integration:</strong> Uses native messaging to communicate with the system, allowing for deeper OS-level interactions</li>
+            <li><strong>Context Menu Integration:</strong> Provides right-click menu options for quick access to features</li>
+            <li><strong>Keyboard Shortcuts:</strong>
+                <ul>
+                    <li><span class="key-combo">Ctrl+Y</span>: Quick YouTube search for selected text</li>
+                    <li><span class="key-combo">Ctrl+Shift+Z</span>: Open YouTube search in incognito mode</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2>Technical Capabilities</h2>
+        <ul>
+            <li><strong>Native Messaging:</strong> Integrates with a Python-based native messaging host for system-level operations</li>
+            <li><strong>Storage Management:</strong> Can store and manage user preferences and settings</li>
+            <li><strong>Notifications:</strong> Ability to send system notifications</li>
+            <li><strong>Active Tab Control:</strong> Can interact with and manipulate the active browser tab</li>
+            <li><strong>Background Processing:</strong> Includes a service worker for background operations</li>
+            <li><strong>Security:</strong> Implements strict content security policies for enhanced safety</li>
+        </ul>
+
+        <h2>System Requirements</h2>
+        <ul>
+            <li>Windows operating system</li>
+            <li>Chrome or Edge browser</li>
+            <li>Python installation (handled by setup scripts)</li>
+            <li>Administrator privileges for installation</li>
+        </ul>
+
+        <h2>Architecture</h2>
+        <p>The extension consists of several key components:</p>
+        <ul>
+            <li><code>popup.html/js/css</code>: User interface and frontend logic</li>
+            <li><code>background.js</code>: Background service worker for event handling</li>
+            <li><code>native_messaging.py</code>: Python-based native messaging host</li>
+            <li>Various setup and installation scripts for system integration</li>
+        </ul>
+
+        <h2>Installation</h2>
+        <p>The extension requires a proper setup process that includes:</p>
+        <ol>
+            <li>Extension installation in the browser</li>
+            <li>Native messaging host setup</li>
+            <li>System configuration via provided setup scripts</li>
+        </ol>
+
+        <div class="note">
+            <h3>Installation Steps:</h3>
+            <ol>
+                <li>Download and extract the "Browser Launcher" extension to a folder on your computer.</li>
+                <li>Open your Chrome or Edge browser and navigate to the Extensions page:
+                    <ul>
+                        <li>For Chrome: <code>chrome://extensions/</code></li>
+                        <li>For Edge: <code>edge://extensions/</code></li>
+                    </ul>
+                </li>
+                <li>Enable Developer mode:
+                    <ul>
+                        <li>Toggle the "Developer mode" switch located at the top-right corner of the Extensions page.</li>
+                    </ul>
+                </li>
+                <li>Run the setup script from the extracted folder:
+                    <ul>
+                        <li>Right-click on <code>setup_native_messaging.bat</code></li>
+                        <li>Select "Run as administrator"</li>
+                    </ul>
+                </li>
+                <li>Load the extension:
+                    <ul>
+                        <li>Click on the "Load unpacked" button</li>
+                        <li>Select the folder where you extracted the "Browser Launcher" extension</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <h2>Security Features</h2>
+        <ul>
+            <li>Uses native messaging for secure system-level operations</li>
+            <li>Implements strict content security policies</li>
+            <li>Requires explicit permissions for various operations</li>
+            <li>Includes EULA and user agreement functionality</li>
+        </ul>
+
+        <div class="note">
+            <p><strong>Note:</strong> This extension is designed for enterprise or power-user scenarios where precise control over browser instances is required.</p>
+        </div>
+    </div>
+</body>
+</html>

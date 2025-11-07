@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>WSL Browser Launcher Pro</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+  <link href="popup.css" rel="stylesheet">
+  <link href="custom.css" rel="stylesheet">
+  <!-- Add jQuery and Bootstrap JS locally -->
+  <script src="scripts/jquery.min.js"></script>
+  <script src="scripts/popper.min.js"></script>
+  <script src="scripts/bootstrap.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <header class="mb-4">
+      <hr>
+      <h4>Browser Launcher Pro</h4>
+      <p class="subheading">Test and future-proof your web apps in beta and dev browser versions</p>
+      <hr>
+    </header>
+    <ul class="nav nav-tabs" id="settings-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="#windows" id="windows-tab">Windows Local</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#wsl" id="wsl-tab">WSL Ubuntu Linux</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#settings" id="settings-tab">Settings</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#version-log" id="version-log-tab">Version Update Log</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#wsl-manager" id="wsl-manager-tab">WSL Manager</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#search-settings" id="search-settings-tab">Search Settings</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#help-support" id="help-support-tab">Help/Support</a>
+      </li>
+    </ul>
+    <div class="tab-content">
+
+      <div class="tab-pane fade show active" id="windows">
+        <div class="browser-group">
+          <h5>Microsoft Edge (Windows Local)</h5>
+          <div class="button-container" title="Watch for version changes">
+            <div class="button-with-version">
+              <label class="checkbox-container">
+                <input type="checkbox" id="edge-stable-checkbox">
+                <span class="checkmark"></span>
+              </label>
+              <button class="btn btn-primary" id="edge-stable-local">Edge Stable</button>
+              <span id="edge-stable-version" class="browser-version"></span>
+            </div>
+            <div class="button-with-version">
+              <label class="checkbox-container" title="Watch for version changes">
+                <input type="checkbox" id="edge-beta-checkbox">
+                <span class="checkmark"></span>
+              </label>
+              <button class="btn btn-primary" id="edge-beta-local">Edge Beta</button>
+              <span id="edge-beta-version" class="browser-version"></span>
+            </div>
+            <div class="button-with-version">
+              <label class="checkbox-container" title="Watch for version changes">
+                <input type="checkbox" id="edge-dev-checkbox">
+                <span class="checkmark"></span>
+              </label>
+              <button class="btn btn-primary" id="edge-dev-local">Edge Dev</button>
+              <span id="edge-dev-version" class="browser-version"></span>
+            </div>
+          </div>
+        </div>
+        <div class="browser-group">
+          <h5>Google Chrome (Windows Local)</h5>
+          <div class="button-container">
+            <div class="button-with-version">
+              <label class="checkbox-container" title="Watch for version changes">
+                <input type="checkbox" id="chrome-stable-checkbox">
+                <span class="checkmark"></span>
+              </label>
+              <button class="btn btn-success" id="chrome-stable-local">Chrome Stable</button>
+              <span id="chrome-stable-version" class="browser-version"></span>
+            </div>
+            <div class="button-with-version">
+              <label class="checkbox-container" title="Watch for version changes">
+                <input type="checkbox" id="chrome-beta-checkbox">
+                <span class="checkmark"></span>
+              </label>
+              <button class="btn btn-success" id="chrome-beta-local">Chrome Beta</button>
+              <span id="chrome-beta-version" class="browser-version"></span>
+            </div>
+            <div class="button-with-version">
+              <label class="checkbox-container" title="Watch for version changes">
+                <input type="checkbox" id="chrome-dev-checkbox">
+                <span class="checkmark"></span>
+              </label>
+              <button class="btn btn-success" id="chrome-dev-local">Chrome Dev</button>
+              <span id="chrome-dev-version" class="browser-version"></span>
+            </div>
+          </div>
+        </div>
+        <div style="position: relative; margin-top: 10px; margin-bottom: 3px;">
+          <hr>
+          <!-- <hr style="border: none; border-top: 1px solid #a0a0a0; position: relative;"> -->
+
+          <!-- Notches -->
+          <div style="position: absolute; top: -5px; left: 90px; width: 1px; height: 10px; background-color: #a0a0a0;">
+          </div>
+          <div style="position: absolute; top: -5px; left: 280px; width: 1px; height: 10px; background-color: #a0a0a0;">
+          </div>
+          <div style="position: absolute; top: -5px; left: 470px; width: 1px; height: 10px; background-color: #a0a0a0;">
+          </div>
+
+          <h7 style="display: inline-block; color : rgb(15, 14, 14)">
+            <span
+              style="position: relative; top: 5px; padding-bottom: 1px; padding-left: 20px; padding-right: 65px;">Production
+              support</span>
+            <span style="position: relative; top: 5px; padding-bottom: 1px; padding-right: 50px;">Pre go-live
+              check</span>
+            <span style="position: relative; top: 5px;">New features check</span>
+          </h7>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="wsl">
+        <div class="browser-group">
+          <h5>Microsoft Edge (<span id="wsl-instance-edge"></span>)</h5>
+          <div class="button-container">
+            <button class="btn btn-primary" id="edge-stable">Edge Stable</button>
+            <button class="btn btn-primary" id="edge-beta">Edge Beta</button>
+            <button class="btn btn-primary" id="edge-dev">Edge Dev</button>
+          </div>
+        </div>
+        <div class="browser-group">
+          <h5>Google Chrome (<span id="wsl-instance-chrome"></span>)</h5>
+          <div class="button-container">
+            <button class="btn btn-success" id="chrome-stable">Chrome Stable</button>
+            <button class="btn btn-success" id="chrome-beta">Chrome Beta</button>
+            <button class="btn btn-success" id="chrome-dev">Chrome Dev</button>
+          </div>
+        </div>
+        <div class="browser-group">
+          <h5>Other Browsers (<span id="wsl-instance-other"></span>)</h5>
+          <div class="button-container">
+            <button class="btn btn-warning" id="firefox">Firefox</button>
+            <button class="btn btn-info" id="opera">Opera</button>
+            <button class="btn btn-secondary" id="brave">Brave</button>
+          </div>
+        </div>
+        <div class="browser-group">
+          <h5>WSL Ubuntu Tools (<span id="wsl-instance-tools"></span>)</h5>
+          <div class="button-container">
+            <button class="btn btn-primary" id="launch-xterm">Launch Konsole</button>
+            <button class="btn btn-secondary" id="launch-powershell">Launch PowerShell</button>
+            <button class="btn btn-danger" id="launch-sandbox">Launch Win Sandbox</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="settings">
+        <div class="settings-header mb-2">
+          <h5 class="mb-1">Settings</h5>
+          <div class="icon-container">
+            <img src="images/export-icon.png" alt="Export" id="export-paths" class="icon">
+            <img src="images/import-icon.png" alt="Import" id="import-paths" class="icon">
+            <input type="file" id="import-file" style="display: none;">
+          </div>
+        </div>
+
+        <!-- General Settings Card -->
+        <div class="card mb-2">
+          <div class="card-header bg-light py-1">
+            <h6 class="mb-0"><i class="fas fa-cog mr-1"></i>General Settings</h6>
+          </div>
+          <div class="card-body p-2">
+            <!-- Repair browser launching button -->
+            <div class="form-group repair-section mb-2">
+              <button class="btn btn-warning btn-sm" id="repair-browser-launching">
+                <i class="fas fa-tools mr-1"></i> Repair Browser Launching
+              </button>
+              <small class="text-muted d-block mt-1">If browsers aren't launching, click this to fix registry settings and permissions</small>
+            </div>
+
+            <!-- Show/hide WSL Ubuntu tab -->
+            <div class="form-group mb-2">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="show-wsl-checkbox">
+                <label class="custom-control-label" for="show-wsl-checkbox">Show WSL Ubuntu Linux and WSL Manager tabs</label>
+              </div>
+            </div>
+
+            <!-- Context menu toggle -->
+            <div class="form-group mb-2">
+              <div class="custom-control custom-switch">
+                <input class="custom-control-input" type="checkbox" id="context-menu-toggle" checked>
+                <label class="custom-control-label" for="context-menu-toggle">Enable Context Menu</label>
+              </div>
+            </div>
+
+            <!-- Version check toggle -->
+            <div class="form-group mb-2">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="version-checkbox" checked>
+                <label class="custom-control-label" for="version-checkbox">Check browser version every time</label>
+              </div>
+            </div>
+
+            <!-- Sandbox context menu toggle -->
+            <div class="form-group mb-2">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="sandbox-context-toggle" checked>
+                <label class="custom-control-label" for="sandbox-context-toggle">Enable Windows Sandbox in context menu</label>
+              </div>
+            </div>
+
+            <!-- Check interval -->
+            <div class="form-group mb-0">
+              <label for="check-interval" class="d-flex align-items-center">
+                <i class="fas fa-clock mr-1"></i>Check Interval (minutes)
+              </label>
+              <div class="input-group input-group-sm">
+                <input type="number" class="form-control" id="check-interval" min="1" max="60" value="60">
+                <div class="input-group-append">
+                  <span class="input-group-text">min</span>
+                </div>
+              </div>
+              <small class="text-muted">1 - 60 Minutes Max</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Browser Paths Card -->
+        <div class="card mb-2">
+          <div class="card-header bg-light py-1">
+            <h6 class="mb-0"><i class="fas fa-folder-open mr-1"></i>Browser Paths</h6>
+          </div>
+          <div class="card-body p-2">
+            <form>
+              <!-- Edge Paths -->
+              <div class="browser-path-group mb-2">
+                <h6 class="text-primary mb-1"><i class="fab fa-edge mr-1"></i>Microsoft Edge</h6>
+                <div class="form-group mb-1">
+                  <div class="label-row">
+                    <label for="edge-stable-path" class="mb-0">Stable Path:</label>
+                    <div class="na-checkbox-container">
+                      <input type="checkbox" id="edge-stable-na-checkbox" class="na-checkbox">
+                      <label for="edge-stable-na-checkbox">Not Available</label>
+                    </div>
+                  </div>
+                  <input type="text" class="form-control form-control-sm" id="edge-stable-path" placeholder="Enter Edge Stable Path or NA to ignore">
+                </div>
+                <div class="form-group mb-1">
+                  <div class="label-row">
+                    <label for="edge-beta-path" class="mb-0">Beta Path:</label>
+                    <div class="na-checkbox-container">
+                      <input type="checkbox" id="edge-beta-na-checkbox" class="na-checkbox">
+                      <label for="edge-beta-na-checkbox">Not Available</label>
+                    </div>
+                  </div>
+                  <input type="text" class="form-control form-control-sm" id="edge-beta-path" placeholder="Enter Edge Beta Path or NA to ignore">
+                </div>
+                <div class="form-group mb-0">
+                  <div class="label-row">
+                    <label for="edge-dev-path" class="mb-0">Dev Path:</label>
+                    <div class="na-checkbox-container">
+                      <input type="checkbox" id="edge-dev-na-checkbox" class="na-checkbox">
+                      <label for="edge-dev-na-checkbox">Not Available</label>
+                    </div>
+                  </div>
+                  <input type="text" class="form-control form-control-sm" id="edge-dev-path" placeholder="Enter Edge Dev Path or NA to ignore">
+                </div>
+              </div>
+
+              <!-- Chrome Paths -->
+              <div class="browser-path-group mb-0">
+                <h6 class="text-success mb-1"><i class="fab fa-chrome mr-1"></i>Google Chrome</h6>
+                <div class="form-group mb-1">
+                  <div class="label-row">
+                    <label for="chrome-stable-path" class="mb-0">Stable Path:</label>
+                    <div class="na-checkbox-container">
+                      <input type="checkbox" id="chrome-stable-na-checkbox" class="na-checkbox">
+                      <label for="chrome-stable-na-checkbox">Not Available</label>
+                    </div>
+                  </div>
+                  <input type="text" class="form-control form-control-sm" id="chrome-stable-path" placeholder="Enter Chrome Stable Path or NA to ignore">
+                </div>
+                <div class="form-group mb-1">
+                  <div class="label-row">
+                    <label for="chrome-beta-path" class="mb-0">Beta Path:</label>
+                    <div class="na-checkbox-container">
+                      <input type="checkbox" id="chrome-beta-na-checkbox" class="na-checkbox">
+                      <label for="chrome-beta-na-checkbox">Not Available</label>
+                    </div>
+                  </div>
+                  <input type="text" class="form-control form-control-sm" id="chrome-beta-path" placeholder="Enter Chrome Beta Path or NA to ignore">
+                </div>
+                <div class="form-group mb-0">
+                  <div class="label-row">
+                    <label for="chrome-dev-path" class="mb-0">Dev Path:</label>
+                    <div class="na-checkbox-container">
+                      <input type="checkbox" id="chrome-dev-na-checkbox" class="na-checkbox">
+                      <label for="chrome-dev-na-checkbox">Not Available</label>
+                    </div>
+                  </div>
+                  <input type="text" class="form-control form-control-sm" id="chrome-dev-path" placeholder="Enter Chrome Dev Path or NA to ignore">
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- WSL Settings Card -->
+        <div class="card mb-2">
+          <div class="card-header bg-light py-1">
+            <h6 class="mb-0"><i class="fab fa-linux mr-1"></i>WSL Settings</h6>
+          </div>
+          <div class="card-body p-2">
+            <div class="form-group mb-2">
+              <label for="wsl-instance" class="mb-0">WSL Instance:</label>
+              <input type="text" class="form-control form-control-sm" id="wsl-instance" placeholder="Enter WSL Instance">
+            </div>
+
+            <div class="form-group mb-2">
+              <label for="wsl-scripts-path" class="mb-0">WSL Scripts Path:</label>
+              <div class="input-group input-group-sm">
+                <input type="text" class="form-control" id="wsl-scripts-path" placeholder="Path to WSL scripts folder">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary" type="button" id="auto-discover-wsl-scripts">
+                    <i class="fas fa-search"></i> Auto Discover
+                  </button>
+                </div>
+              </div>
+              <small class="text-muted">Location of Manage-WSLInstance.bat</small>
+            </div>
+
+            <!-- WSL Browser Paths -->
+            <div class="browser-path-group mb-2">
+              <h6 class="text-primary mb-1"><i class="fab fa-edge mr-1"></i>Microsoft Edge (WSL)</h6>
+              <div class="form-group mb-1">
+                <label for="wsl-edge-stable-path" class="mb-0">Stable Path:</label>
+                <input type="text" class="form-control form-control-sm" id="wsl-edge-stable-path" placeholder="/usr/bin/microsoft-edge-stable">
+              </div>
+              <div class="form-group mb-1">
+                <label for="wsl-edge-beta-path" class="mb-0">Beta Path:</label>
+                <input type="text" class="form-control form-control-sm" id="wsl-edge-beta-path" placeholder="/usr/bin/microsoft-edge-beta">
+              </div>
+              <div class="form-group mb-0">
+                <label for="wsl-edge-dev-path" class="mb-0">Dev Path:</label>
+                <input type="text" class="form-control form-control-sm" id="wsl-edge-dev-path" placeholder="/usr/bin/microsoft-edge-dev">
+              </div>
+            </div>
+
+            <div class="browser-path-group mb-2">
+              <h6 class="text-success mb-1"><i class="fab fa-chrome mr-1"></i>Google Chrome (WSL)</h6>
+              <div class="form-group mb-1">
+                <label for="wsl-chrome-stable-path" class="mb-0">Stable Path:</label>
+                <input type="text" class="form-control form-control-sm" id="wsl-chrome-stable-path" placeholder="/usr/bin/google-chrome-stable">
+              </div>
+              <div class="form-group mb-1">
+                <label for="wsl-chrome-beta-path" class="mb-0">Beta Path:</label>
+                <input type="text" class="form-control form-control-sm" id="wsl-chrome-beta-path" placeholder="/usr/bin/google-chrome-beta">
+              </div>
+              <div class="form-group mb-0">
+                <label for="wsl-chrome-dev-path" class="mb-0">Dev Path:</label>
+                <input type="text" class="form-control form-control-sm" id="wsl-chrome-dev-path" placeholder="/usr/bin/google-chrome-unstable">
+              </div>
+            </div>
+
+            <div class="browser-path-group mb-2">
+              <h6 class="text-warning mb-1"><i class="fab fa-firefox mr-1"></i>Other Browsers (WSL)</h6>
+              <div class="form-group mb-1">
+                <label for="wsl-firefox-path" class="mb-0">Firefox Path:</label>
+                <input type="text" class="form-control form-control-sm" id="wsl-firefox-path" placeholder="/usr/bin/firefox">
+              </div>
+              <div class="form-group mb-1">
+                <label for="wsl-opera-path" class="mb-0">Opera Path:</label>
+                <input type="text" class="form-control form-control-sm" id="wsl-opera-path" placeholder="/usr/bin/opera">
+              </div>
+              <div class="form-group mb-0">
+                <label for="wsl-brave-path" class="mb-0">Brave Path:</label>
+                <input type="text" class="form-control form-control-sm" id="wsl-brave-path" placeholder="/usr/bin/brave-browser">
+              </div>
+            </div>
+
+            <div class="form-group mb-0">
+              <label for="powershell-user" class="mb-0">PowerShell User:</label>
+              <input type="text" class="form-control form-control-sm" id="powershell-user" placeholder="Enter PowerShell username">
+              <div class="form-check mt-1">
+                <input type="checkbox" class="form-check-input" id="use-powershell-user-checkbox">
+                <label class="form-check-label" for="use-powershell-user-checkbox">Use this name to launch PowerShell</label>
+              </div>
+              <small class="text-muted">Also, add underlining user credentials in Windows Credential Manager</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Appearance Settings Card -->
+        <div class="card mb-2" style="display: none;">
+          <div class="card-header bg-light py-1">
+            <h6 class="mb-0"><i class="fas fa-palette mr-1"></i>Appearance Settings</h6>
+          </div>
+          <div class="card-body p-2">
+            <div class="color-settings">
+              <div class="d-flex justify-content-between align-items-center">
+                <button class="btn btn-outline-primary btn-sm" id="background-color-link">
+                  <i class="fas fa-fill-drip mr-1"></i>Background Color
+                </button>
+                <button class="btn btn-outline-primary btn-sm" id="font-color-link">
+                  <i class="fas fa-font mr-1"></i>Font Color
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" id="reset-colors">
+                  <i class="fas fa-undo mr-1"></i>Reset Colors
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="card">
+          <div class="card-body p-2">
+            <div class="row">
+              <div class="col-md-6 mb-1">
+                <button type="button" class="btn btn-primary btn-sm btn-block" id="save-paths">
+                  <i class="fas fa-save mr-1"></i>Save Path Info
+                </button>
+              </div>
+              <div class="col-md-6 mb-1">
+                <button type="button" class="btn btn-secondary btn-sm btn-block" id="test-notification">
+                  <i class="fas fa-bell mr-1"></i>Test Notification
+                </button>
+              </div>
+              <div class="col-md-6 mb-1">
+                <button type="button" class="btn btn-success btn-sm btn-block" id="update-browsers">
+                  <i class="fas fa-sync mr-1"></i>Update Local Browsers
+                </button>
+              </div>
+              <div class="col-md-6 mb-1">
+                <button type="button" class="btn btn-info btn-sm btn-block" id="update-wsl-browsers">
+                  <i class="fas fa-sync-alt mr-1"></i>Update WSL Browsers
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EULA Link -->
+        <div class="text-center mt-2">
+          <button type="button" class="btn btn-link btn-sm" id="view-eula">
+            <i class="fas fa-file-contract mr-1"></i>View EULA
+          </button>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="version-log">
+        <div class="table-responsive">
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th>Browser Name</th>
+                <th>Old Version</th>
+                <th>New Version</th>
+                <th>Date/Time</th>
+              </tr>
+            </thead>
+            <tbody id="version-log-table-body">
+              <!-- Log entries will be dynamically added here -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Buttons outside of the scrollable area -->
+        <div class="text-center mt-3">
+          <button id="refresh-version-log" class="btn btn-primary">Refresh</button>
+        </div>
+        <div class="text-center mt-3">
+          <a href="#" id="export-csv" class="btn btn-secondary">Export to CSV</a>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="wsl-manager">
+        <div class="form-row mb-2">
+          <div class="col">
+            <label for="wsl-dir" class="mb-0">WSL Instance Folder:</label>
+            <input type="text" id="wsl-dir" class="form-control form-control-sm" placeholder="e.g., C:\WSL">
+          </div>
+          <div class="col">
+            <label for="wsl-tar-path" class="mb-0">WSL tar Image Path File:</label>
+            <input type="text" id="wsl-tar-path" class="form-control form-control-sm" placeholder="e.g., C:\ubuntu-export.tar">
+          </div>
+        </div>
+        <div class="form-row mb-2">
+          <div class="col">
+            <label for="wsl-username" class="mb-0">WSL Username:</label>
+            <input type="text" id="wsl-username" class="form-control form-control-sm" placeholder="e.g., ubuntu">
+          </div>
+          <div class="col-auto d-flex align-items-end">
+            <button id="save-wsl-settings" class="btn btn-primary btn-sm">Save</button>
+          </div>
+        </div>
+        <!-- Password Protection Section -->
+        <div class="form-row mb-2">
+          <div class="col">
+            <label class="mb-0">WSL Password Protection:</label>
+            <button id="change-wsl-password" class="btn btn-secondary btn-sm">Change Password</button>
+            <small class="text-muted ml-1">Password required for all WSL operations</small>
+          </div>
+        </div>
+        <!-- End Password Protection Section -->
+        <div class="form-group mb-2">
+          <label for="wsl-instances" class="mb-0">
+            WSL Instances
+            <a href="#" id="refresh-wsl-instances" class="ml-1"><small>Refresh</small></a>
+            <a href="#" id="export-wsl-instance" class="ml-1"><small>Export to TAR</small></a>
+            <a href="#" id="create-wsl-instance-scratch" class="ml-1" style="display: none;"><small>Create WSL instance from scratch</small></a>            
+          </label>
+          <select id="wsl-instances" class="form-control form-control-sm" size="5" multiple></select>
+        </div>
+        <!-- Add new button for Manage-WSLInstance.bat -->
+        <div class="form-group mb-2">
+          <button id="manage-wsl-instance" class="btn btn-info btn-sm">
+            <i class="fas fa-cogs mr-1"></i> Create New WSL Instance
+          </button>
+          <small class="text-muted ml-1">Open WSL Instance Manager</small>
+        </div>
+        <div class="mt-2 wsl-button-container">
+          <div class="wsl-image-button" id="make-default-wsl-instance" title="Make Default">
+            <i class="fas fa-star"></i>
+            <span>Make Default</span>
+          </div>
+          <div class="wsl-image-button" id="create-wsl-instance" title="Add New">
+            <i class="fas fa-plus-circle"></i>
+            <span>Create from tar file</span>
+          </div>
+          <div class="wsl-image-button" id="delete-wsl-instance" title="Delete">
+            <i class="fas fa-trash-alt"></i>
+            <span>Delete</span>
+          </div>
+          <div class="wsl-image-button" id="reinstate-wsl-instance" title="Refresh from Tar file">
+            <i class="fas fa-sync-alt"></i>
+            <span>Reinstate from Tar file</span>
+          </div>
+          <div class="wsl-image-button" id="rename-wsl-instance" title="Rename">
+            <i class="fas fa-edit"></i>
+            <span>Rename</span>
+          </div>
+          <div class="wsl-image-button" id="clone-wsl-instance" title="Clone">
+            <i class="fas fa-clone"></i>
+            <span>Clone</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="search-settings">
+        <div class="settings-header mb-2 d-flex justify-content-between align-items-center">
+          <h5 class="mb-1">Search Engine Settings</h5>
+          <div class="icon-container">
+            <button class="btn btn-sm btn-link p-0 mr-2" id="export-search-settings" title="Export Search Settings">
+              <i class="fas fa-file-export"></i>
+            </button>
+            <button class="btn btn-sm btn-link p-0" id="import-search-settings" title="Import Search Settings">
+              <i class="fas fa-file-import"></i>
+            </button>
+            <input type="file" id="import-search-file" style="display: none;">
+          </div>
+        </div>
+        
+        <div class="container-fluid p-0">
+          <p>Control which search engines appear in the context menu when text is selected:</p>
+          
+          <!-- Built-in Search Engines -->
+          <div class="card mb-3">
+            <div class="card-header">
+              <h6 class="mb-0">Built-in Search Engines</h6>
+            </div>
+            <div class="card-body">
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input search-toggle" type="checkbox" id="youtube-toggle" data-engine="youtube">
+                <label class="form-check-label" for="youtube-toggle">YouTube Search</label>
+              </div>
+              
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input search-toggle" type="checkbox" id="google-toggle" data-engine="google">
+                <label class="form-check-label" for="google-toggle">Google Search</label>
+              </div>
+              
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input search-toggle" type="checkbox" id="duckduckgo-toggle" data-engine="duckduckgo">
+                <label class="form-check-label" for="duckduckgo-toggle">DuckDuckGo Search</label>
+              </div>
+              
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input search-toggle" type="checkbox" id="perplexity-toggle" data-engine="perplexity">
+                <label class="form-check-label" for="perplexity-toggle">Perplexity.ai Search</label>
+              </div>
+              
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input search-toggle" type="checkbox" id="chatgpt-toggle" data-engine="chatgpt">
+                <label class="form-check-label" for="chatgpt-toggle">ChatGPT Search</label>
+              </div>
+
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input search-toggle" type="checkbox" id="googlemaps-toggle" data-engine="googlemaps">
+                <label class="form-check-label" for="googlemaps-toggle">Google Maps Search</label>
+              </div>
+
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input search-toggle" type="checkbox" id="sandbox-toggle" data-engine="sandbox">
+                <label class="form-check-label" for="sandbox-toggle">Windows Sandbox (Link context menu)</label>
+              </div>
+
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input search-toggle" type="checkbox" id="amazon-toggle" data-engine="amazon">
+                <label class="form-check-label" for="amazon-toggle">Amazon Search</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Custom Search Engines -->
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h6 class="mb-0">Custom Search Engines</h6>
+              <button class="btn btn-sm btn-primary" id="add-custom-search">
+                <i class="fas fa-plus"></i> Add New
+              </button>
+            </div>
+            <div class="card-body">
+              <div id="custom-search-engines-list">
+                <!-- Custom search engines will be added here dynamically -->
+              </div>
+              
+              <!-- Template for new custom search engine (hidden by default) -->
+              <div id="custom-search-template" class="d-none">
+                <div class="custom-search-engine mb-3 border-bottom pb-3">
+                  <div class="form-group mb-2">
+                    <label>Search Engine Name:</label>
+                    <input type="text" class="form-control form-control-sm custom-name" placeholder="e.g., Wikipedia">
+                  </div>
+                  <div class="form-group mb-2">
+                    <label>Search URL Template:</label>
+                    <input type="text" class="form-control form-control-sm custom-url" placeholder="e.g., https://wikipedia.org/w/index.php?search={searchTerms}">
+                    <small class="form-text text-muted">Use {searchTerms} where the search text should be inserted</small>
+                  </div>
+                  <div class="form-group mb-2">
+                    <label>Icon (emoji or URL):</label>
+                    <input type="text" class="form-control form-control-sm custom-icon" placeholder="e.g., 📚 or https://example.com/icon.png">
+                  </div>
+                  <div class="form-check mb-2">
+                    <input type="checkbox" class="form-check-input custom-enabled" checked>
+                    <label class="form-check-label">Enabled</label>
+                  </div>
+                  <button class="btn btn-sm btn-danger remove-custom-search">
+                    <i class="fas fa-trash"></i> Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Add Save Button -->
+          <div class="text-right mt-2">
+            <button class="btn btn-success btn-sm" id="save-custom-search-engines">
+              <i class="fas fa-save mr-1"></i> Save Custom Engines
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="help-support">
+        <div class="settings-header">
+          <h5>Help & Support</h5>
+        </div>
+        
+        <div class="container mt-3">
+          <div class="action-box license-box">
+            <div class="license-info">
+              <div id="license-status" class="license-status status-licensed">Licensed Version</div>
+              <button id="manage-license-btn" class="btn btn-outline-primary">Manage License</button>
+            </div>
+          </div>
+          
+          <div class="card mb-3">
+            <div class="card-header">
+              <h6 class="mb-0">Documentation & Resources</h6>
+            </div>
+            <div class="card-body">
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <a href="https://github.com/yourusername/browser-launcher-pro" target="_blank" class="help-link">
+                    <i class="fab fa-github"></i> GitHub Repository
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a href="https://github.com/yourusername/browser-launcher-pro/wiki" target="_blank" class="help-link">
+                    <i class="fas fa-file-alt"></i> User Guide & Documentation
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a href="https://github.com/yourusername/browser-launcher-pro/issues" target="_blank" class="help-link">
+                    <i class="fas fa-bug"></i> Report Issues
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-header">
+              <h6 class="mb-0">Support Channels</h6>
+            </div>
+            <div class="card-body">
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <strong>Email Support:</strong>
+                  <a href="mailto:support@browserlauncherpro.com"><i class="fas fa-envelope"></i> support@browserlauncherpro.com</a>
+                </li>
+                <li class="mb-2">
+                  <strong>GitHub Discussions:</strong>
+                  <a href="https://github.com/yourusername/browser-launcher-pro/discussions" target="_blank">
+                    <i class="fab fa-github-alt"></i> Join our community discussions
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <strong>Response Time:</strong> <i class="fas fa-clock"></i> We typically respond within 24-48 hours
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h6 class="mb-0">Quick Links</h6>
+            </div>
+            <div class="card-body">
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <a href="https://github.com/yourusername/browser-launcher-pro/blob/main/CHANGELOG.md" target="_blank" class="help-link">
+                    <i class="fas fa-history"></i> Changelog
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a href="https://github.com/yourusername/browser-launcher-pro/blob/main/LICENSE" target="_blank" class="help-link">
+                    <i class="fas fa-gavel"></i> License Information
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a href="https://github.com/yourusername/browser-launcher-pro/blob/main/CONTRIBUTING.md" target="_blank" class="help-link">
+                    <i class="fas fa-code-branch"></i> Contributing Guidelines
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card mt-3" id="donation-options-card">
+            <div class="card-header">
+              <h6 class="mb-0">Support the Project</h6>
+            </div>
+            <div class="card-body">
+              <p class="mb-3">If you find this extension helpful, consider supporting its development:</p>
+              <div class="d-flex flex-wrap gap-2">
+                <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_PAYPAL_BUTTON_ID" target="_blank" class="btn btn-primary">
+                  <i class="fab fa-paypal"></i> PayPal
+                </a>
+                <a href="https://ko-fi.com/YOUR_KOFI_USERNAME" target="_blank" class="btn btn-success">
+                  <i class="fas fa-coffee"></i> Ko-fi
+                </a>
+                <a href="https://www.buymeacoffee.com/YOUR_USERNAME" target="_blank" class="btn btn-warning">
+                  <i class="fas fa-mug-hot"></i> Buy Me a Coffee
+                </a>
+                <a href="https://github.com/sponsors/YOUR_USERNAME" target="_blank" class="btn btn-dark">
+                  <i class="fab fa-github-alt"></i> GitHub Sponsors
+                </a>
+                <a href="https://pay.google.com/payments/u/0/home/buttons/" target="_blank" class="btn btn-info">
+                  <i class="fab fa-google-pay"></i> Google Pay
+                </a>
+                <a href="https://venmo.com/YOUR_VENMO_USERNAME" target="_blank" class="btn btn-light">
+                  <i class="fas fa-money-bill-wave"></i> Venmo
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="mt-4">
+        <hr style="margin-top: 10px; margin-bottom: 10px;">
+
+        <div class="help-links">
+          <a href="https://www.microsoft.com/en-us/edge/download/insider?form=MA13FJ" target="_blank"
+            class="help-link">Download MS Edge Beta & Dev</a> |
+          <a href="https://www.google.com/chrome/beta/" target="_blank" class="help-link">Download Chrome Beta</a> |
+          <a href="https://www.google.com/chrome/dev/" target="_blank" class="help-link">Chrome Dev</a>
+        </div>
+        <div class="help-links">
+          Browser release schedule:
+          <a href="https://learn.microsoft.com/en-us/deployedge/microsoft-edge-release-schedule" target="_blank"
+            class="help-link">Edge</a> |
+          <a href="https://chromereleases.googleblog.com/" target="_blank" class="help-link">Chrome</a>
+        </div>
+
+        <p class="mt-0">
+          <span style="display: inline-block; margin-bottom: 5px;">Version 1.0</span>
+          <div id="trial-footer" style="color: #dc3545; font-weight: bold; margin-bottom: 20px; display: none;">
+            TRIAL VERSION - <span id="trial-days-remaining">60</span> DAYS REMAINING
+          </div>
+        </p>
+      </footer>
+      
+      <!-- Password Modal -->
+      <div class="modal fade" id="password-modal" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="passwordModalLabel">Password Required</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="password-modal-close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p id="password-modal-message">Please enter your WSL operations password:</p>
+              <div class="form-group">
+                <input type="password" class="form-control" id="password-modal-input" placeholder="Enter password">
+              </div>
+              <div id="password-validation-message" class="text-danger"></div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" id="password-modal-cancel">Cancel</button>
+              <button type="button" class="btn btn-primary" id="password-modal-submit">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- License Management Modal -->
+      <div class="modal fade" id="license-modal" tabindex="-1" role="dialog" aria-labelledby="licenseModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="licenseModalLabel">License Management</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="license-modal-close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <!-- License Status Section -->
+              <div id="modal-license-status" class="license-status mb-4">
+                <p><strong>Loading license information...</strong></p>
+              </div>
+              
+              <!-- License Information Section -->
+              <div class="hardware-info mb-3">
+                <div class="card bg-light">
+                  <div class="card-body">
+                    <h6 class="card-title">Hardware ID</h6>
+                    <div class="hardware-id-container">
+                      <p class="card-text font-monospace mb-2" id="modal-hardware-id">Loading...</p>
+                      <button class="btn btn-sm btn-outline-secondary copy-button btn-block" id="copy-hardware-id" title="Copy to clipboard">
+                        <i class="fas fa-copy"></i> Copy Hardware ID
+                      </button>
+                    </div>
+                    <small class="text-muted">Your license key is tied to this hardware ID. Please provide this ID when purchasing a license.</small>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- License key input -->
+              <div class="form-group mb-3">
+                <label for="modal-license-key">License Key:</label>
+                <input type="text" class="form-control" id="modal-license-key" placeholder="Enter your license key here">
+              </div>
+              
+              <!-- Error/Success Messages -->
+              <div id="modal-license-message" style="display: none;" role="alert"></div>
+              
+              <!-- Hidden fields for license data - not visible to user but used to store data -->
+              <div style="display:none;">
+                <input type="hidden" id="modal-licensee-name">
+                <input type="hidden" id="modal-licensee-email">
+                <input type="hidden" id="modal-license-type">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div class="container-fluid p-0">
+                <div class="row">
+                  <div class="col-md-6 text-left">
+                    <button type="button" class="btn btn-danger" id="deactivate-license-btn" disabled>Deactivate License</button>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="license-modal-cancel">Close</button>
+                    <button type="button" class="btn btn-primary" id="activate-license-btn">Activate License</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <script src="popup.js"></script>
+      <script src="import-settings.js"></script>
+      <script src="license.js"></script>
+    </div>
+  </div>
+</body>
+
+</html>

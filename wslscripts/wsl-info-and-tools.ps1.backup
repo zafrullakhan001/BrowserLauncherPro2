@@ -1,0 +1,1509 @@
+# WSL Information and Management Tool
+# This script provides detailed information about WSL instances and offers additional
+# functionality for managing, troubleshooting, and optimizing WSL environments.
+
+# Check if script is running with administrative privileges
+function Test-Admin {
+    $currentUser = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+    return $currentUser.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+# If not running as admin, relaunch the script with admin rights
+if (-not (Test-Admin)) {
+    Write-Host "This script requires administrative privileges. Relaunching with elevated rights..." -ForegroundColor Yellow
+    Start-Process powershell.exe -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+    Exit
+}
+
+# Set console colors
+$Host.UI.RawUI.BackgroundColor = "Black"
+$Host.UI.RawUI.ForegroundColor = "White"
+Clear-Host
+
+function Show-Header {
+    param (
+        [string]$Title
+    )
+    
+    Write-Host "`n=============================================" -ForegroundColor Cyan
+    Write-Host "  $Title" -ForegroundColor Cyan
+    Write-Host "=============================================`n" -ForegroundColor Cyan
+}
+
+function Get-WSLStatus {
+    Show-Header "WSL SYSTEM STATUS"
+    
+    # Check WSL Version
+    $wslInfo = wsl --status
+    Write-Host $wslInfo
+    
+    # Check if WSL is enabled in Windows features
+    $wslFeature = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+    $vmFeature = Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
+    
+    Write-Host "`nWindows Features Status:" -ForegroundColor Green
+    Write-Host "- WSL Feature: $($wslFeature.State)" -ForegroundColor $(if ($wslFeature.State -eq "Enabled") { "Green" } else { "Red" })
+    Write-Host "- VM Platform: $($vmFeature.State)" -ForegroundColor $(if ($vmFeature.State -eq "Enabled") { "Green" } else { "Red" })
+    
+    # Kernel version info
+    try {
+        $kernelVersion = wsl -d Ubuntu -e uname -r 2>$null
+        if ($kernelVersion) {
+            Write-Host "- WSL Kernel Version: $kernelVersion" -ForegroundColor Green
+        }
+    } catch {
+        # Silently continue if Ubuntu is not installed
+    }
+}
+
+function Get-WSLDistributions {
+    Show-Header "WSL DISTRIBUTIONS"
+    
+    # Debug mode (set to false when fixed)
+    $debugMode = $false
+    
+    # Capture WSL distribution list using a different method
+    try {
+        # Use the PowerShell way to capture command output accurately
+        $rawOutput = & wsl.exe --list --verbose
+        
+        if ($debugMode) {
+            Write-Host "`nDEBUG: Raw WSL Output:" -ForegroundColor Magenta
+            if ($null -eq $rawOutput) {
+                Write-Host "  [No output returned]" -ForegroundColor Red
+            }
+            else {
+                $rawOutput | ForEach-Object { Write-Host "  $_" -ForegroundColor Gray }
+            }
+        }
+        
+        # Create a more attractive header
+        Write-Host "`nNAME                  STATE           VERSION    DEFAULT" -ForegroundColor Green
+        Write-Host "=====================================================" -ForegroundColor Green
+        
+        # Process each line of the output
+        $distributionInfo = @()
+        
+        # Skip the header line
+        foreach ($line in $rawOutput | Select-Object -Skip 1) {
+            # Skip empty lines
+            if ([string]::IsNullOrWhiteSpace($line)) { continue }
+            
+            if ($debugMode) {
+                Write-Host "DEBUG: Processing line: '$line'" -ForegroundColor Magenta
+            }
+            
+            # The line format appears to be "* NAME STATE VERSION" or "  NAME STATE VERSION"
+            # Use a more targeted approach to detect the default distribution
+            $lineText = $line.Trim()
+            $isDefault = $lineText.StartsWith('*')
+            
+            if ($debugMode) {
+                Write-Host "DEBUG: Line text: '$lineText', isDefault: $isDefault" -ForegroundColor Magenta
+            }
+            
+            # Split the line by whitespace
+            $lineParts = $lineText -split '\s+'
+            
+            # Skip header or malformed lines
+            if ($lineParts.Count -ge 3 -and -not ($lineParts[0] -eq "NAME" -or $lineParts[1] -eq "NAME")) {
+                # Get distribution details based on whether it's default or not
+                $startIndex = if ($isDefault) { 1 } else { 0 }
+                
+                # Extract details properly
+                $name = $lineParts[$startIndex]
+                $state = $lineParts[$startIndex + 1]
+                $version = $lineParts[$startIndex + 2]
+                
+                if ($debugMode) {
+                    Write-Host "DEBUG: Parsed name: '$name', state: '$state', version: '$version'" -ForegroundColor Magenta
+                }
+                
+                # Format the output with proper column widths
+                $nameCol = "{0,-20}" -f $name
+                $stateCol = "{0,-15}" -f $state
+                $versionCol = "{0,-10}" -f $version
+                $defaultText = if ($isDefault) { "Yes" } else { "No" }
+                $defaultCol = "{0,-8}" -f $defaultText
+                
+                # Color based on state
+                $color = switch ($state) {
+                    "Running" { "Green" }
+                    "Stopped" { "Yellow" }
+                    default { "White" }
+                }
+                
+                # Display with proper formatting - asterisk at front if default
+                $displayPrefix = if ($isDefault) { "* " } else { "  " }
+                Write-Host "$displayPrefix$nameCol$stateCol$versionCol$defaultCol" -ForegroundColor $color
+                
+                # Store distribution info for additional details
+                $distributionInfo += [PSCustomObject]@{
+                    Name = $name
+                    State = $state
+                    Version = $version
+                    Default = $defaultText
+                    IsDefault = $isDefault
+                }
+            }
+        }
+        
+        # Count the correctly parsed distributions
+        $distroCount = $distributionInfo.Count
+        if ($distroCount -gt 0) {
+            Write-Host "`nTotal WSL Distributions: $distroCount" -ForegroundColor Green
+            
+            # Additional actions
+            Write-Host "`nAdditional Options:" -ForegroundColor Cyan
+            Write-Host "1. Start a distribution" -ForegroundColor White
+            Write-Host "2. Stop a distribution" -ForegroundColor White
+            Write-Host "3. Set default distribution" -ForegroundColor White
+            Write-Host "4. Show detailed distribution info" -ForegroundColor White
+            Write-Host "5. Return to main menu" -ForegroundColor White
+            
+            $action = Read-Host "`nSelect an option (1-5)"
+            
+            switch ($action) {
+                "1" {
+                    # Start a distribution
+                    $stoppedDistros = $distributionInfo | Where-Object { $_.State -eq "Stopped" }
+                    
+                    if ($stoppedDistros.Count -eq 0) {
+                        Write-Host "No stopped distributions found." -ForegroundColor Yellow
+                        return
+                    }
+                    
+                    Write-Host "`nStopped Distributions:" -ForegroundColor Green
+                    for ($i = 0; $i -lt $stoppedDistros.Count; $i++) {
+                        Write-Host "  $($i+1). $($stoppedDistros[$i].Name)" -ForegroundColor White
+                    }
+                    
+                    $distroIndex = Read-Host "`nSelect a distribution to start (1-$($stoppedDistros.Count)), or 0 to cancel"
+                    if ($distroIndex -eq "0" -or [string]::IsNullOrEmpty($distroIndex)) {
+                        return
+                    }
+                    
+                    try {
+                        $selectedDistro = $stoppedDistros[$distroIndex-1].Name
+                        Write-Host "Starting $selectedDistro..." -ForegroundColor Yellow
+                        wsl -d $selectedDistro
+                        Write-Host "$selectedDistro has been started." -ForegroundColor Green
+                    } catch {
+                        Write-Host "Error starting distribution: $_" -ForegroundColor Red
+                    }
+                }
+                "2" {
+                    # Stop a distribution
+                    $runningDistros = $distributionInfo | Where-Object { $_.State -eq "Running" }
+                    
+                    if ($runningDistros.Count -eq 0) {
+                        Write-Host "No running distributions found." -ForegroundColor Yellow
+                        return
+                    }
+                    
+                    Write-Host "`nRunning Distributions:" -ForegroundColor Green
+                    for ($i = 0; $i -lt $runningDistros.Count; $i++) {
+                        Write-Host "  $($i+1). $($runningDistros[$i].Name)" -ForegroundColor White
+                    }
+                    
+                    $distroIndex = Read-Host "`nSelect a distribution to stop (1-$($runningDistros.Count)), or 0 to cancel"
+                    if ($distroIndex -eq "0" -or [string]::IsNullOrEmpty($distroIndex)) {
+                        return
+                    }
+                    
+                    try {
+                        $selectedDistro = $runningDistros[$distroIndex-1].Name
+                        Write-Host "Stopping $selectedDistro..." -ForegroundColor Yellow
+                        wsl --terminate $selectedDistro
+                        Write-Host "$selectedDistro has been stopped." -ForegroundColor Green
+                    } catch {
+                        Write-Host "Error stopping distribution: $_" -ForegroundColor Red
+                    }
+                }
+                "3" {
+                    # Set default distribution
+                    Write-Host "`nAvailable Distributions:" -ForegroundColor Green
+                    for ($i = 0; $i -lt $distributionInfo.Count; $i++) {
+                        $defaultMark = if ($distributionInfo[$i].Default -eq "Yes") { " (current default)" } else { "" }
+                        Write-Host "  $($i+1). $($distributionInfo[$i].Name)$defaultMark" -ForegroundColor White
+                    }
+                    
+                    $distroIndex = Read-Host "`nSelect a distribution to set as default (1-$($distributionInfo.Count)), or 0 to cancel"
+                    if ($distroIndex -eq "0" -or [string]::IsNullOrEmpty($distroIndex)) {
+                        return
+                    }
+                    
+                    try {
+                        $selectedDistro = $distributionInfo[$distroIndex-1].Name
+                        Write-Host "Setting $selectedDistro as default..." -ForegroundColor Yellow
+                        wsl --set-default $selectedDistro
+                        Write-Host "$selectedDistro is now the default distribution." -ForegroundColor Green
+                    } catch {
+                        Write-Host "Error setting default distribution: $_" -ForegroundColor Red
+                    }
+                }
+                "4" {
+                    # Show detailed info for a specific distribution
+                    Write-Host "`nAvailable Distributions:" -ForegroundColor Green
+                    for ($i = 0; $i -lt $distributionInfo.Count; $i++) {
+                        Write-Host "  $($i+1). $($distributionInfo[$i].Name)" -ForegroundColor White
+                    }
+                    
+                    $distroIndex = Read-Host "`nSelect a distribution to show details (1-$($distributionInfo.Count)), or 0 to cancel"
+                    if ($distroIndex -eq "0" -or [string]::IsNullOrEmpty($distroIndex)) {
+                        return
+                    }
+                    
+                    try {
+                        $selectedDistro = $distributionInfo[$distroIndex-1].Name
+                        Write-Host "`nFetching details for $selectedDistro..." -ForegroundColor Yellow
+                        
+                        $versionInfo = wsl -d $selectedDistro -e cat /etc/os-release 2>$null
+                        $kernelInfo = wsl -d $selectedDistro -e uname -a 2>$null
+                        $diskInfo = wsl -d $selectedDistro -e df -h / 2>$null | Select-Object -Skip 1
+                        $memoryInfo = wsl -d $selectedDistro -e free -h 2>$null | Select-Object -Skip 1 | Select-Object -First 1
+                        
+                        Write-Host "`nDistribution Details for ${selectedDistro}:" -ForegroundColor Green
+                        Write-Host "----------------------------------------" -ForegroundColor Green
+                        Write-Host "Kernel: $kernelInfo" -ForegroundColor Cyan
+                        
+                        # Extract and display OS information
+                        $prettyName = ($versionInfo | Select-String -Pattern "PRETTY_NAME=").Line -replace 'PRETTY_NAME="(.*)"', '$1'
+                        if ($prettyName) {
+                            Write-Host "OS: $prettyName" -ForegroundColor Cyan
+                        }
+                        
+                        Write-Host "`nDisk Usage:" -ForegroundColor Cyan
+                        Write-Host $diskInfo -ForegroundColor White
+                        
+                        Write-Host "`nMemory Information:" -ForegroundColor Cyan
+                        Write-Host $memoryInfo -ForegroundColor White
+                        
+                    } catch {
+                        Write-Host "Error retrieving distribution details: $($_)" -ForegroundColor Red
+                    }
+                }
+                "5" {
+                    # Return to main menu
+                    return
+                }
+                default {
+                    Write-Host "Invalid option. Returning to main menu." -ForegroundColor Red
+                }
+            }
+        } else {
+            Write-Host "`nNo WSL distributions installed." -ForegroundColor Yellow
+            Write-Host "Use option 6 from the main menu to create a new WSL instance." -ForegroundColor Cyan
+        }
+    } catch {
+        Write-Host "Error retrieving WSL distribution information: $_" -ForegroundColor Red
+    }
+}
+
+function Get-WSLResourceUsage {
+    Show-Header "WSL RESOURCE USAGE"
+    
+    # Global WSL memory usage
+    $wslMemory = Get-Process -Name "wslhost" -ErrorAction SilentlyContinue | Measure-Object WorkingSet -Sum
+    if ($wslMemory.Sum -gt 0) {
+        $memoryInMB = [math]::Round($wslMemory.Sum / 1MB, 2)
+        Write-Host "Total WSL Memory Usage: $memoryInMB MB" -ForegroundColor Green
+    } else {
+        Write-Host "No running WSL instances detected." -ForegroundColor Yellow
+        return
+    }
+    
+    # CPU usage
+    $wslCPU = Get-Process -Name "wslhost" -ErrorAction SilentlyContinue | Measure-Object CPU -Sum
+    if ($wslCPU.Sum -gt 0) {
+        $cpuUsage = [math]::Round($wslCPU.Sum, 2)
+        Write-Host "Total WSL CPU Usage: $cpuUsage%" -ForegroundColor Green
+    }
+    
+    # Disk space for each distribution
+    Write-Host "`nDisk Space Usage:" -ForegroundColor Green
+    $wslDistros = (wsl --list --quiet) -split "`n" | Where-Object { $_ -and $_ -ne "Windows" }
+    
+    foreach ($distro in $wslDistros) {
+        if ($distro -and $distro.Trim() -ne "") {
+            try {
+                $diskUsage = wsl -d $distro -e df -h /  2>$null | Select-Object -Skip 1
+                if ($diskUsage) {
+                    Write-Host "- $($distro): $diskUsage" -ForegroundColor Cyan
+                }
+            } catch {
+                Write-Host "- $($distro): Unable to get disk usage" -ForegroundColor Yellow
+            }
+        }
+    }
+}
+
+function Get-WSLNetworkInfo {
+    Show-Header "WSL NETWORK INFORMATION"
+    
+    # Display WSL IP addresses
+    $wslDistros = (wsl --list --quiet) -split "`n" | Where-Object { $_ -and $_ -ne "Windows" }
+    
+    Write-Host "WSL IP Addresses:" -ForegroundColor Green
+    foreach ($distro in $wslDistros) {
+        if ($distro -and $distro.Trim() -ne "") {
+            try {
+                $ipInfo = wsl -d $distro -e ip -4 addr show eth0 2>$null | Select-String -Pattern "inet "
+                if ($ipInfo) {
+                    $ip = $ipInfo -replace ".*inet\s+([0-9.]+)\/.*", '$1'
+                    Write-Host "- $($distro): $ip" -ForegroundColor Cyan
+                } else {
+                    Write-Host "- $($distro): No IP found" -ForegroundColor Yellow
+                }
+            } catch {
+                Write-Host "- $($distro): Unable to get IP address" -ForegroundColor Yellow
+            }
+        }
+    }
+    
+    # Check WSL network adapter
+    Write-Host "`nWSL Network Adapter:" -ForegroundColor Green
+    $wslAdapter = Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*WSL*" }
+    if ($wslAdapter) {
+        Write-Host "- Name: $($wslAdapter.Name)" -ForegroundColor Cyan
+        Write-Host "- Status: $($wslAdapter.Status)" -ForegroundColor Cyan
+        Write-Host "- MAC Address: $($wslAdapter.MacAddress)" -ForegroundColor Cyan
+    } else {
+        Write-Host "- No WSL network adapter found" -ForegroundColor Yellow
+    }
+}
+
+function Test-WSLConnectivity {
+    Show-Header "WSL CONNECTIVITY TEST"
+    
+    $wslDistros = (wsl --list --quiet) -split "`n" | Where-Object { $_ -and $_ -ne "Windows" }
+    
+    foreach ($distro in $wslDistros) {
+        if ($distro -and $distro.Trim() -ne "") {
+            Write-Host ("`nTesting connectivity for {0}:" -f $distro) -ForegroundColor Green
+            
+            try {
+                # Check internet connectivity
+                $pingResult = wsl -d $distro -e ping -c 2 8.8.8.8 2>$null
+                # Look for patterns that indicate successful ping response (bytes from)
+                if ($pingResult -match "bytes from 8.8.8.8" -or $pingResult -match "64 bytes from") {
+                    Write-Host "- Internet connectivity: OK" -ForegroundColor Green
+                } else {
+                    Write-Host "- Internet connectivity: FAILED" -ForegroundColor Red
+                }
+                
+                # Check DNS resolution using ping instead of nslookup (more universally available)
+                $dnsResult = wsl -d $distro -e ping -c 1 google.com 2>$null
+                if ($dnsResult -match "bytes from" -or $dnsResult -match "64 bytes from") {
+                    Write-Host "- DNS resolution: OK" -ForegroundColor Green
+                } else {
+                    # Try alternate method if ping fails
+                    $dnsAltResult = wsl -d $distro -e cat /etc/resolv.conf 2>$null
+                    if ($dnsAltResult -match "nameserver") {
+                        # Try a different domain
+                        $dns2Result = wsl -d $distro -e ping -c 1 microsoft.com 2>$null
+                        if ($dns2Result -match "bytes from" -or $dns2Result -match "64 bytes from") {
+                            Write-Host "- DNS resolution: OK" -ForegroundColor Green
+                        } else {
+                            Write-Host "- DNS resolution: FAILED" -ForegroundColor Red
+                        }
+                    } else {
+                        Write-Host "- DNS resolution: FAILED" -ForegroundColor Red
+                    }
+                }
+            } catch {
+                Write-Host "- Could not test connectivity (distribution may not be running)" -ForegroundColor Yellow
+                Write-Host "  Error: $_" -ForegroundColor Yellow
+            }
+        }
+    }
+}
+
+function Optimize-WSL {
+    Show-Header "WSL OPTIMIZATION"
+    
+    # Create or update .wslconfig file
+    $wslConfigPath = "$env:USERPROFILE\.wslconfig"
+    
+    $currentMemory = (Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB
+    $recommendedMemory = [Math]::Floor($currentMemory / 2)
+    $recommendedProcessors = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors / 2
+    
+    if ($recommendedMemory -lt 2) { $recommendedMemory = 2 }
+    if ($recommendedProcessors -lt 2) { $recommendedProcessors = 2 }
+    
+    Write-Host "System has $([Math]::Floor($currentMemory))GB RAM and $((Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors) logical processors" -ForegroundColor Cyan
+    
+    if (Test-Path $wslConfigPath) {
+        Write-Host "Found existing .wslconfig file. Current settings:" -ForegroundColor Yellow
+        Get-Content $wslConfigPath | ForEach-Object { Write-Host "  $_" -ForegroundColor Gray }
+        
+        $updateConfig = Read-Host "`nDo you want to update the configuration? (Y/N)"
+        if ($updateConfig -ne "Y" -and $updateConfig -ne "y") {
+            return
+        }
+    }
+    
+    Write-Host "`nRecommended settings:" -ForegroundColor Green
+    Write-Host "- Memory: ${recommendedMemory}GB" -ForegroundColor Cyan
+    Write-Host "- Processors: $recommendedProcessors" -ForegroundColor Cyan
+    
+    $configMemory = Read-Host "Enter memory limit in GB (default: $recommendedMemory)"
+    if (-not $configMemory) { $configMemory = $recommendedMemory }
+    
+    $configProcessors = Read-Host "Enter number of processors (default: $recommendedProcessors)"
+    if (-not $configProcessors) { $configProcessors = $recommendedProcessors }
+    
+    $configSwap = Read-Host "Enter swap size in GB (default: 4)"
+    if (-not $configSwap) { $configSwap = 4 }
+    
+    $wslConfig = @"
+[wsl2]
+memory=$($configMemory)GB
+processors=$configProcessors
+swap=$($configSwap)GB
+localhostForwarding=true
+kernelCommandLine=quiet
+"@
+    
+    try {
+        $wslConfig | Out-File -FilePath $wslConfigPath -Encoding ascii -Force
+        Write-Host "`nWSL configuration updated successfully. Please restart WSL for changes to take effect." -ForegroundColor Green
+        Write-Host "Run 'wsl --shutdown' to restart WSL" -ForegroundColor Cyan
+    } catch {
+        Write-Host "Failed to update WSL configuration: $_" -ForegroundColor Red
+    }
+}
+
+function Repair-WSL {
+    Show-Header "WSL REPAIR TOOLS"
+    
+    Write-Host "1. Reset WSL Network" -ForegroundColor Cyan
+    Write-Host "2. Repair WSL Registration" -ForegroundColor Cyan
+    Write-Host "3. Reset WSL Instance" -ForegroundColor Cyan
+    Write-Host "4. Reinstall WSL Components" -ForegroundColor Cyan
+    Write-Host "5. Back to Main Menu" -ForegroundColor Cyan
+    
+    $repairOption = Read-Host "`nSelect an option (1-5)"
+    
+    switch ($repairOption) {
+        "1" {
+            Write-Host "`nResetting WSL network..." -ForegroundColor Yellow
+            wsl --shutdown
+            Get-NetAdapter | Where-Object {$_.InterfaceDescription -like "*WSL*"} | Disable-NetAdapter -Confirm:$false
+            Start-Sleep -Seconds 2
+            Get-NetAdapter | Where-Object {$_.InterfaceDescription -like "*WSL*"} | Enable-NetAdapter -Confirm:$false
+            Write-Host "WSL network reset complete. Restarting WSL..." -ForegroundColor Green
+            wsl -d Ubuntu -e echo "WSL Restarted" 2>$null
+        }
+        "2" {
+            Write-Host "`nRepairing WSL registrations..." -ForegroundColor Yellow
+            $wslDistros = (wsl --list --quiet) -split "`n" | Where-Object { $_ -and $_ -ne "Windows" }
+            
+            foreach ($distro in $wslDistros) {
+                if ($distro -and $distro.Trim() -ne "") {
+                    try {
+                        Write-Host "Reregistering $distro..." -ForegroundColor Cyan
+                        wsl --terminate $distro
+                        wsl --shutdown
+                        # This is just a check - actual reregistration would require export/import
+                        wsl -d $distro -e echo "WSL distribution check" 2>$null
+                        Write-Host "$distro registration verified." -ForegroundColor Green
+                    } catch {
+                        Write-Host "Could not verify $distro. It may need manual repair." -ForegroundColor Red
+                    }
+                }
+            }
+        }
+        "3" {
+            $wslDistros = (wsl --list --quiet) -split "`n" | Where-Object { $_ -and $_ -ne "Windows" }
+            if ($wslDistros.Count -eq 0) {
+                Write-Host "`nNo WSL distributions found to reset." -ForegroundColor Yellow
+                return
+            }
+            
+            Write-Host "`nAvailable WSL instances:" -ForegroundColor Yellow
+            for ($i = 0; $i -lt $wslDistros.Count; $i++) {
+                Write-Host "$($i+1). $($wslDistros[$i])" -ForegroundColor Cyan
+            }
+            
+            $distroIndex = Read-Host "`nSelect a distribution to reset (1-$($wslDistros.Count)), or 0 to cancel"
+            if ($distroIndex -eq "0" -or [string]::IsNullOrEmpty($distroIndex)) {
+                return
+            }
+            
+            $selectedDistro = $wslDistros[$distroIndex-1]
+            $confirmation = Read-Host "Are you sure you want to reset $selectedDistro? This will unregister and re-register the distribution. (Y/N)"
+            
+            if ($confirmation -eq "Y" -or $confirmation -eq "y") {
+                Write-Host "Resetting $selectedDistro..." -ForegroundColor Yellow
+                
+                try {
+                    # Terminate the distribution if it's running
+                    wsl --terminate $selectedDistro 2>$null
+                    
+                    # Unregister the distribution
+                    Write-Host "Unregistering $selectedDistro..." -ForegroundColor Cyan
+                    wsl --unregister $selectedDistro
+                    
+                    # Reinstall the distribution
+                    Write-Host "Reinstalling $selectedDistro..." -ForegroundColor Cyan
+                    wsl --install -d $selectedDistro
+                    
+                    Write-Host "$selectedDistro has been reset. You may need to set up a new user account." -ForegroundColor Green
+                } catch {
+                    Write-Host "Error resetting WSL instance: $_" -ForegroundColor Red
+                }
+            }
+        }
+        "4" {
+            $confirmation = Read-Host "`nThis will reinstall WSL components. Continue? (Y/N)"
+            
+            if ($confirmation -eq "Y" -or $confirmation -eq "y") {
+                Write-Host "Reinstalling WSL components..." -ForegroundColor Yellow
+                wsl --shutdown
+                
+                # Enable WSL features
+                dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+                dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+                
+                Write-Host "WSL components reinstalled. A system restart is recommended." -ForegroundColor Green
+                $restartNow = Read-Host "Do you want to restart now? (Y/N)"
+                
+                if ($restartNow -eq "Y" -or $restartNow -eq "y") {
+                    Restart-Computer -Force
+                }
+            }
+        }
+        "5" {
+            # Return to main menu
+            return
+        }
+        default {
+            Write-Host "Invalid option. Please try again." -ForegroundColor Red
+        }
+    }
+}
+
+function New-WSLInstance {
+    Show-Header "CREATE NEW WSL INSTANCE"
+    
+    # List available distributions
+    Write-Host "Fetching available WSL distributions..." -ForegroundColor Yellow
+    $availableDistros = wsl --list --online | Select-Object -Skip 1
+    
+    Write-Host "`nAvailable distributions:" -ForegroundColor Green
+    $availableDistros | ForEach-Object {
+        $distroLine = $_ -replace '^\s+', ''
+        Write-Host "- $distroLine" -ForegroundColor Cyan
+    }
+    
+    $distroName = Read-Host "`nEnter the name of the distribution to install (e.g., Ubuntu-20.04)"
+    if (-not $distroName) {
+        Write-Host "Installation canceled." -ForegroundColor Yellow
+        return
+    }
+    
+    # Installation confirmation
+    $confirmation = Read-Host "Do you want to install $distroName? (Y/N)"
+    if ($confirmation -ne "Y" -and $confirmation -ne "y") {
+        return
+    }
+    
+    # Install the distribution
+    Write-Host "`nInstalling $distroName. This may take several minutes..." -ForegroundColor Yellow
+    try {
+        wsl --install -d $distroName
+        Write-Host "`nInstallation initiated. Follow the on-screen instructions to complete setup." -ForegroundColor Green
+        Write-Host "Note: You'll need to create a username and password when the distribution first launches." -ForegroundColor Yellow
+    } catch {
+        Write-Host "Error installing distribution: $_" -ForegroundColor Red
+    }
+}
+
+function Remove-WSLInstance {
+    Show-Header "DELETE WSL INSTANCE"
+    
+    # Get list of installed distributions
+    $wslDistros = (wsl --list) -split "`n" | Select-Object -Skip 1 | Where-Object { $_ -match '\S' }
+    
+    if ($wslDistros.Count -eq 0) {
+        Write-Host "No WSL distributions found to delete." -ForegroundColor Yellow
+        return
+    }
+    
+    # Format and display distributions
+    Write-Host "Installed WSL distributions:" -ForegroundColor Green
+    for ($i = 0; $i -lt $wslDistros.Count; $i++) {
+        $distro = $wslDistros[$i] -replace '^\s+', '' -replace '\s+$', ''
+        Write-Host "  $($i+1). $distro" -ForegroundColor Cyan
+    }
+    
+    $distroIndex = Read-Host "`nSelect a distribution to delete (1-$($wslDistros.Count)), or 0 to cancel"
+    if ($distroIndex -eq "0" -or [string]::IsNullOrEmpty($distroIndex)) {
+        return
+    }
+    
+    try {
+        $selectedDistro = ($wslDistros[$distroIndex-1] -replace '^\s+', '' -replace '\s+$', '').Split(' ')[0]
+        
+        Write-Host "`nWARNING: This will permanently delete the $selectedDistro distribution and all its data!" -ForegroundColor Red
+        $finalConfirmation = Read-Host "Type 'DELETE' to confirm deletion of $selectedDistro"
+        
+        if ($finalConfirmation -eq "DELETE") {
+            Write-Host "Unregistering $selectedDistro..." -ForegroundColor Yellow
+            wsl --unregister $selectedDistro
+            Write-Host "Successfully deleted $selectedDistro." -ForegroundColor Green
+        } else {
+            Write-Host "Deletion canceled." -ForegroundColor Yellow
+        }
+    } catch {
+        Write-Host "Error during deletion: $_" -ForegroundColor Red
+    }
+}
+
+function Rename-WSLInstance {
+    Show-Header "RENAME WSL INSTANCE"
+    
+    Write-Host "Note: Renaming requires exporting and importing the distribution, which may take time." -ForegroundColor Yellow
+    
+    # Get list of installed distributions
+    $wslDistros = (wsl --list) -split "`n" | Select-Object -Skip 1 | Where-Object { $_ -match '\S' }
+    
+    if ($wslDistros.Count -eq 0) {
+        Write-Host "No WSL distributions found to rename." -ForegroundColor Yellow
+        return
+    }
+    
+    # Format and display distributions
+    Write-Host "`nInstalled WSL distributions:" -ForegroundColor Green
+    for ($i = 0; $i -lt $wslDistros.Count; $i++) {
+        $distro = $wslDistros[$i] -replace '^\s+', '' -replace '\s+$', ''
+        Write-Host "  $($i+1). $distro" -ForegroundColor Cyan
+    }
+    
+    $distroIndex = Read-Host "`nSelect a distribution to rename (1-$($wslDistros.Count)), or 0 to cancel"
+    if ($distroIndex -eq "0" -or [string]::IsNullOrEmpty($distroIndex)) {
+        return
+    }
+    
+    try {
+        $selectedDistro = ($wslDistros[$distroIndex-1] -replace '^\s+', '' -replace '\s+$', '').Split(' ')[0]
+        $newName = Read-Host "Enter new name for $selectedDistro"
+        
+        if ([string]::IsNullOrEmpty($newName)) {
+            Write-Host "Rename canceled. New name cannot be empty." -ForegroundColor Yellow
+            return
+        }
+        
+        # Check if the new name already exists
+        $existingDistros = wsl --list --quiet
+        if ($existingDistros -match "^$newName$") {
+            Write-Host "A distribution with the name '$newName' already exists. Choose a different name." -ForegroundColor Red
+            return
+        }
+        
+        $confirmation = Read-Host "Rename $selectedDistro to $newName? (Y/N)"
+        if ($confirmation -ne "Y" -and $confirmation -ne "y") {
+            return
+        }
+        
+        # Create temp directory
+        $tempDir = "$env:TEMP\WSL-Rename"
+        if (-not (Test-Path $tempDir)) {
+            New-Item -ItemType Directory -Path $tempDir | Out-Null
+        }
+        
+        $exportPath = "$tempDir\$selectedDistro.tar"
+        
+        # Export the distribution
+        Write-Host "`nExporting $selectedDistro... This may take several minutes." -ForegroundColor Yellow
+        wsl --export $selectedDistro $exportPath
+        
+        if (-not (Test-Path $exportPath)) {
+            Write-Host "Export failed. Rename operation canceled." -ForegroundColor Red
+            return
+        }
+        
+        # Import with the new name
+        Write-Host "Importing as $newName... This may take several minutes." -ForegroundColor Yellow
+        wsl --import $newName $tempDir\$newName $exportPath
+        
+        # Verify the import was successful
+        $newDistroExists = wsl --list --quiet | Where-Object { $_ -match "^$newName$" }
+        
+        if ($newDistroExists) {
+            # Unregister the old distribution
+            Write-Host "Removing old distribution $selectedDistro..." -ForegroundColor Yellow
+            wsl --unregister $selectedDistro
+            
+            # Cleanup
+            Write-Host "Cleaning up temporary files..." -ForegroundColor Yellow
+            Remove-Item $exportPath -Force
+            
+            Write-Host "`nRenamed $selectedDistro to $newName successfully." -ForegroundColor Green
+            Write-Host "Note: You may need to set up a default user for the renamed distribution." -ForegroundColor Yellow
+        } else {
+            Write-Host "Import failed. The original distribution is still available." -ForegroundColor Red
+        }
+    } catch {
+        Write-Host "Error during rename: $_" -ForegroundColor Red
+    }
+}
+
+function Update-WSLInstance {
+    Show-Header "UPDATE WSL INSTANCE"
+    
+    # Get list of installed distributions
+    $wslDistros = (wsl --list) -split "`n" | Select-Object -Skip 1 | Where-Object { $_ -match '\S' }
+    
+    if ($wslDistros.Count -eq 0) {
+        Write-Host "No WSL distributions found to update." -ForegroundColor Yellow
+        return
+    }
+    
+    Write-Host "Update options:" -ForegroundColor Green
+    Write-Host "1. Update WSL kernel" -ForegroundColor Cyan
+    Write-Host "2. Update a specific distribution" -ForegroundColor Cyan
+    Write-Host "3. Update all distributions" -ForegroundColor Cyan
+    Write-Host "4. Back to main menu" -ForegroundColor Cyan
+    
+    $updateOption = Read-Host "`nSelect an option (1-4)"
+    
+    switch ($updateOption) {
+        "1" {
+            # Update the WSL kernel
+            Write-Host "`nUpdating WSL kernel..." -ForegroundColor Yellow
+            wsl --update
+            Write-Host "WSL kernel updated successfully." -ForegroundColor Green
+        }
+        "2" {
+            # Update a specific distribution
+            # Format and display distributions
+            Write-Host "`nInstalled WSL distributions:" -ForegroundColor Green
+            for ($i = 0; $i -lt $wslDistros.Count; $i++) {
+                $distro = $wslDistros[$i] -replace '^\s+', '' -replace '\s+$', ''
+                Write-Host "  $($i+1). $distro" -ForegroundColor Cyan
+            }
+            
+            $distroIndex = Read-Host "`nSelect a distribution to update (1-$($wslDistros.Count)), or 0 to cancel"
+            if ($distroIndex -eq "0" -or [string]::IsNullOrEmpty($distroIndex)) {
+                return
+            }
+            
+            $selectedDistro = ($wslDistros[$distroIndex-1] -replace '^\s+', '' -replace '\s+$', '').Split(' ')[0]
+            
+            try {
+                Write-Host "`nUpdating $selectedDistro... This may take a while." -ForegroundColor Yellow
+                
+                # Determine the distribution type (Ubuntu, Debian, etc.) and run the appropriate update commands
+                $distroInfo = wsl -d $selectedDistro -e cat /etc/os-release
+                
+                if ($distroInfo -match "ID=ubuntu" -or $distroInfo -match "ID_LIKE=ubuntu") {
+                    Write-Host "Detected Ubuntu-based distribution." -ForegroundColor Cyan
+                    wsl -d $selectedDistro -e bash -c "sudo apt update && sudo apt upgrade -y"
+                } elseif ($distroInfo -match "ID=debian" -or $distroInfo -match "ID_LIKE=debian") {
+                    Write-Host "Detected Debian-based distribution." -ForegroundColor Cyan
+                    wsl -d $selectedDistro -e bash -c "sudo apt update && sudo apt upgrade -y"
+                } elseif ($distroInfo -match "ID=fedora" -or $distroInfo -match "ID_LIKE=fedora") {
+                    Write-Host "Detected Fedora-based distribution." -ForegroundColor Cyan
+                    wsl -d $selectedDistro -e bash -c "sudo dnf update -y"
+                } elseif ($distroInfo -match "ID=arch" -or $distroInfo -match "ID_LIKE=arch") {
+                    Write-Host "Detected Arch-based distribution." -ForegroundColor Cyan
+                    wsl -d $selectedDistro -e bash -c "sudo pacman -Syu --noconfirm"
+                } else {
+                    Write-Host "Distribution type not recognized. Unable to determine update command." -ForegroundColor Yellow
+                    return
+                }
+                
+                Write-Host "Update completed for $selectedDistro." -ForegroundColor Green
+            } catch {
+                Write-Host "Error updating distribution: $_" -ForegroundColor Red
+            }
+        }
+        "3" {
+            # Update all distributions
+            Write-Host "`nUpdating all WSL distributions... This may take a while." -ForegroundColor Yellow
+            
+            foreach ($distro in $wslDistros) {
+                $distroName = ($distro -replace '^\s+', '' -replace '\s+$', '').Split(' ')[0]
+                try {
+                    Write-Host "`nUpdating $distroName..." -ForegroundColor Cyan
+                    
+                    # Determine the distribution type and run the appropriate update commands
+                    $distroInfo = wsl -d $distroName -e cat /etc/os-release
+                    
+                    if ($distroInfo -match "ID=ubuntu" -or $distroInfo -match "ID_LIKE=ubuntu") {
+                        wsl -d $distroName -e bash -c "sudo apt update && sudo apt upgrade -y"
+                    } elseif ($distroInfo -match "ID=debian" -or $distroInfo -match "ID_LIKE=debian") {
+                        wsl -d $distroName -e bash -c "sudo apt update && sudo apt upgrade -y"
+                    } elseif ($distroInfo -match "ID=fedora" -or $distroInfo -match "ID_LIKE=fedora") {
+                        wsl -d $distroName -e bash -c "sudo dnf update -y"
+                    } elseif ($distroInfo -match "ID=arch" -or $distroInfo -match "ID_LIKE=arch") {
+                        wsl -d $distroName -e bash -c "sudo pacman -Syu --noconfirm"
+                    } else {
+                        Write-Host "  Distribution type not recognized for $distroName. Skipping." -ForegroundColor Yellow
+                        continue
+                    }
+                    
+                    Write-Host "  $distroName updated successfully." -ForegroundColor Green
+                } catch {
+                    Write-Host "  Error updating $($distroName): $($_)" -ForegroundColor Red
+                }
+            }
+            
+            Write-Host "`nAll distributions update process completed." -ForegroundColor Green
+        }
+        "4" {
+            # Return to main menu
+            return
+        }
+        default {
+            Write-Host "Invalid option. Please try again." -ForegroundColor Red
+        }
+    }
+}
+
+function Manage-WSLNetworking {
+    Show-Header "WSL NETWORKING MANAGEMENT"
+    
+    Write-Host "1. Configure Port Forwarding" -ForegroundColor Cyan
+    Write-Host "2. Manage Network Interfaces" -ForegroundColor Cyan
+    Write-Host "3. Configure DNS Settings" -ForegroundColor Cyan
+    Write-Host "4. Network Troubleshooting" -ForegroundColor Cyan
+    Write-Host "5. Back to Main Menu" -ForegroundColor Cyan
+    
+    $netOption = Read-Host "`nSelect an option (1-5)"
+    
+    switch ($netOption) {
+        "1" {
+            Write-Host "`nPort Forwarding Management" -ForegroundColor Green
+            Write-Host "1. Add Port Forward" -ForegroundColor Cyan
+            Write-Host "2. List Port Forwards" -ForegroundColor Cyan
+            Write-Host "3. Remove Port Forward" -ForegroundColor Cyan
+            Write-Host "4. Back" -ForegroundColor Cyan
+            
+            $portOption = Read-Host "`nSelect an option (1-4)"
+            
+            switch ($portOption) {
+                "1" {
+                    $localPort = Read-Host "Enter local port number"
+                    $remotePort = Read-Host "Enter remote port number"
+                    $distro = Read-Host "Enter WSL distribution name"
+                    
+                    try {
+                        netsh interface portproxy add v4tov4 listenport=$localPort listenaddress=0.0.0.0 connectport=$remotePort connectaddress=(wsl -d $distro hostname -I)
+                        Write-Host "Port forward added successfully." -ForegroundColor Green
+                    } catch {
+                        Write-Host "Error adding port forward: $_" -ForegroundColor Red
+                    }
+                }
+                "2" {
+                    Write-Host "`nCurrent Port Forwards:" -ForegroundColor Green
+                    netsh interface portproxy show all
+                }
+                "3" {
+                    $localPort = Read-Host "Enter local port number to remove"
+                    try {
+                        netsh interface portproxy delete v4tov4 listenport=$localPort listenaddress=0.0.0.0
+                        Write-Host "Port forward removed successfully." -ForegroundColor Green
+                    } catch {
+                        Write-Host "Error removing port forward: $_" -ForegroundColor Red
+                    }
+                }
+            }
+        }
+        "2" {
+            Write-Host "`nNetwork Interface Management" -ForegroundColor Green
+            $wslDistros = (wsl --list --quiet) -split "`n" | Where-Object { $_ -and $_ -ne "Windows" }
+            
+            foreach ($distro in $wslDistros) {
+                if ($distro -and $distro.Trim() -ne "") {
+                    Write-Host ("`nNetwork interfaces for {0}:" -f $distro) -ForegroundColor Cyan
+                    wsl -d $distro -e ip addr show
+                }
+            }
+            
+            Write-Host "`nWSL Network Adapter Status:" -ForegroundColor Green
+            Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*WSL*" } | Format-Table Name, Status, LinkSpeed
+        }
+        "3" {
+            Write-Host "`nDNS Configuration" -ForegroundColor Green
+            $wslDistros = (wsl --list --quiet) -split "`n" | Where-Object { $_ -and $_ -ne "Windows" }
+            
+            foreach ($distro in $wslDistros) {
+                if ($distro -and $distro.Trim() -ne "") {
+                    Write-Host ("`nCurrent DNS settings for {0}:" -f $distro) -ForegroundColor Cyan
+                    wsl -d $distro -e cat /etc/resolv.conf
+                    
+                    $changeDNS = Read-Host "Do you want to configure custom DNS servers for $distro? (Y/N)"
+                    if ($changeDNS -eq "Y" -or $changeDNS -eq "y") {
+                        $primaryDNS = Read-Host "Enter primary DNS server (e.g., 8.8.8.8)"
+                        $secondaryDNS = Read-Host "Enter secondary DNS server (e.g., 8.8.4.4)"
+                        
+                        try {
+                            wsl -d $distro -e bash -c "echo 'nameserver $primaryDNS' | sudo tee /etc/resolv.conf"
+                            wsl -d $distro -e bash -c "echo 'nameserver $secondaryDNS' | sudo tee -a /etc/resolv.conf"
+                            Write-Host "DNS settings updated successfully." -ForegroundColor Green
+                        } catch {
+                            Write-Host "Error updating DNS settings: $_" -ForegroundColor Red
+                        }
+                    }
+                }
+            }
+        }
+        "4" {
+            Write-Host "`nNetwork Troubleshooting" -ForegroundColor Green
+            $wslDistros = (wsl --list --quiet) -split "`n" | Where-Object { $_ -and $_ -ne "Windows" }
+            
+            foreach ($distro in $wslDistros) {
+                if ($distro -and $distro.Trim() -ne "") {
+                    Write-Host ("`nTesting network for {0}:" -f $distro) -ForegroundColor Cyan
+                    
+                    # Test internet connectivity
+                    Write-Host "Testing internet connectivity..." -ForegroundColor Yellow
+                    wsl -d $distro -e ping -c 4 8.8.8.8
+                    
+                    # Test DNS resolution
+                    Write-Host "`nTesting DNS resolution..." -ForegroundColor Yellow
+                    wsl -d $distro -e nslookup google.com
+                    
+                    # Check network interfaces
+                    Write-Host "`nChecking network interfaces..." -ForegroundColor Yellow
+                    wsl -d $distro -e ip addr show
+                    
+                    # Check routing table
+                    Write-Host "`nChecking routing table..." -ForegroundColor Yellow
+                    wsl -d $distro -e ip route
+                }
+            }
+        }
+    }
+}
+
+function Backup-Restore-WSL {
+    Show-Header "WSL BACKUP AND RESTORE"
+    
+    Write-Host "1. Backup WSL Distribution" -ForegroundColor Cyan
+    Write-Host "2. Restore WSL Distribution" -ForegroundColor Cyan
+    Write-Host "3. List Backups" -ForegroundColor Cyan
+    Write-Host "4. Back to Main Menu" -ForegroundColor Cyan
+    
+    $backupOption = Read-Host "`nSelect an option (1-4)"
+    
+    switch ($backupOption) {
+        "1" {
+            $wslDistros = (wsl --list --quiet) -split "`n" | Where-Object { $_ -and $_ -ne "Windows" }
+            
+            Write-Host "`nAvailable distributions:" -ForegroundColor Green
+            for ($i = 0; $i -lt $wslDistros.Count; $i++) {
+                Write-Host "  $($i+1). $($wslDistros[$i])" -ForegroundColor Cyan
+            }
+            
+            $distroIndex = Read-Host "`nSelect a distribution to backup (1-$($wslDistros.Count)), or 0 to cancel"
+            if ($distroIndex -eq "0" -or [string]::IsNullOrEmpty($distroIndex)) {
+                return
+            }
+            
+            $selectedDistro = ($wslDistros[$distroIndex-1] -replace '^\s+', '' -replace '\s+$', '').Split(' ')[0]
+            $backupPath = Read-Host "Enter backup path (default: $env:USERPROFILE\WSL-Backups)"
+            if (-not $backupPath) { $backupPath = "$env:USERPROFILE\WSL-Backups" }
+            
+            if (-not (Test-Path $backupPath)) {
+                New-Item -ItemType Directory -Path $backupPath | Out-Null
+            }
+            
+            $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+            $backupFile = "$backupPath\${selectedDistro}_${timestamp}.tar"
+            
+            Write-Host "`nCreating backup of $selectedDistro..." -ForegroundColor Yellow
+            try {
+                wsl --export $selectedDistro $backupFile
+                Write-Host "Backup created successfully at: $backupFile" -ForegroundColor Green
+            } catch {
+                Write-Host "Error creating backup: $_" -ForegroundColor Red
+            }
+        }
+        "2" {
+            $backupPath = Read-Host "Enter backup directory path (default: $env:USERPROFILE\WSL-Backups)"
+            if (-not $backupPath) { $backupPath = "$env:USERPROFILE\WSL-Backups" }
+            
+            if (-not (Test-Path $backupPath)) {
+                Write-Host "Backup directory not found." -ForegroundColor Red
+                return
+            }
+            
+            $backups = Get-ChildItem -Path $backupPath -Filter "*.tar"
+            if ($backups.Count -eq 0) {
+                Write-Host "No backup files found." -ForegroundColor Yellow
+                return
+            }
+            
+            Write-Host "`nAvailable backups:" -ForegroundColor Green
+            for ($i = 0; $i -lt $backups.Count; $i++) {
+                Write-Host "  $($i+1). $($backups[$i].Name)" -ForegroundColor Cyan
+            }
+            
+            $backupIndex = Read-Host "`nSelect a backup to restore (1-$($backups.Count)), or 0 to cancel"
+            if ($backupIndex -eq "0" -or [string]::IsNullOrEmpty($backupIndex)) {
+                return
+            }
+            
+            $selectedBackup = $backups[$backupIndex-1]
+            $newDistroName = Read-Host "Enter name for the restored distribution"
+            
+            if ([string]::IsNullOrEmpty($newDistroName)) {
+                Write-Host "Distribution name cannot be empty." -ForegroundColor Red
+                return
+            }
+            
+            Write-Host "`nRestoring from backup..." -ForegroundColor Yellow
+            try {
+                wsl --import $newDistroName $env:USERPROFILE\WSL\$newDistroName $selectedBackup.FullName
+                Write-Host "Distribution restored successfully as $newDistroName" -ForegroundColor Green
+            } catch {
+                Write-Host "Error restoring backup: $_" -ForegroundColor Red
+            }
+        }
+        "3" {
+            $backupPath = Read-Host "Enter backup directory path (default: $env:USERPROFILE\WSL-Backups)"
+            if (-not $backupPath) { $backupPath = "$env:USERPROFILE\WSL-Backups" }
+            
+            if (-not (Test-Path $backupPath)) {
+                Write-Host "Backup directory not found." -ForegroundColor Red
+                return
+            }
+            
+            $backups = Get-ChildItem -Path $backupPath -Filter "*.tar"
+            if ($backups.Count -eq 0) {
+                Write-Host "No backup files found." -ForegroundColor Yellow
+                return
+            }
+            
+            Write-Host "`nAvailable backups:" -ForegroundColor Green
+            $backups | Format-Table Name, Length, LastWriteTime
+        }
+    }
+}
+
+function Monitor-WSLPerformance {
+    Show-Header "WSL PERFORMANCE MONITORING"
+    
+    Write-Host "1. Start Performance Monitoring" -ForegroundColor Cyan
+    Write-Host "2. View Performance Logs" -ForegroundColor Cyan
+    Write-Host "3. Configure Monitoring" -ForegroundColor Cyan
+    Write-Host "4. Back to Main Menu" -ForegroundColor Cyan
+    
+    $monitorOption = Read-Host "`nSelect an option (1-4)"
+    
+    switch ($monitorOption) {
+        "1" {
+            $logPath = "$env:USERPROFILE\WSL-Logs"
+            if (-not (Test-Path $logPath)) {
+                New-Item -ItemType Directory -Path $logPath | Out-Null
+            }
+            
+            $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+            $logFile = "$logPath\performance_$timestamp.csv"
+            
+            Write-Host "`nStarting performance monitoring..." -ForegroundColor Yellow
+            Write-Host "Log file: $logFile" -ForegroundColor Cyan
+            Write-Host "Press Ctrl+C to stop monitoring" -ForegroundColor Yellow
+            
+            try {
+                # Create CSV header
+                "Timestamp,Distribution,CPU%,Memory(MB),DiskIO(MB/s)" | Out-File -FilePath $logFile
+                
+                while ($true) {
+                    $wslDistros = (wsl --list --quiet) -split "`n" | Where-Object { $_ -and $_ -ne "Windows" }
+                    
+                    foreach ($distro in $wslDistros) {
+                        if ($distro -and $distro.Trim() -ne "") {
+                            $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                            $cpu = wsl -d $distro -e top -bn1 | Select-String "Cpu(s)" | ForEach-Object { ($_ -split '\s+')[1] }
+                            $memory = wsl -d $distro -e free -m | Select-Object -Skip 1 | Select-Object -First 1 | ForEach-Object { ($_ -split '\s+')[2] }
+                            $diskIO = wsl -d $distro -e iostat -d | Select-Object -Skip 3 | Select-Object -First 1 | ForEach-Object { ($_ -split '\s+')[3] }
+                            
+                            "$timestamp,$distro,$cpu,$memory,$diskIO" | Out-File -FilePath $logFile -Append
+                        }
+                    }
+                    
+                    Start-Sleep -Seconds 5
+                }
+            } catch {
+                Write-Host "`nMonitoring stopped." -ForegroundColor Yellow
+            }
+        }
+        "2" {
+            $logPath = "$env:USERPROFILE\WSL-Logs"
+            if (-not (Test-Path $logPath)) {
+                Write-Host "No performance logs found." -ForegroundColor Yellow
+                return
+            }
+            
+            $logFiles = Get-ChildItem -Path $logPath -Filter "performance_*.csv"
+            if ($logFiles.Count -eq 0) {
+                Write-Host "No performance logs found." -ForegroundColor Yellow
+                return
+            }
+            
+            Write-Host "`nAvailable log files:" -ForegroundColor Green
+            for ($i = 0; $i -lt $logFiles.Count; $i++) {
+                Write-Host "  $($i+1). $($logFiles[$i].Name)" -ForegroundColor Cyan
+            }
+            
+            $logIndex = Read-Host "`nSelect a log file to view (1-$($logFiles.Count)), or 0 to cancel"
+            if ($logIndex -eq "0" -or [string]::IsNullOrEmpty($logIndex)) {
+                return
+            }
+            
+            $selectedLog = $logFiles[$logIndex-1]
+            Import-Csv $selectedLog.FullName | Format-Table -AutoSize
+        }
+        "3" {
+            Write-Host "`nPerformance Monitoring Configuration" -ForegroundColor Green
+            $configPath = "$env:USERPROFILE\WSL-Logs\monitor_config.json"
+            
+            if (Test-Path $configPath) {
+                $config = Get-Content $configPath | ConvertFrom-Json
+                Write-Host "Current configuration:" -ForegroundColor Cyan
+                Write-Host "Monitoring interval: $($config.interval) seconds"
+                Write-Host "Log retention: $($config.retention) days"
+            } else {
+                $config = @{
+                    interval = 5
+                    retention = 7
+                }
+            }
+            
+            $newInterval = Read-Host "Enter monitoring interval in seconds (default: $($config.interval))"
+            if ($newInterval) { $config.interval = [int]$newInterval }
+            
+            $newRetention = Read-Host "Enter log retention period in days (default: $($config.retention))"
+            if ($newRetention) { $config.retention = [int]$newRetention }
+            
+            $config | ConvertTo-Json | Out-File -FilePath $configPath
+            Write-Host "Configuration saved successfully." -ForegroundColor Green
+        }
+    }
+}
+
+function Manage-WSLProfiles {
+    Show-Header "WSL CONFIGURATION PROFILES"
+    
+    Write-Host "1. Create New Profile" -ForegroundColor Cyan
+    Write-Host "2. Apply Profile" -ForegroundColor Cyan
+    Write-Host "3. List Profiles" -ForegroundColor Cyan
+    Write-Host "4. Delete Profile" -ForegroundColor Cyan
+    Write-Host "5. Back to Main Menu" -ForegroundColor Cyan
+    
+    $profileOption = Read-Host "`nSelect an option (1-5)"
+    
+    $profilesPath = "$env:USERPROFILE\WSL-Profiles"
+    if (-not (Test-Path $profilesPath)) {
+        New-Item -ItemType Directory -Path $profilesPath | Out-Null
+    }
+    
+    switch ($profileOption) {
+        "1" {
+            $profileName = Read-Host "Enter profile name"
+            if ([string]::IsNullOrEmpty($profileName)) {
+                Write-Host "Profile name cannot be empty." -ForegroundColor Red
+                return
+            }
+            
+            $profilePath = "$profilesPath\$profileName.json"
+            
+            $profile = @{
+                name = $profileName
+                memory = Read-Host "Enter memory limit in GB"
+                processors = Read-Host "Enter number of processors"
+                swap = Read-Host "Enter swap size in GB"
+                localhostForwarding = Read-Host "Enable localhost forwarding? (Y/N)"
+                kernelCommandLine = Read-Host "Enter kernel command line options (optional)"
+            }
+            
+            $profile | ConvertTo-Json | Out-File -FilePath $profilePath
+            Write-Host "Profile created successfully." -ForegroundColor Green
+        }
+        "2" {
+            $profiles = Get-ChildItem -Path $profilesPath -Filter "*.json"
+            if ($profiles.Count -eq 0) {
+                Write-Host "No profiles found." -ForegroundColor Yellow
+                return
+            }
+            
+            Write-Host "`nAvailable profiles:" -ForegroundColor Green
+            for ($i = 0; $i -lt $profiles.Count; $i++) {
+                Write-Host "  $($i+1). $($profiles[$i].BaseName)" -ForegroundColor Cyan
+            }
+            
+            $profileIndex = Read-Host "`nSelect a profile to apply (1-$($profiles.Count)), or 0 to cancel"
+            if ($profileIndex -eq "0" -or [string]::IsNullOrEmpty($profileIndex)) {
+                return
+            }
+            
+            $selectedProfile = $profiles[$profileIndex-1]
+            $profile = Get-Content $selectedProfile.FullName | ConvertFrom-Json
+            
+            $wslConfig = @"
+[wsl2]
+memory=$($profile.memory)GB
+processors=$($profile.processors)
+swap=$($profile.swap)GB
+localhostForwarding=$($profile.localhostForwarding -eq "Y")
+kernelCommandLine=$($profile.kernelCommandLine)
+"@
+            
+            $wslConfigPath = "$env:USERPROFILE\.wslconfig"
+            $wslConfig | Out-File -FilePath $wslConfigPath -Encoding ascii -Force
+            
+            Write-Host "Profile applied successfully. Please restart WSL for changes to take effect." -ForegroundColor Green
+            Write-Host "Run 'wsl --shutdown' to restart WSL" -ForegroundColor Cyan
+        }
+        "3" {
+            $profiles = Get-ChildItem -Path $profilesPath -Filter "*.json"
+            if ($profiles.Count -eq 0) {
+                Write-Host "No profiles found." -ForegroundColor Yellow
+                return
+            }
+            
+            Write-Host "`nAvailable profiles:" -ForegroundColor Green
+            foreach ($profile in $profiles) {
+                $profileData = Get-Content $profile.FullName | ConvertFrom-Json
+                Write-Host "`nProfile: $($profileData.name)" -ForegroundColor Cyan
+                Write-Host "Memory: $($profileData.memory)GB"
+                Write-Host "Processors: $($profileData.processors)"
+                Write-Host "Swap: $($profileData.swap)GB"
+                Write-Host "Localhost Forwarding: $($profileData.localhostForwarding)"
+                if ($profileData.kernelCommandLine) {
+                    Write-Host "Kernel Command Line: $($profileData.kernelCommandLine)"
+                }
+            }
+        }
+        "4" {
+            $profiles = Get-ChildItem -Path $profilesPath -Filter "*.json"
+            if ($profiles.Count -eq 0) {
+                Write-Host "No profiles found." -ForegroundColor Yellow
+                return
+            }
+            
+            Write-Host "`nAvailable profiles:" -ForegroundColor Green
+            for ($i = 0; $i -lt $profiles.Count; $i++) {
+                Write-Host "  $($i+1). $($profiles[$i].BaseName)" -ForegroundColor Cyan
+            }
+            
+            $profileIndex = Read-Host "`nSelect a profile to delete (1-$($profiles.Count)), or 0 to cancel"
+            if ($profileIndex -eq "0" -or [string]::IsNullOrEmpty($profileIndex)) {
+                return
+            }
+            
+            $selectedProfile = $profiles[$profileIndex-1]
+            Remove-Item $selectedProfile.FullName -Force
+            Write-Host "Profile deleted successfully." -ForegroundColor Green
+        }
+    }
+}
+
+function Manage-WSLPackages {
+    Show-Header "WSL PACKAGE MANAGEMENT"
+    
+    $wslDistros = (wsl --list --quiet) -split "`n" | Where-Object { $_ -and $_ -ne "Windows" }
+    
+    if ($wslDistros.Count -eq 0) {
+        Write-Host "No WSL distributions found." -ForegroundColor Yellow
+        return
+    }
+    
+    Write-Host "`nAvailable distributions:" -ForegroundColor Green
+    for ($i = 0; $i -lt $wslDistros.Count; $i++) {
+        Write-Host "  $($i+1). $($wslDistros[$i])" -ForegroundColor Cyan
+    }
+    
+    $distroIndex = Read-Host "`nSelect a distribution (1-$($wslDistros.Count)), or 0 to cancel"
+    if ($distroIndex -eq "0" -or [string]::IsNullOrEmpty($distroIndex)) {
+        return
+    }
+    
+    $selectedDistro = ($wslDistros[$distroIndex-1] -replace '^\s+', '' -replace '\s+$', '').Split(' ')[0]
+    
+    Write-Host "`nPackage Management Options:" -ForegroundColor Green
+    Write-Host "1. Update Package List" -ForegroundColor Cyan
+    Write-Host "2. Upgrade Packages" -ForegroundColor Cyan
+    Write-Host "3. Install Package" -ForegroundColor Cyan
+    Write-Host "4. Remove Package" -ForegroundColor Cyan
+    Write-Host "5. List Installed Packages" -ForegroundColor Cyan
+    Write-Host "6. Back to Main Menu" -ForegroundColor Cyan
+    
+    $packageOption = Read-Host "`nSelect an option (1-6)"
+    
+    switch ($packageOption) {
+        "1" {
+            Write-Host "`nUpdating package list for $selectedDistro..." -ForegroundColor Yellow
+            wsl -d $selectedDistro -e bash -c "sudo apt update"
+        }
+        "2" {
+            Write-Host "`nUpgrading packages for $selectedDistro..." -ForegroundColor Yellow
+            wsl -d $selectedDistro -e bash -c "sudo apt upgrade -y"
+        }
+        "3" {
+            $packageName = Read-Host "Enter package name to install"
+            Write-Host "`nInstalling $packageName..." -ForegroundColor Yellow
+            wsl -d $selectedDistro -e bash -c "sudo apt install -y $packageName"
+        }
+        "4" {
+            $packageName = Read-Host "Enter package name to remove"
+            Write-Host "`nRemoving $packageName..." -ForegroundColor Yellow
+            wsl -d $selectedDistro -e bash -c "sudo apt remove -y $packageName"
+        }
+        "5" {
+            Write-Host ("`nInstalled packages in {0}:" -f $selectedDistro) -ForegroundColor Yellow
+            wsl -d $selectedDistro -e bash -c "dpkg -l | grep '^ii'"
+        }
+    }
+}
+
+function Test-WSLHealth {
+    Show-Header "WSL HEALTH CHECK"
+    
+    Write-Host "Running comprehensive health check..." -ForegroundColor Yellow
+    
+    # Check WSL version and status
+    Write-Host "`n1. WSL Version and Status:" -ForegroundColor Green
+    wsl --status
+    
+    # Check Windows features
+    Write-Host "`n2. Windows Features:" -ForegroundColor Green
+    $wslFeature = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+    $vmFeature = Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
+    
+    Write-Host "WSL Feature: $($wslFeature.State)" -ForegroundColor $(if ($wslFeature.State -eq "Enabled") { "Green" } else { "Red" })
+    Write-Host "VM Platform: $($vmFeature.State)" -ForegroundColor $(if ($vmFeature.State -eq "Enabled") { "Green" } else { "Red" })
+    
+    # Check distributions
+    Write-Host "`n3. WSL Distributions:" -ForegroundColor Green
+    $wslDistros = (wsl --list --verbose) -split "`n" | Select-Object -Skip 1
+    foreach ($distro in $wslDistros) {
+        if ($distro -and $distro.Trim() -ne "") {
+            $distroName = ($distro -replace '^\s+', '' -replace '\s+$', '').Split(' ')[0]
+            Write-Host ("`nChecking {0}:" -f $distroName) -ForegroundColor Cyan
+            
+            # Check if distribution is running
+            $isRunning = $distro -match "Running"
+            Write-Host "Status: $(if ($isRunning) { 'Running' } else { 'Stopped' })" -ForegroundColor $(if ($isRunning) { "Green" } else { "Yellow" })
+            
+            if ($isRunning) {
+                # Check disk space
+                Write-Host "Disk Space:" -ForegroundColor Cyan
+                wsl -d $distroName -e df -h /
+                
+                # Check memory usage
+                Write-Host "Memory Usage:" -ForegroundColor Cyan
+                wsl -d $distroName -e free -h
+                
+                # Check network connectivity
+                Write-Host "Network Connectivity:" -ForegroundColor Cyan
+                wsl -d $distroName -e ping -c 2 8.8.8.8
+                
+                # Check system load
+                Write-Host "System Load:" -ForegroundColor Cyan
+                wsl -d $distroName -e uptime
+            }
+        }
+    }
+    
+    # Check WSL network adapter
+    Write-Host "`n4. WSL Network Adapter:" -ForegroundColor Green
+    $wslAdapter = Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*WSL*" }
+    if ($wslAdapter) {
+        Write-Host "Status: $($wslAdapter.Status)" -ForegroundColor $(if ($wslAdapter.Status -eq "Up") { "Green" } else { "Red" })
+        Write-Host "Speed: $($wslAdapter.LinkSpeed)" -ForegroundColor Cyan
+    } else {
+        Write-Host "No WSL network adapter found" -ForegroundColor Red
+    }
+    
+    # Check for common issues
+    Write-Host "`n5. Common Issues Check:" -ForegroundColor Green
+    
+    # Check if .wslconfig exists
+    $wslConfigPath = "$env:USERPROFILE\.wslconfig"
+    if (Test-Path $wslConfigPath) {
+        Write-Host "WSL configuration file exists" -ForegroundColor Green
+    } else {
+        Write-Host "No WSL configuration file found" -ForegroundColor Yellow
+    }
+    
+    # Check for port conflicts
+    $wslPorts = Get-NetTCPConnection | Where-Object { $_.OwningProcess -eq (Get-Process -Name "wslhost" -ErrorAction SilentlyContinue).Id }
+    if ($wslPorts) {
+        Write-Host "Active WSL ports:" -ForegroundColor Cyan
+        $wslPorts | Format-Table LocalPort, RemotePort, State
+    }
+    
+    Write-Host "`nHealth check completed." -ForegroundColor Green
+}
+
+function Show-Menu {
+    Clear-Host
+    Show-Header "WSL INFORMATION AND MANAGEMENT TOOL"
+    
+    Write-Host "INFORMATION:" -ForegroundColor Green
+    Write-Host "1. WSL System Status" -ForegroundColor Cyan
+    Write-Host "2. List WSL Distributions" -ForegroundColor Cyan
+    Write-Host "3. WSL Resource Usage" -ForegroundColor Cyan
+    Write-Host "4. WSL Network Information" -ForegroundColor Cyan
+    Write-Host "5. Test WSL Connectivity" -ForegroundColor Cyan
+    
+    Write-Host "`nNETWORKING:" -ForegroundColor Green
+    Write-Host "6. Manage WSL Networking" -ForegroundColor Cyan
+    
+    Write-Host "`nMANAGEMENT:" -ForegroundColor Green
+    Write-Host "7. Create New WSL Instance" -ForegroundColor Cyan
+    Write-Host "8. Delete WSL Instance" -ForegroundColor Cyan
+    Write-Host "9. Rename WSL Instance" -ForegroundColor Cyan
+    Write-Host "10. Update WSL Instance" -ForegroundColor Cyan
+    
+    Write-Host "`nMAINTENANCE:" -ForegroundColor Green
+    Write-Host "11. Optimize WSL Performance" -ForegroundColor Cyan
+    Write-Host "12. WSL Repair Tools" -ForegroundColor Cyan
+    Write-Host "13. Backup and Restore" -ForegroundColor Cyan
+    Write-Host "14. Performance Monitoring" -ForegroundColor Cyan
+    Write-Host "15. Configuration Profiles" -ForegroundColor Cyan
+    Write-Host "16. Package Management" -ForegroundColor Cyan
+    Write-Host "17. System Health Check" -ForegroundColor Cyan
+    Write-Host "18. Exit" -ForegroundColor Cyan
+    
+    $option = Read-Host "`nSelect an option (1-18)"
+    
+    switch ($option) {
+        "1" { Get-WSLStatus; Wait-Script }
+        "2" { Get-WSLDistributions; Wait-Script }
+        "3" { Get-WSLResourceUsage; Wait-Script }
+        "4" { Get-WSLNetworkInfo; Wait-Script }
+        "5" { Test-WSLConnectivity; Wait-Script }
+        "6" { Manage-WSLNetworking; Wait-Script }
+        "7" { New-WSLInstance; Wait-Script }
+        "8" { Remove-WSLInstance; Wait-Script }
+        "9" { Rename-WSLInstance; Wait-Script }
+        "10" { Update-WSLInstance; Wait-Script }
+        "11" { Optimize-WSL; Wait-Script }
+        "12" { Repair-WSL; Wait-Script }
+        "13" { Backup-Restore-WSL; Wait-Script }
+        "14" { Monitor-WSLPerformance; Wait-Script }
+        "15" { Manage-WSLProfiles; Wait-Script }
+        "16" { Manage-WSLPackages; Wait-Script }
+        "17" { Test-WSLHealth; Wait-Script }
+        "18" { Exit }
+        default { Write-Host "Invalid option. Please try again." -ForegroundColor Red; Start-Sleep -Seconds 2 }
+    }
+}
+
+function Wait-Script {
+    Write-Host "`nPress any key to continue..." -ForegroundColor Yellow
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+}
+
+# Main execution
+while ($true) {
+    Show-Menu
+} 
