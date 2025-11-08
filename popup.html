@@ -18,7 +18,7 @@
     <header class="mb-4">
       <hr>
       <h4>Browser Launcher Pro</h4>
-      <p class="subheading">Test and future-proof your web apps in beta and dev browser versions</p>
+      <p class="subheading">Launch and manage multiple browsers across Windows and WSL with version tracking</p>
       <hr>
     </header>
     <ul class="nav nav-tabs" id="settings-tabs">
@@ -179,6 +179,19 @@
             <h6 class="mb-0"><i class="fas fa-cog mr-1"></i>General Settings</h6>
           </div>
           <div class="card-body p-2">
+            <!-- UI Zoom / Display size -->
+            <div class="form-group mb-2">
+              <label class="mb-1 d-block"><i class="fas fa-text-height mr-1"></i>Display size</label>
+              <div class="ui-zoom-control" aria-label="Adjust popup zoom/size">
+                <button type="button" id="ui-zoom-minus" class="zoom-btn" title="Smaller (A-)">A-</button>
+                <input type="range" id="ui-zoom-slider" min="70" max="150" step="5" aria-label="Zoom slider">
+                <button type="button" id="ui-zoom-plus" class="zoom-btn" title="Larger (A+)">A+</button>
+                <span id="ui-zoom-value" class="zoom-value" aria-live="polite">100%</span>
+                <button type="button" id="ui-zoom-reset" class="zoom-reset" title="Reset to 100%">Reset</button>
+              </div>
+              <small class="text-muted d-block mt-1">Adjust the UI text size. Your preference is saved.</small>
+            </div>
+
             <!-- Repair browser launching button -->
             <div class="form-group repair-section mb-2">
               <button class="btn btn-warning btn-sm" id="repair-browser-launching">

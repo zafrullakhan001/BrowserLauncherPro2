@@ -1,4 +1,47 @@
 document.addEventListener('DOMContentLoaded', function () {
+  // ===== UI Zoom Control =====
+  (function initUiZoomControl() {
+    const slider = document.getElementById('ui-zoom-slider');
+    const valueEl = document.getElementById('ui-zoom-value');
+    const minusBtn = document.getElementById('ui-zoom-minus');
+    const plusBtn = document.getElementById('ui-zoom-plus');
+    const resetBtn = document.getElementById('ui-zoom-reset');
+
+    if (!slider || !valueEl) return; // control not present
+
+    const MIN = parseInt(slider.min || '70', 10);
+    const MAX = parseInt(slider.max || '150', 10);
+    const STEP = parseInt(slider.step || '5', 10);
+
+    const clamp = (n) => Math.min(MAX, Math.max(MIN, n));
+
+    function applyZoom(percent, persist = true) {
+      const p = clamp(parseInt(percent, 10) || 100);
+      document.body.style.zoom = p + '%';
+      valueEl.textContent = p + '%';
+      slider.value = p;
+      if (persist && chrome?.storage?.local) {
+        chrome.storage.local.set({ uiZoomPercent: p });
+      }
+    }
+
+    // Load stored zoom or default to 100%
+    try {
+      chrome.storage.local.get(['uiZoomPercent'], (res) => {
+        const initial = parseInt(res.uiZoomPercent, 10);
+        applyZoom(!isNaN(initial) ? initial : 100, false);
+      });
+    } catch (e) {
+      // Fallback if storage not available
+      applyZoom(100, false);
+    }
+
+    slider.addEventListener('input', () => applyZoom(slider.value));
+    if (minusBtn) minusBtn.addEventListener('click', () => applyZoom(parseInt(slider.value, 10) - STEP));
+    if (plusBtn) plusBtn.addEventListener('click', () => applyZoom(parseInt(slider.value, 10) + STEP));
+    if (resetBtn) resetBtn.addEventListener('click', () => applyZoom(100));
+  })();
+
   // Global variables for password protection
   // window.isPasswordVerifiedForSession = false;
   
