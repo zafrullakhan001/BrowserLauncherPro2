@@ -23,25 +23,25 @@
     </header>
     <ul class="nav nav-tabs" id="settings-tabs">
       <li class="nav-item">
-        <a class="nav-link active" href="#windows" id="windows-tab">Windows Local</a>
+        <a class="nav-link active" href="#windows" id="windows-tab"><i class="fas fa-desktop mr-1"></i>Windows Local</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#wsl" id="wsl-tab">WSL Ubuntu Linux</a>
+        <a class="nav-link" href="#wsl" id="wsl-tab"><i class="fab fa-linux mr-1"></i>WSL Ubuntu Linux</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#settings" id="settings-tab">Settings</a>
+        <a class="nav-link" href="#settings" id="settings-tab"><i class="fas fa-cog mr-1"></i>Settings</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#version-log" id="version-log-tab">Version Update Log</a>
+        <a class="nav-link" href="#version-log" id="version-log-tab"><i class="fas fa-history mr-1"></i>Version Update Log</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#wsl-manager" id="wsl-manager-tab">WSL Manager</a>
+        <a class="nav-link" href="#wsl-manager" id="wsl-manager-tab"><i class="fas fa-server mr-1"></i>WSL Manager</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#search-settings" id="search-settings-tab">Search Settings</a>
+        <a class="nav-link" href="#search-settings" id="search-settings-tab"><i class="fas fa-search mr-1"></i>Search Settings</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#help-support" id="help-support-tab">Help/Support</a>
+        <a class="nav-link" href="#help-support" id="help-support-tab"><i class="fas fa-question-circle mr-1"></i>Help/Support</a>
       </li>
     </ul>
     <div class="tab-content">
@@ -55,7 +55,10 @@
                 <input type="checkbox" id="edge-stable-checkbox">
                 <span class="checkmark"></span>
               </label>
-              <button class="btn btn-primary" id="edge-stable-local">Edge Stable</button>
+              <button class="btn btn-primary browser-btn-edge" id="edge-stable-local">
+                <img src="images/edge.png" alt="Edge" class="browser-icon">
+                <span class="browser-label">Stable</span>
+              </button>
               <span id="edge-stable-version" class="browser-version"></span>
             </div>
             <div class="button-with-version">
@@ -63,7 +66,10 @@
                 <input type="checkbox" id="edge-beta-checkbox">
                 <span class="checkmark"></span>
               </label>
-              <button class="btn btn-primary" id="edge-beta-local">Edge Beta</button>
+              <button class="btn btn-primary browser-btn-edge" id="edge-beta-local">
+                <img src="images/edge.png" alt="Edge" class="browser-icon">
+                <span class="browser-label">Beta</span>
+              </button>
               <span id="edge-beta-version" class="browser-version"></span>
             </div>
             <div class="button-with-version">
@@ -71,7 +77,10 @@
                 <input type="checkbox" id="edge-dev-checkbox">
                 <span class="checkmark"></span>
               </label>
-              <button class="btn btn-primary" id="edge-dev-local">Edge Dev</button>
+              <button class="btn btn-primary browser-btn-edge" id="edge-dev-local">
+                <img src="images/edge.png" alt="Edge" class="browser-icon">
+                <span class="browser-label">Dev</span>
+              </button>
               <span id="edge-dev-version" class="browser-version"></span>
             </div>
           </div>
@@ -84,7 +93,10 @@
                 <input type="checkbox" id="chrome-stable-checkbox">
                 <span class="checkmark"></span>
               </label>
-              <button class="btn btn-success" id="chrome-stable-local">Chrome Stable</button>
+              <button class="btn btn-success browser-btn-chrome" id="chrome-stable-local">
+                <img src="images/chrome.png" alt="Chrome" class="browser-icon">
+                <span class="browser-label">Stable</span>
+              </button>
               <span id="chrome-stable-version" class="browser-version"></span>
             </div>
             <div class="button-with-version">
@@ -92,7 +104,10 @@
                 <input type="checkbox" id="chrome-beta-checkbox">
                 <span class="checkmark"></span>
               </label>
-              <button class="btn btn-success" id="chrome-beta-local">Chrome Beta</button>
+              <button class="btn btn-success browser-btn-chrome" id="chrome-beta-local">
+                <img src="images/chrome.png" alt="Chrome" class="browser-icon">
+                <span class="browser-label">Beta</span>
+              </button>
               <span id="chrome-beta-version" class="browser-version"></span>
             </div>
             <div class="button-with-version">
@@ -100,7 +115,10 @@
                 <input type="checkbox" id="chrome-dev-checkbox">
                 <span class="checkmark"></span>
               </label>
-              <button class="btn btn-success" id="chrome-dev-local">Chrome Dev</button>
+              <button class="btn btn-success browser-btn-chrome" id="chrome-dev-local">
+                <img src="images/chrome.png" alt="Chrome" class="browser-icon">
+                <span class="browser-label">Dev</span>
+              </button>
               <span id="chrome-dev-version" class="browser-version"></span>
             </div>
           </div>
@@ -132,33 +150,33 @@
         <div class="browser-group">
           <h5>Microsoft Edge (<span id="wsl-instance-edge"></span>)</h5>
           <div class="button-container">
-            <button class="btn btn-primary" id="edge-stable">Edge Stable</button>
-            <button class="btn btn-primary" id="edge-beta">Edge Beta</button>
-            <button class="btn btn-primary" id="edge-dev">Edge Dev</button>
+            <button class="btn btn-primary" id="edge-stable"><i class="fab fa-edge"></i> Edge Stable</button>
+            <button class="btn btn-primary" id="edge-beta"><i class="fab fa-edge"></i> Edge Beta</button>
+            <button class="btn btn-primary" id="edge-dev"><i class="fab fa-edge"></i> Edge Dev</button>
           </div>
         </div>
         <div class="browser-group">
           <h5>Google Chrome (<span id="wsl-instance-chrome"></span>)</h5>
           <div class="button-container">
-            <button class="btn btn-success" id="chrome-stable">Chrome Stable</button>
-            <button class="btn btn-success" id="chrome-beta">Chrome Beta</button>
-            <button class="btn btn-success" id="chrome-dev">Chrome Dev</button>
+            <button class="btn btn-success" id="chrome-stable"><i class="fab fa-chrome"></i> Chrome Stable</button>
+            <button class="btn btn-success" id="chrome-beta"><i class="fab fa-chrome"></i> Chrome Beta</button>
+            <button class="btn btn-success" id="chrome-dev"><i class="fab fa-chrome"></i> Chrome Dev</button>
           </div>
         </div>
         <div class="browser-group">
           <h5>Other Browsers (<span id="wsl-instance-other"></span>)</h5>
           <div class="button-container">
-            <button class="btn btn-warning" id="firefox">Firefox</button>
-            <button class="btn btn-info" id="opera">Opera</button>
-            <button class="btn btn-secondary" id="brave">Brave</button>
+            <button class="btn btn-warning" id="firefox"><i class="fab fa-firefox"></i> Firefox</button>
+            <button class="btn btn-info" id="opera"><i class="fab fa-opera"></i> Opera</button>
+            <button class="btn btn-secondary" id="brave"><i class="fab fa-brave"></i> Brave</button>
           </div>
         </div>
         <div class="browser-group">
           <h5>WSL Ubuntu Tools (<span id="wsl-instance-tools"></span>)</h5>
           <div class="button-container">
-            <button class="btn btn-primary" id="launch-xterm">Launch Konsole</button>
-            <button class="btn btn-secondary" id="launch-powershell">Launch PowerShell</button>
-            <button class="btn btn-danger" id="launch-sandbox">Launch Win Sandbox</button>
+            <button class="btn btn-primary" id="launch-xterm"><i class="fas fa-terminal"></i> Launch Konsole</button>
+            <button class="btn btn-secondary" id="launch-powershell"><i class="fas fa-terminal"></i> Launch PowerShell</button>
+            <button class="btn btn-danger" id="launch-sandbox"><i class="fas fa-shield-alt"></i> Launch Win Sandbox</button>
           </div>
         </div>
       </div>
@@ -414,11 +432,18 @@
         </div>
 
         <!-- Appearance Settings Card -->
-        <div class="card mb-2" style="display: none;">
+        <div class="card mb-2">
           <div class="card-header bg-light py-1">
             <h6 class="mb-0"><i class="fas fa-palette mr-1"></i>Appearance Settings</h6>
           </div>
           <div class="card-body p-2">
+            <div class="form-group mb-2">
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="dark-mode-toggle">
+                <label class="custom-control-label" for="dark-mode-toggle">Enable Dark Mode</label>
+              </div>
+              <small class="text-muted">Switch to a dark theme for better visibility in low light</small>
+            </div>
             <div class="color-settings">
               <div class="d-flex justify-content-between align-items-center">
                 <button class="btn btn-outline-primary btn-sm" id="background-color-link">
