@@ -42,6 +42,26 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   })();
 
+  // ===== WSL Instance Badge (inside WSL tab content) =====
+  function updateWSLInstanceBadge() {
+    const badge = document.getElementById('wsl-instance-badge');
+    if (!badge || !chrome?.storage?.local) return;
+    try {
+      chrome.storage.local.get(['wslInstance'], (res) => {
+        const name = (res?.wslInstance || '').trim();
+        if (name) {
+          badge.textContent = name;
+          badge.style.display = '';
+        } else {
+          badge.textContent = '';
+          badge.style.display = 'none';
+        }
+      });
+    } catch (e) {
+      // silent failure if storage unavailable
+    }
+  }
+
   // ===== UI Zoom Control =====
   (function initUiZoomControl() {
     const slider = document.getElementById('ui-zoom-slider');
@@ -608,6 +628,16 @@ document.addEventListener('DOMContentLoaded', function () {
   showWSLCheckbox.addEventListener('change', saveShowWSLSetting);
 
   loadShowWSLSetting();
+  // Initialize the WSL instance name badge in the tab header
+  updateWSLInstanceBadge();
+  // React to storage changes for default instance selection
+  try {
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area === 'local' && changes.wslInstance) {
+        updateWSLInstanceBadge();
+      }
+    });
+  } catch (e) { /* ignore */ }
 
   // Removing the event handlers from the browsers array since they cause browsers to launch twice
   // The localBrowsers and wslBrowsers arrays handle this functionality now (around line 2646)
@@ -1193,6 +1223,8 @@ document.addEventListener('DOMContentLoaded', function () {
           document.getElementById('wsl-instance').value = selectedInstance;
           // Refresh the WSL instances list to update the highlighting
           getWSLInstances();
+          // Update the badge in the tab header
+          updateWSLInstanceBadge();
         }
       });
     });
