@@ -5,7 +5,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 100000;
+  z-index: 2147483647; /* Maximum z-index value */
   outline: none;
 }
 
@@ -16,7 +16,7 @@
   margin: 1.75rem auto;
   transform: none;
   transition: transform 0.3s ease-out;
-  z-index: 100001;
+  z-index: 2147483647; /* Maximum z-index value */
 }
 
 .modal-backdrop {
@@ -25,9 +25,10 @@
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 99999;
-  background-color: rgba(0,0,0,0.7);
-  backdrop-filter: blur(4px);
+  z-index: -1; /* Put backdrop behind everything */
+  background-color: transparent; /* Make backdrop transparent */
+  backdrop-filter: none; /* Remove blur effect */
+  pointer-events: none; /* Allow clicks through backdrop */
 }
 
 .modal.fade .modal-dialog {
@@ -50,6 +51,7 @@
   width: 100%;
   pointer-events: auto;
   outline: 0;
+  z-index: 2147483647; /* Ensure content is at maximum z-index */
 }
 
 /* Dark mode support */
@@ -228,6 +230,47 @@
   transform: none;
 }
 
+/* License modal specific overrides to ensure it appears on top */
+#license-modal {
+  z-index: 2147483647 !important; /* Force maximum z-index */
+  background-color: transparent !important; /* No modal background */
+  pointer-events: none !important; /* Allow clicks through modal container */
+}
+
+#license-modal .modal-dialog {
+  z-index: 2147483647 !important; /* Force maximum z-index */
+  pointer-events: auto !important; /* Allow clicks on dialog */
+  position: relative;
+  margin: 50px auto !important; /* Center the dialog with margins */
+  width: 70% !important; /* Set width to 70% of viewport */
+  max-width: none !important; /* Remove max-width constraint */
+}
+
+#license-modal .modal-content {
+  z-index: 2147483647 !important; /* Force maximum z-index */
+  background: white !important; /* Ensure white background in light mode */
+  border: 3px solid #007bff !important; /* Thick visible border */
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8) !important; /* Very strong shadow */
+  pointer-events: auto !important; /* Ensure content is clickable */
+  position: relative;
+}
+
+/* Dark theme overrides for license modal */
+[data-theme="dark"] #license-modal .modal-content {
+  background: var(--surface-strong, #1e293b) !important;
+  border: 3px solid var(--primary, #60a5fa) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Backdrop specific to license modal - make it transparent and non-blocking */
+#license-modal + .modal-backdrop,
+.modal-backdrop.license-modal-backdrop {
+  z-index: -1 !important; /* Put behind everything */
+  background-color: transparent !important; /* Make completely transparent */
+  pointer-events: none !important; /* Allow clicks through */
+  display: none !important; /* Hide backdrop completely */
+}
+
 /* Custom styles to improve license section appearance */
 .license-box {
   display: flex;
@@ -266,4 +309,51 @@
 
 #manage-license-btn {
   min-width: 200px;
+}
+
+/* Additional safety measures to ensure license modal is always on top */
+body.modal-open #license-modal {
+  z-index: 2147483647 !important;
+}
+
+/* Ensure license modal elements are interactive */
+#license-modal * {
+  pointer-events: auto;
+}
+
+/* Force license modal to be visible when shown */
+#license-modal.show,
+#license-modal.in {
+  display: block !important;
+  z-index: 2147483647 !important;
+}
+
+/* Override any conflicting styles that might hide the modal */
+#license-modal .modal-dialog {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+  position: relative !important;
+  pointer-events: auto !important;
+}
+
+/* Additional rules to prevent any interference */
+#license-modal .modal-header,
+#license-modal .modal-body,
+#license-modal .modal-footer,
+#license-modal .form-control,
+#license-modal .btn {
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 2147483647 !important;
+}
+
+/* Ensure modal shows without any overlay issues */
+body:has(#license-modal.show) {
+  overflow: auto !important; /* Don't hide scrollbars */
+}
+
+/* Make sure backdrop never appears */
+.modal-backdrop {
+  display: none !important;
 }

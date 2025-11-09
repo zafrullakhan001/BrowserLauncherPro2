@@ -2352,17 +2352,16 @@ document.addEventListener('DOMContentLoaded', function () {
       return typeof jQuery !== 'undefined';
     }
     
-    // Create backdrop for vanilla JS fallback
+    // Create backdrop for vanilla JS fallback - disabled for license modal
     function createBackdrop() {
-      const backdrop = document.createElement('div');
-      backdrop.className = 'modal-backdrop fade show';
-      document.body.appendChild(backdrop);
-      return backdrop;
+      // Don't create backdrop for license modal to avoid overlay issues
+      console.log('Backdrop creation skipped for license modal');
+      return null;
     }
     
     // Remove backdrop
     function removeBackdrop() {
-      const backdrop = document.querySelector('.modal-backdrop');
+      const backdrop = document.querySelector('.modal-backdrop, .license-modal-backdrop');
       if (backdrop) {
         backdrop.remove();
       }
@@ -2370,17 +2369,41 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // Show modal
     function showModal() {
+      // Force the modal to be visible and on top
+      modal.style.zIndex = '2147483647';
+      modal.style.display = 'block';
+      modal.style.backgroundColor = 'transparent';
+      modal.style.pointerEvents = 'none';
+      
+      // Make dialog clickable
+      const dialog = modal.querySelector('.modal-dialog');
+      if (dialog) {
+        dialog.style.pointerEvents = 'auto';
+      }
+      
       if (isJQueryAvailable()) {
         // Remove inert attribute before showing modal
         modal.removeAttribute('inert');
-        $(modal).modal('show');
+        // Show modal without backdrop
+        $(modal).modal({
+          show: true,
+          backdrop: false, // Disable backdrop
+          keyboard: true
+        });
+        
+        // Remove any backdrop that jQuery might create
+        setTimeout(() => {
+          const jqueryBackdrop = document.querySelector('.modal-backdrop');
+          if (jqueryBackdrop) {
+            jqueryBackdrop.remove();
+          }
+        }, 100);
       } else {
-        // Vanilla JS fallback
+        // Vanilla JS fallback without backdrop
         modal.removeAttribute('inert');
         modal.classList.add('show');
-        modal.style.display = 'block';
-        document.body.classList.add('modal-open');
-        createBackdrop();
+        // Don't add modal-open class to prevent backdrop styling
+        // createBackdrop(); // Disabled - no backdrop needed
       }
       
       // Update license information when modal is shown
@@ -2391,14 +2414,21 @@ document.addEventListener('DOMContentLoaded', function () {
     function hideModal() {
       if (isJQueryAvailable()) {
         $(modal).modal('hide');
-        // Add inert attribute after hiding the modal
+        // Clean up any backdrops and add inert attribute after hiding the modal
         setTimeout(() => {
+          removeBackdrop();
           modal.setAttribute('inert', '');
+          modal.style.zIndex = ''; // Reset z-index
+          modal.style.backgroundColor = ''; // Reset background
+          modal.style.pointerEvents = ''; // Reset pointer events
         }, 300); // Allow time for the modal hide animation
       } else {
         // Vanilla JS fallback
         modal.classList.remove('show');
         modal.style.display = 'none';
+        modal.style.zIndex = ''; // Reset z-index
+        modal.style.backgroundColor = ''; // Reset background
+        modal.style.pointerEvents = ''; // Reset pointer events
         document.body.classList.remove('modal-open');
         removeBackdrop();
         modal.setAttribute('inert', '');
