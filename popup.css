@@ -991,7 +991,8 @@ header h4 {
 }
 
 #version-log-table-body td {
-  color: #475569;
+  color: #000000;
+  font-weight: bold;
 }
 
 .form-group {
@@ -1224,6 +1225,8 @@ small.text-muted {
 [data-theme="dark"] #version-log .table td {
   border-top-color: #475569;
   background-color: #1e293b;
+  color: #ffffff;
+  font-weight: bold;
 }
 
 [data-theme="dark"] #version-log .table tbody tr:nth-child(even) td {
@@ -1237,6 +1240,13 @@ small.text-muted {
 
 [data-theme="dark"] #version-log .table tbody tr:hover td {
   background-color: #475569 !important;
+}
+
+/* Dark theme version columns styling */
+[data-theme="dark"] #version-log .table td:nth-child(2),
+[data-theme="dark"] #version-log .table td:nth-child(3) {
+  color: #ffffff;
+  font-weight: bold;
 }
 
 /* Ensure table fills the container and scrollbar is visible */
@@ -1257,6 +1267,12 @@ small.text-muted {
   vertical-align: middle;
 }
 
+/* Ensure table data is bold and black */
+#version-log .table td {
+  font-weight: bold;
+  color: #000000;
+}
+
 /* Browser name column - can use ellipsis */
 #version-log .table th:nth-child(1), 
 #version-log .table td:nth-child(1) {
@@ -1275,6 +1291,8 @@ small.text-muted {
   overflow: visible;
   font-family: 'Courier New', monospace; /* Better for version numbers */
   font-size: 10px;
+  font-weight: bold;
+  color: #000000;
 }
 
 /* Date/time column - can use ellipsis and nowrap */
@@ -1355,6 +1373,8 @@ small.text-muted {
   border-bottom: none;
   border-left: none;
   border-right: none;
+  color: #000000;
+  font-weight: bold;
 }
 
 /* Last row bottom corners */

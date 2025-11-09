@@ -2196,6 +2196,27 @@ document.addEventListener('DOMContentLoaded', function () {
     // Remove inert attribute
     modal.removeAttribute('inert');
     
+    // Add global ESC key handler for this modal
+    const escKeyHandler = function(event) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        // Trigger cancel action
+        const cancelBtn = modal.querySelector('#password-modal-cancel');
+        if (cancelBtn && cancelBtn.onclick) {
+          cancelBtn.onclick();
+        }
+        // Remove this specific handler
+        document.removeEventListener('keydown', escKeyHandler, true);
+      }
+    };
+    
+    // Store the handler reference on the modal for cleanup
+    modal._escKeyHandler = escKeyHandler;
+    
+    // Add the keydown listener with capture to ensure it gets called first
+    document.addEventListener('keydown', escKeyHandler, true);
+    
     if (typeof jQuery !== 'undefined') {
       // Use jQuery if available
       $(modal).modal({
@@ -2219,6 +2240,12 @@ document.addEventListener('DOMContentLoaded', function () {
   
   // Hide password modal
   function hidePasswordModal(modal) {
+    // Clean up the ESC key handler
+    if (modal._escKeyHandler) {
+      document.removeEventListener('keydown', modal._escKeyHandler, true);
+      modal._escKeyHandler = null;
+    }
+    
     if (typeof jQuery !== 'undefined') {
       $(modal).modal('hide');
       setTimeout(() => {
@@ -4411,6 +4438,75 @@ document.addEventListener('DOMContentLoaded', function () {
     
     return hashHex;
   }
+
+  // ===== Footer Functionality =====
+  (function initFooterFunctionality() {
+    // Footer refresh button
+    const footerRefreshBtn = document.getElementById('footer-refresh-btn');
+    if (footerRefreshBtn) {
+      footerRefreshBtn.addEventListener('click', function() {
+        // Refresh all browser versions and status
+        updateBrowserVersions();
+        updateNativeHostStatus();
+        
+        // Provide visual feedback
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        setTimeout(() => {
+          this.innerHTML = '<i class="fas fa-sync-alt"></i>';
+        }, 1500);
+      });
+    }
+    
+    // Footer settings button - quick access to settings tab
+    const footerSettingsBtn = document.getElementById('footer-settings-btn');
+    if (footerSettingsBtn) {
+      footerSettingsBtn.addEventListener('click', function() {
+        // Switch to settings tab
+        const settingsTab = document.getElementById('settings-tab');
+        if (settingsTab) {
+          settingsTab.click();
+        }
+      });
+    }
+    
+    // Native host status updater
+    function updateNativeHostStatus() {
+      const statusEl = document.getElementById('native-host-status');
+      if (!statusEl) return;
+      
+      chrome.runtime.sendMessage({ action: 'ping' }, (response) => {
+        if (chrome.runtime.lastError || !response) {
+          statusEl.className = 'status-indicator status-error';
+          statusEl.innerHTML = '<i class="fas fa-unlink"></i> Disconnected';
+          statusEl.title = 'Native Host Disconnected';
+        } else {
+          statusEl.className = 'status-indicator status-info';
+          statusEl.innerHTML = '<i class="fas fa-link"></i> Connected';
+          statusEl.title = 'Native Host Connected';
+        }
+      });
+    }
+    
+    // Update status on load
+    updateNativeHostStatus();
+    
+    // Update status periodically
+    setInterval(updateNativeHostStatus, 30000); // Every 30 seconds
+    
+    // Update build info with current date if not already set
+    function updateBuildInfo() {
+      const buildInfoEl = document.querySelector('.build-info');
+      if (buildInfoEl && buildInfoEl.textContent === 'Build 2025.11.08') {
+        const today = new Date();
+        const buildDate = today.getFullYear() + '.' + 
+                         String(today.getMonth() + 1).padStart(2, '0') + '.' + 
+                         String(today.getDate()).padStart(2, '0');
+        buildInfoEl.textContent = `Build ${buildDate}`;
+      }
+    }
+    
+    updateBuildInfo();
+  })();
 
   // Add event listener for the sandbox context menu toggle (which was accidentally removed)
   document.addEventListener('DOMContentLoaded', function() {

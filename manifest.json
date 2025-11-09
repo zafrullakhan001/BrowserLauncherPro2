@@ -2,7 +2,7 @@
     "manifest_version":  3,
     "name":  "Browser Launcher Pro",
     "description":  "Launch the apps in the multiple browsers with ease. Features include browser update tracking, WSL Linux integration, and quick search across multiple searchengines.",
-    "version":  "2.0",
+    "version":  "3.0",
     "author":  "Browser Launcher",
     "homepage_url":  "https://browserlauncher.pro",
     "permissions":  [

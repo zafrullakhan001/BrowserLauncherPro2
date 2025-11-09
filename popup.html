@@ -827,28 +827,106 @@
         </div>
       </div>
 
-      <footer class="mt-4">
-        <hr style="margin-top: 10px; margin-bottom: 10px;">
+      <footer class="app-footer mt-4">
+        <hr class="footer-divider">
 
-        <div class="help-links">
-          <a href="https://www.microsoft.com/en-us/edge/download/insider?form=MA13FJ" target="_blank"
-            class="help-link">Download MS Edge Beta & Dev</a> |
-          <a href="https://www.google.com/chrome/beta/" target="_blank" class="help-link">Download Chrome Beta</a> |
-          <a href="https://www.google.com/chrome/dev/" target="_blank" class="help-link">Chrome Dev</a>
-        </div>
-        <div class="help-links">
-          Browser release schedule:
-          <a href="https://learn.microsoft.com/en-us/deployedge/microsoft-edge-release-schedule" target="_blank"
-            class="help-link">Edge</a> |
-          <a href="https://chromereleases.googleblog.com/" target="_blank" class="help-link">Chrome</a>
-        </div>
-
-        <p class="mt-0">
-          <span style="display: inline-block; margin-bottom: 5px;">Version 1.0</span>
-          <div id="trial-footer" style="color: #dc3545; font-weight: bold; margin-bottom: 20px; display: none;">
-            TRIAL VERSION - <span id="trial-days-remaining">60</span> DAYS REMAINING
+        <!-- Quick Links Section -->
+        <div class="footer-section">
+          <div class="footer-links-grid">
+            <div class="footer-column">
+              <h6 class="footer-heading">Browser Downloads</h6>
+              <div class="footer-links">
+                <a href="https://www.microsoft.com/en-us/edge/download/insider?form=MA13FJ" target="_blank"
+                  class="footer-link"><i class="fab fa-edge mr-1"></i>MS Edge Beta & Dev</a>
+                <a href="https://www.google.com/chrome/beta/" target="_blank" 
+                  class="footer-link"><i class="fab fa-chrome mr-1"></i>Chrome Beta</a>
+                <a href="https://www.google.com/chrome/dev/" target="_blank" 
+                  class="footer-link"><i class="fab fa-chrome mr-1"></i>Chrome Dev</a>
+                <a href="https://www.mozilla.org/en-US/firefox/developer/" target="_blank" 
+                  class="footer-link"><i class="fab fa-firefox mr-1"></i>Firefox Developer</a>
+              </div>
+            </div>
+            
+            <div class="footer-column">
+              <h6 class="footer-heading">Release Schedules</h6>
+              <div class="footer-links">
+                <a href="https://learn.microsoft.com/en-us/deployedge/microsoft-edge-release-schedule" target="_blank"
+                  class="footer-link"><i class="fas fa-calendar-alt mr-1"></i>Edge Schedule</a>
+                <a href="https://chromereleases.googleblog.com/" target="_blank" 
+                  class="footer-link"><i class="fas fa-calendar-alt mr-1"></i>Chrome Releases</a>
+                <a href="https://www.mozilla.org/en-US/firefox/releases/" target="_blank" 
+                  class="footer-link"><i class="fas fa-calendar-alt mr-1"></i>Firefox Releases</a>
+              </div>
+            </div>
+            
+            <div class="footer-column">
+              <h6 class="footer-heading">Resources</h6>
+              <div class="footer-links">
+                <a href="https://github.com/zafrullakhan001/BrowserLauncherPro2" target="_blank" 
+                  class="footer-link"><i class="fab fa-github mr-1"></i>GitHub</a>
+                <a href="https://browserlauncher.pro" target="_blank" 
+                  class="footer-link"><i class="fas fa-globe mr-1"></i>Website</a>
+                <a href="mailto:support@browserlauncherpro.com" 
+                  class="footer-link"><i class="fas fa-envelope mr-1"></i>Support</a>
+              </div>
+            </div>
           </div>
-        </p>
+        </div>
+
+        <!-- Version Section -->
+        <div class="version-section">
+          <div class="version-info">
+            <span class="version-badge">
+              <i class="fas fa-tag mr-1"></i>Version 3.0
+            </span>
+            <span class="build-info">
+              Build 2025.11.08
+            </span>
+          </div>
+        </div>
+
+        <!-- Copyright Section -->
+        <div class="footer-bottom">
+          <div class="copyright-info">
+            <p class="copyright-text">
+              &copy; 2025 Browser Launcher Pro. All rights reserved.
+            </p>
+            <div class="footer-meta">
+              <span class="meta-item">
+                <i class="fas fa-code mr-1"></i>Made with &hearts; for developers
+              </span>
+              <span class="meta-divider">&bull;</span>
+              <span class="meta-item">
+                <i class="fas fa-users mr-1"></i>Trusted by 10,000+ users
+              </span>
+            </div>
+          </div>
+          
+          <div id="trial-footer" class="trial-notice" style="display: none;">
+            <i class="fas fa-clock mr-1"></i>
+            <strong>TRIAL VERSION</strong> - <span id="trial-days-remaining">60</span> DAYS REMAINING
+          </div>
+        </div>
+
+        <!-- Status Indicators -->
+        <div class="footer-status">
+          <div class="status-indicators">
+            <span class="status-indicator status-online" title="Extension Active">
+              <i class="fas fa-circle"></i> Active
+            </span>
+            <span class="status-indicator status-info" title="Native Host Connected" id="native-host-status">
+              <i class="fas fa-link"></i> Connected
+            </span>
+          </div>
+          <div class="quick-actions">
+            <button type="button" class="footer-action-btn" id="footer-refresh-btn" title="Refresh Extension">
+              <i class="fas fa-sync-alt"></i>
+            </button>
+            <button type="button" class="footer-action-btn" id="footer-settings-btn" title="Quick Settings">
+              <i class="fas fa-cog"></i>
+            </button>
+          </div>
+        </div>
       </footer>
       
 

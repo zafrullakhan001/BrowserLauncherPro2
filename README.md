@@ -1,6 +1,13 @@
-# Browser Launcher Pro
+# Browser Launcher Pro v3.0
 
-A powerful browser extension for managing multiple browser versions and enhancing your web browsing experience.
+A powerful browser extension for managing multiple browser versions and enhancing your web browsing experience with a professional, modern interface.
+
+## ✨ What's New in v3.0
+- **Enhanced Footer Design**: Complete redesign with comprehensive resources, status indicators, and quick actions
+- **Professional UI**: Modern gradient backgrounds, smooth animations, and improved typography
+- **Real-time Status**: Live native host connection monitoring and system status indicators
+- **Better Organization**: Organized resource links, browser downloads, and release schedules
+- **Responsive Design**: Optimized for all screen sizes with mobile-first approach
 
 ## Features
 
@@ -37,10 +44,31 @@ A powerful browser extension for managing multiple browser versions and enhancin
 
 ## Settings
 
-- **Appearance**: Customize background and font colors
-- **Search Engines**: Enable/disable specific search providers
+- **Appearance**: Customize background and font colors with dark/light theme support
+- **Search Engines**: Enable/disable specific search providers and add custom engines
 - **Notifications**: Configure update notification preferences
-- **WSL**: Manage WSL instance settings
+- **WSL**: Manage WSL instance settings and credentials
+- **UI Zoom**: Adjust interface size from 70% to 150%
+
+## Enhanced Footer (v3.0)
+
+The new footer provides quick access to essential resources and real-time status monitoring:
+
+### Resource Categories
+- **Browser Downloads**: Direct links to beta and dev versions of major browsers
+- **Release Schedules**: Official browser release calendars and changelogs
+- **Project Resources**: GitHub repository, website, and support channels
+
+### Status Monitoring
+- **Extension Status**: Shows when the extension is active and running
+- **Native Host Connection**: Real-time monitoring of native messaging connectivity
+- **Quick Actions**: Refresh button and settings shortcut for immediate access
+
+### Professional Branding
+- Version information with animated badge
+- Build timestamp for version tracking
+- Professional copyright and user statistics
+- "Made with ❤️ for developers" branding message
 
 ## Support
 
