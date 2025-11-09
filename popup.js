@@ -184,7 +184,15 @@ document.addEventListener('DOMContentLoaded', function () {
     languages.forEach(lang => {
       const option = document.createElement('option');
       option.value = lang.code;
-      option.textContent = `[${lang.flag}] ${lang.nativeName}`;
+      
+      // Use safer text formatting to avoid encoding issues
+      try {
+        option.textContent = `${lang.nativeName || lang.name} (${lang.flag || lang.code.toUpperCase()})`;
+      } catch (e) {
+        // Fallback to simple name if there are any issues
+        option.textContent = lang.name || lang.code;
+      }
+      
       if (lang.code === window.i18n.getCurrentLanguage()) {
         option.selected = true;
       }
@@ -394,7 +402,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Settings saved successfully!');
         const message = window.i18n ? window.i18n.t('messages.settings.saved') : 'Settings saved successfully!';
         alert(message);
-        updateWSLInstanceNames(); // Update WSL instance names after saving
+        // WSL instance names no longer need updating since we use static badges
       });
     } else {
       console.log('Some fields are empty.');
@@ -754,7 +762,10 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         } else {
           const notFoundText = window.i18n ? window.i18n.t('browsers.notFound') : 'Not Found';
-          document.getElementById(elementId).textContent = notFoundText;
+          const element = document.getElementById(elementId);
+          if (element) {
+            element.textContent = notFoundText;
+          }
         }
       }
     });
@@ -766,7 +777,10 @@ document.addEventListener('DOMContentLoaded', function () {
       let updateRequired = false;
 
       for (const [key, version] of Object.entries(browserVersions)) {
-        document.getElementById(key).textContent = version;
+        const element = document.getElementById(key);
+        if (element) {
+          element.textContent = version;
+        }
         if (version === '0.0.0.0') {
           updateRequired = true;
         }
@@ -1495,21 +1509,8 @@ document.addEventListener('DOMContentLoaded', function () {
   
   document.getElementById('create-wsl-instance-scratch').addEventListener('click', createWSLInstanceFromScratch);
 
-  const updateWSLInstanceNames = () => {
-    chrome.storage.local.get('wslInstance', function(result) {
-      const wslInstance = result.wslInstance || 'ubuntu';
-      document.getElementById('wsl-instance-edge').textContent = `WSL ${wslInstance}`;
-      document.getElementById('wsl-instance-chrome').textContent = `WSL ${wslInstance}`;
-      document.getElementById('wsl-instance-other').textContent = `WSL ${wslInstance}`;
-      document.getElementById('wsl-instance-tools').textContent = `WSL ${wslInstance}`;
-    });
-  };
-
-  // Call this function when the DOM is loaded
-  updateWSLInstanceNames();
-
-  // Also call this function when the WSL tab is clicked
-  document.getElementById('wsl-tab').addEventListener('click', updateWSLInstanceNames);
+  // WSL instance name functionality removed since we now use badges instead of dynamic instance names
+  // The WSL sections now show "WSL" badges instead of dynamic instance names
 
   // Add this to the existing event listeners section
   document.getElementById('launch-sandbox').addEventListener('click', launchWindowsSandbox);
