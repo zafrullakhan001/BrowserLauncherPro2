@@ -95,6 +95,43 @@ function Write-Log {
     }
 }
 
+# Wait until a distro is listed and can execute a simple command
+function Wait-ForDistroReady {
+    param (
+        [Parameter(Mandatory=$true)][string]$DistroName,
+        [int]$TimeoutSec = 900,
+        [int]$PollIntervalSec = 5
+    )
+
+    Write-Log "[PHASE:READY] Waiting for '$DistroName' to be ready (timeout ${TimeoutSec}s)" "INFO"
+    $sw = [System.Diagnostics.Stopwatch]::StartNew()
+    $lastPct = -1
+    while ($sw.Elapsed.TotalSeconds -lt $TimeoutSec) {
+        try {
+            $list = wsl --list --quiet 2>$null
+            if ($list -and ($list -contains $DistroName)) {
+                $null = wsl -d $DistroName -- echo READY 2>$null
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Log "[PHASE:READY] '$DistroName' responded to test command" "SUCCESS"
+                    return $true
+                }
+            }
+        } catch { }
+        $elapsed = [int][math]::Floor($sw.Elapsed.TotalSeconds)
+        $pct = [int]([math]::Min(99, ($elapsed * 100.0 / [math]::Max(1,$TimeoutSec))))
+        if ($pct -ne $lastPct) { Show-Progress "Distro Readiness" "Waiting for $DistroName ($elapsed s)" $pct; $lastPct = $pct }
+        Start-Sleep -Seconds $PollIntervalSec
+    }
+    Write-Log "[PHASE:READY] Timeout waiting for '$DistroName' readiness" "WARNING"
+    return $false
+}
+
+# Attempt to terminate a distro, ignore failures
+function Stop-WSLDistro {
+    param([Parameter(Mandatory=$true)][string]$DistroName)
+    try { wsl --terminate $DistroName 2>$null } catch { }
+}
+
 # Check admin privileges
 function Test-AdminPrivileges {
     $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
@@ -180,8 +217,14 @@ function Install-WSLDistribution {
                     Start-Sleep -Seconds 3
                 }
                 'U' {
-                    Show-Progress "WSL Installation" "Using existing distribution" 100
-                    return $true
+                    Show-Progress "WSL Installation" "Using existing distribution" 60
+                    if (Wait-ForDistroReady -DistroName $DistroName -TimeoutSec 900) {
+                        Show-Progress "WSL Installation" "Existing distribution is ready" 100
+                        return $true
+                    } else {
+                        Write-Log "Existing distro '$DistroName' not ready (first-boot likely running)" "WARNING"
+                        return $false
+                    }
                 }
                 'S' {
                     return $false
@@ -231,9 +274,14 @@ function Install-WSLDistribution {
             Start-Sleep -Seconds 5
             $verifyDistros = wsl --list --quiet 2>$null
             if ($verifyDistros -contains $DistroName) {
-                Show-Progress "WSL Installation" "Verification successful" 100
-                Write-Host "`nDistribution $DistroName has been installed successfully!" -ForegroundColor Green
-                return $true
+                if (Wait-ForDistroReady -DistroName $DistroName -TimeoutSec 1200) {
+                    Show-Progress "WSL Installation" "Verification successful" 100
+                    Write-Host "`nDistribution $DistroName has been installed successfully!" -ForegroundColor Green
+                    return $true
+                } else {
+                    Write-Host "Installation finished but the distro is not ready yet. Complete any first-boot prompts, then retry." -ForegroundColor Yellow
+                    return $false
+                }
             }
             else {
                 Write-Host "Installation appeared to succeed but distribution not found in list." -ForegroundColor Yellow
