@@ -991,7 +991,7 @@ header h4 {
 }
 
 #version-log-table-body td {
-  color: #000000;
+  color: var(--text-primary, #1e293b);
   font-weight: bold;
 }
 
@@ -1225,7 +1225,7 @@ small.text-muted {
 [data-theme="dark"] #version-log .table td {
   border-top-color: #475569;
   background-color: #1e293b;
-  color: #ffffff;
+  color: var(--text-primary, #e2e8f0);
   font-weight: bold;
 }
 
@@ -1245,7 +1245,7 @@ small.text-muted {
 /* Dark theme version columns styling */
 [data-theme="dark"] #version-log .table td:nth-child(2),
 [data-theme="dark"] #version-log .table td:nth-child(3) {
-  color: #ffffff;
+  color: var(--text-primary, #e2e8f0);
   font-weight: bold;
 }
 
@@ -1267,10 +1267,10 @@ small.text-muted {
   vertical-align: middle;
 }
 
-/* Ensure table data is bold and black */
+/* Ensure table data is bold with theme-appropriate color */
 #version-log .table td {
   font-weight: bold;
-  color: #000000;
+  color: var(--text-primary, #1e293b);
 }
 
 /* Browser name column - can use ellipsis */
@@ -1292,7 +1292,7 @@ small.text-muted {
   font-family: 'Courier New', monospace; /* Better for version numbers */
   font-size: 10px;
   font-weight: bold;
-  color: #000000;
+  color: var(--text-primary, #1e293b);
 }
 
 /* Date/time column - can use ellipsis and nowrap */
@@ -1373,7 +1373,7 @@ small.text-muted {
   border-bottom: none;
   border-left: none;
   border-right: none;
-  color: #000000;
+  color: var(--text-primary, #1e293b);
   font-weight: bold;
 }
 
