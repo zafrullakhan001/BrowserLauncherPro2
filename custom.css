@@ -667,6 +667,92 @@ body:has(#license-modal.show) {
   border-color: #3b82f6;
 }
 
+/* Browser Section Badges */
+.browser-section-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 8px 0;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  background: transparent;
+  border: none;
+}
+
+/* Edge Badge */
+.edge-badge {
+  color: #000000;
+}
+
+.edge-badge:hover {
+  color: #000000;
+}
+
+.edge-badge i {
+  font-size: 16px;
+  color: #0078d4;
+}
+
+.edge-badge:hover i {
+  color: #005a9e;
+}
+
+/* Chrome Badge */
+.chrome-badge {
+  color: #000000;
+}
+
+.chrome-badge:hover {
+  color: #000000;
+}
+
+.chrome-badge i {
+  font-size: 16px;
+  color: #4285f4;
+}
+
+.chrome-badge:hover i {
+  color: #ea4335;
+}
+
+/* Dark theme support for badges */
+[data-theme="dark"] .edge-badge {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .edge-badge:hover {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .edge-badge i {
+  color: #60a5fa;
+}
+
+[data-theme="dark"] .edge-badge:hover i {
+  color: #3b82f6;
+}
+
+[data-theme="dark"] .chrome-badge {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .chrome-badge:hover {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .chrome-badge i {
+  color: #60a5fa;
+}
+
+[data-theme="dark"] .chrome-badge:hover i {
+  color: #34d399;
+}
+
 /* Input group styling for password modal (for future use) */
 #password-modal .input-group {
   border-radius: 8px;
