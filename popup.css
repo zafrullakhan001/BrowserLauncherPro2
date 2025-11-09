@@ -1194,6 +1194,7 @@ header h4 {
   padding: 8px 10px;
   text-align: center;
   font-size: 13px;
+  color: #64748b;
 }
 
 #version-log-table-body th {
@@ -1219,8 +1220,27 @@ header h4 {
 }
 
 #version-log-table-body td {
-  color: var(--text-primary, #1e293b);
-  font-weight: bold;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Dark theme support for version log table */
+[data-theme="dark"] #version-log-table-body th,
+[data-theme="dark"] #version-log-table-body td {
+  border-color: #374151;
+  color: #9ca3af;
+}
+
+[data-theme="dark"] #version-log-table-body tr:nth-child(even) {
+  background-color: #1f2937;
+}
+
+[data-theme="dark"] #version-log-table-body tr:nth-child(odd) {
+  background-color: #111827;
+}
+
+[data-theme="dark"] #version-log-table-body tr:hover {
+  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
 }
 
 .form-group {
@@ -1525,10 +1545,15 @@ small.text-muted {
   vertical-align: middle;
 }
 
-/* Ensure table data is bold with theme-appropriate color */
+/* Ensure table data is readable with lighter color */
 #version-log .table td {
-  font-weight: bold;
-  color: var(--text-primary, #1e293b);
+  font-weight: 500;
+  color: #64748b !important;
+}
+
+/* Dark theme support for version log table */
+[data-theme="dark"] #version-log .table td {
+  color: #9ca3af !important;
 }
 
 /* Browser name column - can use ellipsis */

@@ -173,7 +173,7 @@ const TRANSLATIONS = {
     'footer.build': 'Build 2025.11.08',
     'footer.copyright': '© 2025 Browser Launcher Pro. All rights reserved.',
     'footer.made.with.love': 'Made with ♥ for developers',
-    'footer.trusted.users': 'Trusted by 10,000+ users',
+    'footer.trusted.users': 'Trusted by users',
     'footer.trial.version': 'TRIAL VERSION',
     'footer.days.remaining': 'DAYS REMAINING',
     'footer.active': 'Active',
