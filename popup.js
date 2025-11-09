@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
+  // ===== Initialize Internationalization =====
+  if (window.i18n) {
+    // Initialize i18n system first
+    window.i18n.initialize();
+    
+    // Set up additional language selector in settings
+    setupSettingsLanguageSelector();
+  }
+  
   // ===== Theme Toggle Control =====
   (function initThemeToggle() {
     const themeToggle = document.getElementById('theme-toggle');
@@ -147,6 +156,107 @@ document.addEventListener('DOMContentLoaded', function () {
     { id: 'chromeDevCheckbox', elementId: 'chrome-dev-checkbox' }
   ];
 
+  // ===== Language Selector Setup =====
+  function setupSettingsLanguageSelector() {
+    const settingsLanguageSelect = document.getElementById('language-select-settings');
+    if (!settingsLanguageSelect || !window.i18n) return;
+    
+    // Clear existing options
+    settingsLanguageSelect.innerHTML = '';
+    
+    // Get supported languages
+    const supportedLanguages = window.i18n.getSupportedLanguages();
+    
+    // Group languages by region
+    const languagesByRegion = {};
+    Object.entries(supportedLanguages).forEach(([code, info]) => {
+      if (!languagesByRegion[info.region]) {
+        languagesByRegion[info.region] = [];
+      }
+      languagesByRegion[info.region].push({ code, ...info });
+    });
+    
+    // Create optgroups for each region
+    Object.entries(languagesByRegion).forEach(([region, languages]) => {
+      const optgroup = document.createElement('optgroup');
+      optgroup.label = region;
+      
+    languages.forEach(lang => {
+      const option = document.createElement('option');
+      option.value = lang.code;
+      option.textContent = `[${lang.flag}] ${lang.nativeName}`;
+      if (lang.code === window.i18n.getCurrentLanguage()) {
+        option.selected = true;
+      }
+      optgroup.appendChild(option);
+    });      settingsLanguageSelect.appendChild(optgroup);
+    });
+    
+    // Add event listener for language change
+    settingsLanguageSelect.addEventListener('change', (e) => {
+      const selectedLang = e.target.value;
+      window.i18n.apply(selectedLang);
+      
+      // Also update the header language selector if it exists
+      const headerLanguageSelect = document.getElementById('language-select');
+      if (headerLanguageSelect) {
+        headerLanguageSelect.value = selectedLang;
+      }
+      
+      // Show success message
+      showLanguageChangeMessage(selectedLang);
+    });
+  }
+  
+  // Function to show language change success message
+  function showLanguageChangeMessage(langCode) {
+    // Create a temporary message element
+    const message = document.createElement('div');
+    message.className = 'language-change-message';
+    message.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+      z-index: 2147483647;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      max-width: 300px;
+    `;
+    
+    // Get the language info for display
+    const supportedLanguages = window.i18n.getSupportedLanguages();
+    const langInfo = supportedLanguages[langCode];
+    
+    message.innerHTML = `
+      <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+      Language changed to ${langInfo ? langInfo.flag + ' ' + langInfo.nativeName : langCode}
+    `;
+    
+    document.body.appendChild(message);
+    
+    // Animate in
+    setTimeout(() => {
+      message.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+      message.style.transform = 'translateX(100%)';
+      setTimeout(() => {
+        if (message.parentNode) {
+          message.parentNode.removeChild(message);
+        }
+      }, 300);
+    }, 3000);
+  }
+
   // Initialize versionCheckbox element
   const versionCheckbox = document.getElementById('version-checkbox');
 
@@ -282,11 +392,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (allFieldsFilled) {
       chrome.storage.local.set(data, function () {
         console.log('Settings saved successfully!');
-        alert('Settings saved successfully!');
+        const message = window.i18n ? window.i18n.t('messages.settings.saved') : 'Settings saved successfully!';
+        alert(message);
         updateWSLInstanceNames(); // Update WSL instance names after saving
       });
     } else {
       console.log('Some fields are empty.');
+      const message = window.i18n ? window.i18n.t('messages.fill.all.fields') : 'Please fill out all required fields.';
+      alert(message);
     }
   };
 
@@ -354,7 +467,8 @@ document.addEventListener('DOMContentLoaded', function () {
           const importedData = JSON.parse(e.target.result);
           chrome.storage.local.set(importedData, function () {
             console.log('Settings imported successfully!');
-            alert('Settings imported successfully!');
+            const message = window.i18n ? window.i18n.t('messages.settings.imported') : 'Settings imported successfully!';
+            alert(message);
             
             // Reload all settings
             loadSettings();
@@ -401,7 +515,8 @@ document.addEventListener('DOMContentLoaded', function () {
           });
         } catch (error) {
           console.error('Error parsing imported file:', error);
-          alert('Error importing settings: Invalid JSON format.');
+          const message = window.i18n ? window.i18n.t('messages.error.importing') : 'Error importing settings: Invalid JSON format.';
+          alert(message);
         }
       };
       reader.readAsText(file);
@@ -638,7 +753,8 @@ document.addEventListener('DOMContentLoaded', function () {
             element.textContent = version;
           }
         } else {
-          document.getElementById(elementId).textContent = 'Not Found';
+          const notFoundText = window.i18n ? window.i18n.t('browsers.notFound') : 'Not Found';
+          document.getElementById(elementId).textContent = notFoundText;
         }
       }
     });
@@ -1500,6 +1616,39 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Load search settings
   loadSearchSettings();
+  
+  // ===== Language Change Listener =====
+  document.addEventListener('languageChanged', function(e) {
+    const newLanguage = e.detail.language;
+    console.log('Language changed to:', newLanguage);
+    
+    // Update any dynamic content that needs re-translation
+    updateDynamicTranslations(newLanguage);
+    
+    // Save language preference
+    chrome.storage.local.set({ selectedLanguage: newLanguage });
+  });
+  
+  function updateDynamicTranslations(langCode) {
+    // Update version log "No data" message if visible
+    const logTableBody = document.getElementById('version-log-table-body');
+    if (logTableBody && logTableBody.children.length === 1) {
+      const firstRow = logTableBody.children[0];
+      if (firstRow.children.length === 1 && firstRow.children[0].colSpan === 4) {
+        const noDataMessage = window.i18n ? window.i18n.t('version.log.no.data') : 'No version update logs available.';
+        firstRow.children[0].textContent = noDataMessage;
+      }
+    }
+    
+    // Update any alerts or messages that might be visible
+    updateVisibleMessages(langCode);
+  }
+  
+  function updateVisibleMessages(langCode) {
+    // This function can be extended to update any dynamic messages
+    // that are not covered by the standard data-i18n attributes
+    console.log('Updating visible messages for language:', langCode);
+  }
 
   function renameWSLInstance() {
     const select = document.getElementById('wsl-instances');

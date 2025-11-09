@@ -1,8 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WSL Browser Launcher Pro</title>
+  <!-- Preload font for better performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
   <link href="popup.css" rel="stylesheet">
@@ -11,40 +17,52 @@
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/popper.min.js"></script>
   <script src="scripts/bootstrap.min.js"></script>
+  <!-- Internationalization Script -->
+  <script src="js/i18n.js"></script>
 </head>
 
 <body>
   <div class="container">
     <header class="mb-1">
       <div class="header-content">
-        <h4>Browser Launcher Pro</h4>
-        <button id="theme-toggle" class="theme-toggle" title="Toggle dark/light mode">
-          <i class="fas fa-moon" id="theme-icon"></i>
-        </button>
+        <h4 data-i18n="header.title">Browser Launcher Pro</h4>
+        <div class="header-controls">
+          <button id="theme-toggle" class="theme-toggle" title="Toggle dark/light mode">
+            <i class="fas fa-moon" id="theme-icon"></i>
+          </button>
+        </div>
       </div>
-      <p class="subheading">Launch and manage multiple browsers across Windows and WSL with version tracking</p>
+      <p class="subheading" data-i18n="header.subtitle">Launch and manage multiple browsers across Windows and WSL with version tracking</p>
     </header>
+    
+    <!-- Language Selector - Right aligned above tabs -->
+    <div class="language-selector-above-tabs">
+      <select id="language-select" class="language-selector-compact" title="Select Language">
+        <!-- Language options will be populated by JavaScript -->
+      </select>
+    </div>
+    
     <ul class="nav nav-tabs" id="settings-tabs">
       <li class="nav-item">
-        <a class="nav-link active" href="#windows" id="windows-tab"><i class="fas fa-desktop mr-1"></i>Windows Local</a>
+        <a class="nav-link active" href="#windows" id="windows-tab"><i class="fas fa-desktop mr-1"></i><span data-i18n="nav.windows">Windows Local</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#wsl" id="wsl-tab"><i class="fab fa-linux mr-1"></i>WSL Ubuntu Linux</a>
+        <a class="nav-link" href="#wsl" id="wsl-tab"><i class="fab fa-linux mr-1"></i><span data-i18n="nav.wsl">WSL Ubuntu Linux</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#settings" id="settings-tab"><i class="fas fa-cog mr-1"></i>Settings</a>
+        <a class="nav-link" href="#settings" id="settings-tab"><i class="fas fa-cog mr-1"></i><span data-i18n="nav.settings">Settings</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#version-log" id="version-log-tab"><i class="fas fa-history mr-1"></i>Version Update Log</a>
+        <a class="nav-link" href="#version-log" id="version-log-tab"><i class="fas fa-history mr-1"></i><span data-i18n="nav.versionLog">Version Update Log</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#wsl-manager" id="wsl-manager-tab"><i class="fas fa-server mr-1"></i>WSL Manager</a>
+        <a class="nav-link" href="#wsl-manager" id="wsl-manager-tab"><i class="fas fa-server mr-1"></i><span data-i18n="nav.wslManager">WSL Manager</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#search-settings" id="search-settings-tab"><i class="fas fa-search mr-1"></i>Search Settings</a>
+        <a class="nav-link" href="#search-settings" id="search-settings-tab"><i class="fas fa-search mr-1"></i><span data-i18n="nav.searchSettings">Search Settings</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#help-support" id="help-support-tab"><i class="fas fa-question-circle mr-1"></i>Help/Support</a>
+        <a class="nav-link" href="#help-support" id="help-support-tab"><i class="fas fa-question-circle mr-1"></i><span data-i18n="nav.helpSupport">Help/Support</span></a>
       </li>
     </ul>
     <div class="tab-content">
@@ -53,7 +71,7 @@
         <div class="browser-group">
           <div class="browser-section-badge edge-badge">
             <i class="fab fa-edge"></i>
-            <span>MICROSOFT EDGE (WINDOWS LOCAL)</span>
+            <span data-i18n="browsers.edge.title">MICROSOFT EDGE (WINDOWS LOCAL)</span>
           </div>
           <div class="button-container" title="Watch for version changes">
             <div class="button-with-version">
@@ -63,7 +81,7 @@
               </label>
               <button class="btn btn-primary browser-btn-edge" id="edge-stable-local">
                 <img src="images/edge.png" alt="Edge" class="browser-icon">
-                <span class="browser-label badge-stable">Stable</span>
+                <span class="browser-label badge-stable" data-i18n="browsers.stable">Stable</span>
               </button>
               <span id="edge-stable-version" class="browser-version"></span>
             </div>
@@ -74,7 +92,7 @@
               </label>
               <button class="btn btn-primary browser-btn-edge" id="edge-beta-local">
                 <img src="images/edge.png" alt="Edge" class="browser-icon">
-                <span class="browser-label badge-beta">Beta</span>
+                <span class="browser-label badge-beta" data-i18n="browsers.beta">Beta</span>
               </button>
               <span id="edge-beta-version" class="browser-version"></span>
             </div>
@@ -85,7 +103,7 @@
               </label>
               <button class="btn btn-primary browser-btn-edge" id="edge-dev-local">
                 <img src="images/edge.png" alt="Edge" class="browser-icon">
-                <span class="browser-label badge-dev">Dev</span>
+                <span class="browser-label badge-dev" data-i18n="browsers.dev">Dev</span>
               </button>
               <span id="edge-dev-version" class="browser-version"></span>
             </div>
@@ -94,7 +112,7 @@
         <div class="browser-group">
           <div class="browser-section-badge chrome-badge">
             <i class="fab fa-chrome"></i>
-            <span>GOOGLE CHROME (WINDOWS LOCAL)</span>
+            <span data-i18n="browsers.chrome.title">GOOGLE CHROME (WINDOWS LOCAL)</span>
           </div>
           <div class="button-container">
             <div class="button-with-version">
@@ -104,7 +122,7 @@
               </label>
               <button class="btn btn-success browser-btn-chrome" id="chrome-stable-local">
                 <img src="images/chrome.png" alt="Chrome" class="browser-icon chrome-icon">
-                <span class="browser-label badge-stable">Stable</span>
+                <span class="browser-label badge-stable" data-i18n="browsers.stable">Stable</span>
               </button>
               <span id="chrome-stable-version" class="browser-version"></span>
             </div>
@@ -115,7 +133,7 @@
               </label>
               <button class="btn btn-success browser-btn-chrome" id="chrome-beta-local">
                 <img src="images/chrome.png" alt="Chrome" class="browser-icon chrome-icon">
-                <span class="browser-label badge-beta">Beta</span>
+                <span class="browser-label badge-beta" data-i18n="browsers.beta">Beta</span>
               </button>
               <span id="chrome-beta-version" class="browser-version"></span>
             </div>
@@ -126,7 +144,7 @@
               </label>
               <button class="btn btn-success browser-btn-chrome" id="chrome-dev-local">
                 <img src="images/chrome.png" alt="Chrome" class="browser-icon chrome-icon">
-                <span class="browser-label badge-dev">Dev</span>
+                <span class="browser-label badge-dev" data-i18n="browsers.dev">Dev</span>
               </button>
               <span id="chrome-dev-version" class="browser-version"></span>
             </div>
@@ -150,42 +168,42 @@
 
       <div class="tab-pane fade" id="wsl">
         <div class="browser-group">
-          <h5>Microsoft Edge (<span id="wsl-instance-edge"></span>)</h5>
+          <h5><span data-i18n="wsl.edge.title">Microsoft Edge</span> (<span id="wsl-instance-edge"></span>)</h5>
           <div class="button-container">
-            <button class="btn btn-primary" id="edge-stable"><i class="fab fa-edge"></i> Edge Stable</button>
-            <button class="btn btn-primary" id="edge-beta"><i class="fab fa-edge"></i> Edge Beta</button>
-            <button class="btn btn-primary" id="edge-dev"><i class="fab fa-edge"></i> Edge Dev</button>
+            <button class="btn btn-primary" id="edge-stable"><i class="fab fa-edge"></i> <span>Edge </span><span data-i18n="browsers.stable">Stable</span></button>
+            <button class="btn btn-primary" id="edge-beta"><i class="fab fa-edge"></i> <span>Edge </span><span data-i18n="browsers.beta">Beta</span></button>
+            <button class="btn btn-primary" id="edge-dev"><i class="fab fa-edge"></i> <span>Edge </span><span data-i18n="browsers.dev">Dev</span></button>
           </div>
         </div>
         <div class="browser-group">
-          <h5>Google Chrome (<span id="wsl-instance-chrome"></span>)</h5>
+          <h5><span data-i18n="wsl.chrome.title">Google Chrome</span> (<span id="wsl-instance-chrome"></span>)</h5>
           <div class="button-container">
-            <button class="btn btn-success" id="chrome-stable"><i class="fab fa-chrome"></i> Chrome Stable</button>
-            <button class="btn btn-success" id="chrome-beta"><i class="fab fa-chrome"></i> Chrome Beta</button>
-            <button class="btn btn-success" id="chrome-dev"><i class="fab fa-chrome"></i> Chrome Dev</button>
+            <button class="btn btn-success" id="chrome-stable"><i class="fab fa-chrome"></i> <span>Chrome </span><span data-i18n="browsers.stable">Stable</span></button>
+            <button class="btn btn-success" id="chrome-beta"><i class="fab fa-chrome"></i> <span>Chrome </span><span data-i18n="browsers.beta">Beta</span></button>
+            <button class="btn btn-success" id="chrome-dev"><i class="fab fa-chrome"></i> <span>Chrome </span><span data-i18n="browsers.dev">Dev</span></button>
           </div>
         </div>
         <div class="browser-group">
-          <h5>Other Browsers (<span id="wsl-instance-other"></span>)</h5>
+          <h5><span data-i18n="wsl.other.title">Other Browsers</span> (<span id="wsl-instance-other"></span>)</h5>
           <div class="button-container">
-            <button class="btn btn-warning" id="firefox"><i class="fab fa-firefox"></i> Firefox</button>
-            <button class="btn btn-info" id="opera"><i class="fab fa-opera"></i> Opera</button>
-            <button class="btn btn-secondary" id="brave"><i class="fab fa-brave"></i> Brave</button>
+            <button class="btn btn-warning" id="firefox"><i class="fab fa-firefox"></i> <span data-i18n="wsl.firefox">Firefox</span></button>
+            <button class="btn btn-info" id="opera"><i class="fab fa-opera"></i> <span data-i18n="wsl.opera">Opera</span></button>
+            <button class="btn btn-secondary" id="brave"><i class="fab fa-brave"></i> <span data-i18n="wsl.brave">Brave</span></button>
           </div>
         </div>
         <div class="browser-group">
-          <h5>WSL Ubuntu Tools (<span id="wsl-instance-tools"></span>)</h5>
+          <h5><span data-i18n="wsl.tools.title">WSL Ubuntu Tools</span> (<span id="wsl-instance-tools"></span>)</h5>
           <div class="button-container">
-            <button class="btn btn-primary" id="launch-xterm"><i class="fas fa-terminal"></i> Launch Konsole</button>
-            <button class="btn btn-secondary" id="launch-powershell"><i class="fas fa-terminal"></i> Launch PowerShell</button>
-            <button class="btn btn-danger" id="launch-sandbox"><i class="fas fa-shield-alt"></i> Launch Win Sandbox</button>
+            <button class="btn btn-primary" id="launch-xterm"><i class="fas fa-terminal"></i> <span data-i18n="wsl.konsole">Launch Konsole</span></button>
+            <button class="btn btn-secondary" id="launch-powershell"><i class="fas fa-terminal"></i> <span data-i18n="wsl.powershell">Launch PowerShell</span></button>
+            <button class="btn btn-danger" id="launch-sandbox"><i class="fas fa-shield-alt"></i> <span data-i18n="wsl.sandbox">Launch Win Sandbox</span></button>
           </div>
         </div>
       </div>
 
       <div class="tab-pane fade" id="settings">
         <div class="settings-header mb-2">
-          <h5 class="mb-1">Settings</h5>
+          <h5 class="mb-1" data-i18n="settings.title">Settings</h5>
           <div class="icon-container">
             <img src="images/export-icon.png" alt="Export" id="export-paths" class="icon">
             <img src="images/import-icon.png" alt="Import" id="import-paths" class="icon">
@@ -196,12 +214,21 @@
         <!-- General Settings Card -->
         <div class="card mb-2">
           <div class="card-header bg-light py-1">
-            <h6 class="mb-0"><i class="fas fa-cog mr-1"></i>General Settings</h6>
+            <h6 class="mb-0"><i class="fas fa-cog mr-1"></i><span data-i18n="settings.general.title">General Settings</span></h6>
           </div>
           <div class="card-body p-2">
+            <!-- Language Selection -->
+            <div class="form-group mb-2">
+              <label class="mb-1 d-block"><i class="fas fa-globe mr-1"></i><span data-i18n="settings.language">Language</span></label>
+              <select id="language-select-settings" class="form-control form-control-sm">
+                <!-- Language options will be populated by JavaScript -->
+              </select>
+              <small class="text-muted d-block mt-1" data-i18n="settings.language.description">Select your preferred language</small>
+            </div>
+            
             <!-- UI Zoom / Display size -->
             <div class="form-group mb-2">
-              <label class="mb-1 d-block"><i class="fas fa-text-height mr-1"></i>Display size</label>
+              <label class="mb-1 d-block"><i class="fas fa-text-height mr-1"></i><span data-i18n="settings.display.size">Display size</span></label>
               <div class="ui-zoom-control" aria-label="Adjust popup zoom/size">
                 <button type="button" id="ui-zoom-minus" class="zoom-btn" title="Smaller (A-)">A-</button>
                 <input type="range" id="ui-zoom-slider" min="70" max="150" step="5" aria-label="Zoom slider">
@@ -224,7 +251,7 @@
             <div class="form-group mb-2">
               <div class="custom-control custom-switch">
                 <input type="checkbox" class="custom-control-input" id="show-wsl-checkbox">
-                <label class="custom-control-label" for="show-wsl-checkbox">Show WSL Ubuntu Linux and WSL Manager tabs</label>
+                <label class="custom-control-label" for="show-wsl-checkbox" data-i18n="settings.show.wsl">Show WSL Ubuntu Linux and WSL Manager tabs</label>
               </div>
             </div>
 
@@ -232,7 +259,7 @@
             <div class="form-group mb-2">
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="context-menu-toggle" checked>
-                <label class="custom-control-label" for="context-menu-toggle">Enable Context Menu</label>
+                <label class="custom-control-label" for="context-menu-toggle" data-i18n="settings.context.menu">Enable Context Menu</label>
               </div>
             </div>
 
@@ -240,7 +267,7 @@
             <div class="form-group mb-2">
               <div class="custom-control custom-switch">
                 <input type="checkbox" class="custom-control-input" id="version-checkbox" checked>
-                <label class="custom-control-label" for="version-checkbox">Check browser version every time</label>
+                <label class="custom-control-label" for="version-checkbox" data-i18n="settings.version.check">Check browser version every time</label>
               </div>
             </div>
 
@@ -248,14 +275,14 @@
             <div class="form-group mb-2">
               <div class="custom-control custom-switch">
                 <input type="checkbox" class="custom-control-input" id="sandbox-context-toggle" checked>
-                <label class="custom-control-label" for="sandbox-context-toggle">Enable Windows Sandbox in context menu</label>
+                <label class="custom-control-label" for="sandbox-context-toggle" data-i18n="settings.sandbox.context">Enable Windows Sandbox in context menu</label>
               </div>
             </div>
 
             <!-- Check interval -->
             <div class="form-group mb-0">
               <label for="check-interval" class="d-flex align-items-center">
-                <i class="fas fa-clock mr-1"></i>Check Interval (minutes)
+                <i class="fas fa-clock mr-1"></i><span data-i18n="settings.check.interval">Check Interval (minutes)</span>
               </label>
               <div class="input-group input-group-sm">
                 <input type="number" class="form-control" id="check-interval" min="1" max="60" value="60">
@@ -263,7 +290,7 @@
                   <span class="input-group-text">min</span>
                 </div>
               </div>
-              <small class="text-muted">1 - 60 Minutes Max</small>
+              <small class="text-muted" data-i18n="settings.interval.description">1 - 60 Minutes Max</small>
             </div>
           </div>
         </div>
@@ -271,7 +298,7 @@
         <!-- Browser Paths Card -->
         <div class="card mb-2">
           <div class="card-header bg-light py-1">
-            <h6 class="mb-0"><i class="fas fa-folder-open mr-1"></i>Browser Paths</h6>
+            <h6 class="mb-0"><i class="fas fa-folder-open mr-1"></i><span data-i18n="settings.browser.paths">Browser Paths</span></h6>
           </div>
           <div class="card-body p-2">
             <form>
@@ -280,30 +307,30 @@
                 <h6 class="text-primary mb-1"><i class="fab fa-edge mr-1"></i>Microsoft Edge</h6>
                 <div class="form-group mb-1">
                   <div class="label-row">
-                    <label for="edge-stable-path" class="mb-0">Stable Path:</label>
+                    <label for="edge-stable-path" class="mb-0" data-i18n="paths.stable">Stable Path:</label>
                     <div class="na-checkbox-container">
                       <input type="checkbox" id="edge-stable-na-checkbox" class="na-checkbox">
-                      <label for="edge-stable-na-checkbox">Not Available</label>
+                      <label for="edge-stable-na-checkbox" data-i18n="paths.not.available">Not Available</label>
                     </div>
                   </div>
                   <input type="text" class="form-control form-control-sm" id="edge-stable-path" placeholder="Enter Edge Stable Path or NA to ignore">
                 </div>
                 <div class="form-group mb-1">
                   <div class="label-row">
-                    <label for="edge-beta-path" class="mb-0">Beta Path:</label>
+                    <label for="edge-beta-path" class="mb-0" data-i18n="paths.beta">Beta Path:</label>
                     <div class="na-checkbox-container">
                       <input type="checkbox" id="edge-beta-na-checkbox" class="na-checkbox">
-                      <label for="edge-beta-na-checkbox">Not Available</label>
+                      <label for="edge-beta-na-checkbox" data-i18n="paths.not.available">Not Available</label>
                     </div>
                   </div>
                   <input type="text" class="form-control form-control-sm" id="edge-beta-path" placeholder="Enter Edge Beta Path or NA to ignore">
                 </div>
                 <div class="form-group mb-0">
                   <div class="label-row">
-                    <label for="edge-dev-path" class="mb-0">Dev Path:</label>
+                    <label for="edge-dev-path" class="mb-0" data-i18n="paths.dev">Dev Path:</label>
                     <div class="na-checkbox-container">
                       <input type="checkbox" id="edge-dev-na-checkbox" class="na-checkbox">
-                      <label for="edge-dev-na-checkbox">Not Available</label>
+                      <label for="edge-dev-na-checkbox" data-i18n="paths.not.available">Not Available</label>
                     </div>
                   </div>
                   <input type="text" class="form-control form-control-sm" id="edge-dev-path" placeholder="Enter Edge Dev Path or NA to ignore">
@@ -439,22 +466,22 @@
             <div class="row">
               <div class="col-md-6 mb-1">
                 <button type="button" class="btn btn-primary btn-sm btn-block" id="save-paths">
-                  <i class="fas fa-save mr-1"></i>Save Path Info
+                  <i class="fas fa-save mr-1"></i><span data-i18n="settings.save.paths">Save Path Info</span>
                 </button>
               </div>
               <div class="col-md-6 mb-1">
                 <button type="button" class="btn btn-secondary btn-sm btn-block" id="test-notification">
-                  <i class="fas fa-bell mr-1"></i>Test Notification
+                  <i class="fas fa-bell mr-1"></i><span data-i18n="settings.test.notification">Test Notification</span>
                 </button>
               </div>
               <div class="col-md-6 mb-1">
                 <button type="button" class="btn btn-success btn-sm btn-block" id="update-browsers">
-                  <i class="fas fa-sync mr-1"></i>Update Local Browsers
+                  <i class="fas fa-sync mr-1"></i><span data-i18n="settings.update.local">Update Local Browsers</span>
                 </button>
               </div>
               <div class="col-md-6 mb-1">
                 <button type="button" class="btn btn-info btn-sm btn-block" id="update-wsl-browsers">
-                  <i class="fas fa-sync-alt mr-1"></i>Update WSL Browsers
+                  <i class="fas fa-sync-alt mr-1"></i><span data-i18n="settings.update.wsl">Update WSL Browsers</span>
                 </button>
               </div>
             </div>
@@ -464,7 +491,7 @@
         <!-- EULA Link -->
         <div class="text-center mt-2">
           <button type="button" class="btn btn-link btn-sm" id="view-eula">
-            <i class="fas fa-file-contract mr-1"></i>View EULA
+            <i class="fas fa-file-contract mr-1"></i><span data-i18n="settings.view.eula">View EULA</span>
           </button>
         </div>
       </div>
@@ -474,10 +501,10 @@
           <table class="table table-bordered table-sm">
             <thead>
               <tr>
-                <th>Browser Name</th>
-                <th>Old Version</th>
-                <th>New Version</th>
-                <th>Date/Time</th>
+                <th data-i18n="version.log.browser">Browser Name</th>
+                <th data-i18n="version.log.old">Old Version</th>
+                <th data-i18n="version.log.new">New Version</th>
+                <th data-i18n="version.log.date">Date/Time</th>
               </tr>
             </thead>
             <tbody id="version-log-table-body">
@@ -487,10 +514,10 @@
         </div>
         <!-- Buttons outside of the scrollable area -->
         <div class="text-center mt-3">
-          <button id="refresh-version-log" class="btn btn-primary">Refresh</button>
+          <button id="refresh-version-log" class="btn btn-primary" data-i18n="version.log.refresh">Refresh</button>
         </div>
         <div class="text-center mt-3">
-          <a href="#" id="export-csv" class="btn btn-secondary">Export to CSV</a>
+          <a href="#" id="export-csv" class="btn btn-secondary" data-i18n="version.log.export">Export to CSV</a>
         </div>
       </div>
 
@@ -683,14 +710,14 @@
 
       <div class="tab-pane fade" id="help-support">
         <div class="settings-header">
-          <h5>Help & Support</h5>
+          <h5 data-i18n="help.title">Help & Support</h5>
         </div>
         
         <div class="container mt-3">
           <div class="action-box license-box">
             <div class="license-info">
-              <div id="license-status" class="license-status status-licensed">Licensed Version</div>
-              <button id="manage-license-btn" class="btn btn-outline-primary">Manage License</button>
+              <div id="license-status" class="license-status status-licensed" data-i18n="help.license.status">Licensed Version</div>
+              <button id="manage-license-btn" class="btn btn-outline-primary" data-i18n="help.manage.license">Manage License</button>
             </div>
           </div>
           
@@ -848,9 +875,9 @@
         <div class="version-section">
           <div class="version-info">
             <span class="version-badge">
-              <i class="fas fa-tag mr-1"></i>Version 3.0
+              <i class="fas fa-tag mr-1"></i><span data-i18n="footer.version">Version 3.0</span>
             </span>
-            <span class="build-info">
+            <span class="build-info" data-i18n="footer.build">
               Build 2025.11.08
             </span>
           </div>
@@ -859,7 +886,7 @@
         <!-- Copyright Section -->
         <div class="footer-bottom">
           <div class="copyright-info">
-            <p class="copyright-text">
+            <p class="copyright-text" data-i18n="footer.copyright">
               &copy; 2025 Browser Launcher Pro. All rights reserved.
             </p>
             <div class="footer-meta">
@@ -915,7 +942,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="licenseModalLabel">License Management</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="license-modal-close">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="license-modal-close" title="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -964,8 +991,8 @@
                     <button type="button" class="btn btn-danger" id="deactivate-license-btn" disabled>Deactivate License</button>
                   </div>
                   <div class="col-md-6 text-right">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="license-modal-cancel">Close</button>
-                    <button type="button" class="btn btn-primary" id="activate-license-btn">Activate License</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="license-modal-cancel" data-i18n="buttons.close">Close</button>
+                    <button type="button" class="btn btn-primary" id="activate-license-btn" data-i18n="buttons.activate">Activate License</button>
                   </div>
                 </div>
               </div>
@@ -1019,8 +1046,8 @@
               <div id="password-message" style="display: none;" role="alert"></div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal" id="password-modal-cancel">Cancel</button>
-              <button type="button" class="btn btn-primary" id="password-modal-ok">OK</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" id="password-modal-cancel" data-i18n="buttons.cancel">Cancel</button>
+              <button type="button" class="btn btn-primary" id="password-modal-ok" data-i18n="buttons.ok">OK</button>
             </div>
           </div>
         </div>

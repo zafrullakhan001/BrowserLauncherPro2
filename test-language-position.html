@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Selector Bottom Right Test</title>
+    <link href="custom.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            background: #f8fafc;
+            position: relative;
+        }
+        .test-content {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .red-box {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            width: 100px;
+            height: 30px;
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid red;
+            border-radius: 6px;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-content">
+        <h2>Language Selector Position Test</h2>
+        <p>The language selector should appear in the bottom-right corner, overlapping the red box below.</p>
+        <p>This simulates the Browser Launcher Pro extension popup layout.</p>
+        
+        <div style="margin-top: 20px;">
+            <h4>Test Content</h4>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+        </div>
+    </div>
+
+    <!-- Red placeholder box to show target position -->
+    <div class="red-box"></div>
+    
+    <!-- Language Selector - Bottom Right (should overlap the red box) -->
+    <div class="language-selector-bottom">
+        <select id="language-select" class="language-selector-compact" title="Select Language">
+            <option value="en">[US] English</option>
+            <option value="es">[ES] Spanish</option>
+            <option value="fr">[FR] French</option>
+            <option value="de">[DE] German</option>
+            <option value="it">[IT] Italian</option>
+            <option value="pt">[BR] Portuguese</option>
+            <option value="ru">[RU] Russian</option>
+            <option value="zh">[CN] Chinese</option>
+            <option value="ja">[JP] Japanese</option>
+            <option value="ko">[KR] Korean</option>
+            <option value="ar">[SA] Arabic</option>
+        </select>
+    </div>
+
+    <script>
+        // Test theme toggle
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 't' || e.key === 'T') {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                document.body.style.background = newTheme === 'dark' ? '#0f172a' : '#f8fafc';
+            }
+        });
+        
+        // Language selector change handler
+        document.getElementById('language-select').addEventListener('change', function() {
+            console.log('Language changed to:', this.value, '(' + this.options[this.selectedIndex].text + ')');
+        });
+    </script>
+</body>
+</html>

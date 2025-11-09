@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Launcher Pro - Language Demo</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+        
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .demo-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .demo-content {
+            padding: 2rem;
+        }
+        
+        .language-selector-demo {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .demo-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .language-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .lang-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .lang-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .lang-flag {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .lang-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+        
+        .lang-region {
+            font-size: 0.875rem;
+            color: #666;
+        }
+        
+        .demo-ui {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 1.5rem;
+            background: white;
+        }
+        
+        .btn-demo {
+            margin: 0.25rem;
+        }
+        
+        /* RTL Support Demo */
+        [dir="rtl"] {
+            text-align: right;
+        }
+        
+        [dir="rtl"] .demo-header {
+            text-align: center;
+        }
+        
+        [dir="rtl"] .language-selector-demo {
+            text-align: center;
+        }
+        
+        .rtl-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff6b35;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: none;
+        }
+        
+        [dir="rtl"] .rtl-indicator {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="rtl-indicator">
+        <i class="fas fa-arrow-left"></i> RTL Mode Active
+    </div>
+    
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1 data-i18n="header.title">Browser Launcher Pro</h1>
+            <p data-i18n="header.subtitle">Launch and manage multiple browsers across Windows and WSL with version tracking</p>
+        </div>
+        
+        <div class="demo-content">
+            <div class="language-selector-demo">
+                <h3>🌍 Language Selection Demo</h3>
+                <p>Select a language to see the interface update in real-time:</p>
+                <select id="language-select" class="form-control" style="max-width: 300px; margin: 0 auto;">
+                    <!-- Options populated by JavaScript -->
+                </select>
+            </div>
+            
+            <div class="demo-section">
+                <h4><i class="fas fa-globe mr-2"></i>Supported Languages & Regions</h4>
+                <p>Browser Launcher Pro supports the following languages popular in USA, Canada, Europe, Middle East, and China:</p>
+                
+                <div class="language-info" id="language-grid">
+                    <!-- Language cards populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="demo-section">
+                <h4><i class="fas fa-desktop mr-2"></i>UI Sample - <span data-i18n="nav.windows">Windows Local</span></h4>
+                <div class="demo-ui">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 data-i18n="browsers.edge.title">MICROSOFT EDGE (WINDOWS LOCAL)</h5>
+                    </div>
+                    <div class="btn-group-demo">
+                        <button class="btn btn-primary btn-demo">
+                            <i class="fab fa-edge mr-1"></i><span data-i18n="browsers.stable">Stable</span>
+                        </button>
+                        <button class="btn btn-primary btn-demo">
+                            <i class="fab fa-edge mr-1"></i><span data-i18n="browsers.beta">Beta</span>
+                        </button>
+                        <button class="btn btn-primary btn-demo">
+                            <i class="fab fa-edge mr-1"></i><span data-i18n="browsers.dev">Dev</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="demo-section">
+                <h4><i class="fas fa-cog mr-2"></i><span data-i18n="settings.title">Settings</span></h4>
+                <div class="demo-ui">
+                    <div class="form-group">
+                        <label><i class="fas fa-globe mr-1"></i><span data-i18n="settings.language">Language</span></label>
+                        <select class="form-control" disabled>
+                            <option>🇺🇸 English (English)</option>
+                        </select>
+                        <small class="text-muted" data-i18n="settings.language.description">Select your preferred language</small>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" checked disabled>
+                        <label class="form-check-label" data-i18n="settings.version.check">
+                            Check browser version every time
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="demo-section">
+                <h4><i class="fas fa-question-circle mr-2"></i><span data-i18n="help.title">Help & Support</span></h4>
+                <div class="demo-ui">
+                    <div class="alert alert-info">
+                        <strong data-i18n="help.license.status">Licensed Version</strong>
+                    </div>
+                    <button class="btn btn-outline-primary" data-i18n="help.manage.license">Manage License</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Include the i18n script -->
+    <script src="js/i18n.js"></script>
+    
+    <script>
+        // Initialize demo after DOM loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setupDemo();
+        });
+        
+        function setupDemo() {
+            // Create language grid
+            createLanguageGrid();
+            
+            // Setup language selector
+            if (window.i18n) {
+                // Wait for i18n to initialize
+                setTimeout(() => {
+                    setupLanguageSelector();
+                }, 100);
+            }
+        }
+        
+        function createLanguageGrid() {
+            const grid = document.getElementById('language-grid');
+            if (!grid || !window.i18n) return;
+            
+            const languages = window.i18n.getSupportedLanguages();
+            
+            Object.entries(languages).forEach(([code, info]) => {
+                const card = document.createElement('div');
+                card.className = 'lang-card';
+                card.innerHTML = `
+                    <span class="lang-flag">${info.flag}</span>
+                    <div class="lang-name">${info.nativeName}</div>
+                    <div class="lang-region">${info.region}</div>
+                `;
+                
+                card.addEventListener('click', () => {
+                    if (window.i18n) {
+                        window.i18n.apply(code);
+                        updateLanguageSelector(code);
+                        showLanguageChangeNotification(info);
+                    }
+                });
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        function setupLanguageSelector() {
+            const select = document.getElementById('language-select');
+            if (!select || !window.i18n) return;
+            
+            const languages = window.i18n.getSupportedLanguages();
+            
+            // Group by region
+            const regions = {};
+            Object.entries(languages).forEach(([code, info]) => {
+                if (!regions[info.region]) {
+                    regions[info.region] = [];
+                }
+                regions[info.region].push({ code, ...info });
+            });
+            
+            // Create options
+            Object.entries(regions).forEach(([region, langs]) => {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = region;
+                
+                langs.forEach(lang => {
+                    const option = document.createElement('option');
+                    option.value = lang.code;
+                    option.textContent = `${lang.flag} ${lang.nativeName} (${lang.name})`;
+                    if (lang.code === window.i18n.getCurrentLanguage()) {
+                        option.selected = true;
+                    }
+                    optgroup.appendChild(option);
+                });
+                
+                select.appendChild(optgroup);
+            });
+            
+            // Add change listener
+            select.addEventListener('change', (e) => {
+                const langCode = e.target.value;
+                if (window.i18n) {
+                    window.i18n.apply(langCode);
+                    const langInfo = languages[langCode];
+                    showLanguageChangeNotification(langInfo);
+                }
+            });
+        }
+        
+        function updateLanguageSelector(langCode) {
+            const select = document.getElementById('language-select');
+            if (select) {
+                select.value = langCode;
+            }
+        }
+        
+        function showLanguageChangeNotification(langInfo) {
+            // Remove existing notifications
+            document.querySelectorAll('.lang-notification').forEach(el => el.remove());
+            
+            const notification = document.createElement('div');
+            notification.className = 'lang-notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%) translateY(-100%);
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 25px;
+                font-weight: 600;
+                box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+                z-index: 1000;
+                transition: transform 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            `;
+            
+            notification.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                Language: ${langInfo.flag} ${langInfo.nativeName}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(-50%) translateY(0)';
+            }, 100);
+            
+            // Auto remove
+            setTimeout(() => {
+                notification.style.transform = 'translateX(-50%) translateY(-100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
