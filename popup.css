@@ -2513,3 +2513,15 @@ button:disabled {
   background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
 }
 
+/* CENTER THE COPY HARDWARE ID BUTTON IN LICENSE MODAL */
+.hardware-id-container {
+  text-align: center !important;
+}
+
+#copy-hardware-id {
+  display: inline-block !important;
+  width: auto !important;
+  max-width: 300px !important;
+  margin: 0 auto !important;
+}
+
