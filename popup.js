@@ -80,46 +80,10 @@ document.addEventListener('DOMContentLoaded', function () {
   // window.isPasswordVerifiedForSession = false;
   
   // Helper function to check password modal elements
-  function debugPasswordModal() {
-    console.log('Debugging password modal elements:');
-    const modal = document.getElementById('password-modal');
-    console.log('Modal element exists:', !!modal);
-    
-    const messageElement = document.getElementById('password-modal-message');
-    console.log('Message element exists:', !!messageElement);
-    
-    const inputElement = document.getElementById('password-modal-input');
-    console.log('Input element exists:', !!inputElement);
-    
-    const validationElement = document.getElementById('password-validation-message');
-    console.log('Validation element exists:', !!validationElement);
-    
-    const submitButton = document.getElementById('password-modal-submit');
-    console.log('Submit button exists:', !!submitButton);
-    
-    if (inputElement) {
-      inputElement.value = 'Test123456';
-      console.log('Set test value to input');
-      console.log('Input value is now:', inputElement.value);
-      console.log('Is valid password:', isValidPassword(inputElement.value));
-    }
-  }
+  // Removed debugPasswordModal since we now use system alert dialog
   
-  // Run debug after a delay to ensure DOM is fully loaded
-  setTimeout(debugPasswordModal, 2000);
-  
-  // Add direct event listener for the change password button
-  setTimeout(() => {
-    const changePasswordBtn = document.getElementById('change-wsl-password');
-    if (changePasswordBtn) {
-      console.log('Adding change password button listener');
-      changePasswordBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        console.log('Change password button clicked directly');
-        handleChangePassword(); // Use handleChangePassword instead of promptChangePassword
-      });
-    }
-  }, 1000);
+  // Password button initialization is now handled in initializeWSLPasswordProtection
+  let passwordButtonInitialized = false;
   
   // Check license status immediately when popup opens
   chrome.storage.local.get(['licenseStatus'], function(result) {
@@ -1747,22 +1711,31 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
     
-    // Set up change password button
-    const changePasswordButton = document.getElementById('change-wsl-password');
-    if (changePasswordButton) {
-      console.log('Setting up change password button');
-      // Remove existing listeners by cloning
-      const newButton = changePasswordButton.cloneNode(true);
-      changePasswordButton.parentNode.replaceChild(newButton, changePasswordButton);
-      
-      // Add the event listener to the new button
-      newButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        console.log('Change password button clicked');
-        handleChangePassword();
-      });
-    } else {
-      console.error('Change password button not found');
+    // Set up change password button only if not already initialized
+    if (!passwordButtonInitialized) {
+      const changePasswordButton = document.getElementById('change-wsl-password');
+      if (changePasswordButton) {
+        console.log('Setting up change password button');
+        const newButton = changePasswordButton.cloneNode(true);
+        changePasswordButton.parentNode.replaceChild(newButton, changePasswordButton);
+        
+        // Add a single event listener to the button
+        newButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          // Prevent double-clicks
+          if (this.disabled) return;
+          this.disabled = true;
+          
+          console.log('Change password button clicked');
+          handleChangePassword().finally(() => {
+            this.disabled = false;
+          });
+        });
+        
+        passwordButtonInitialized = true;
+      } else {
+        console.error('Change password button not found');
+      }
     }
     
     // Set up protected button handlers
@@ -1820,182 +1793,32 @@ document.addEventListener('DOMContentLoaded', function () {
   // A much simpler password modal
   function showSimplePasswordPrompt(message, callback) {
     console.log('Showing simple password prompt:', message);
+
+    // Use system prompt to get password
+    const password = window.prompt(message);
     
-    // Get DOM elements
-    const modal = document.getElementById('password-modal');
-    const messageElement = document.getElementById('password-modal-message');
-    const inputElement = document.getElementById('password-modal-input');
-    const validationElement = document.getElementById('password-validation-message');
-    const submitButton = document.getElementById('password-modal-submit');
-    const cancelButton = document.getElementById('password-modal-cancel');
-    const closeButton = document.getElementById('password-modal-close');
-    
-    if (!modal || !messageElement || !inputElement || !validationElement || !submitButton) {
-      console.error('Password modal elements not found');
-      alert('Error: Password dialog not found. Please try reloading the extension.');
+    // If user pressed Cancel, callback with null
+    if (password === null) {
+      callback(null);
       return;
     }
-    
-    // Clean up any existing modals first
-    const existingBackdrops = document.querySelectorAll('.modal-backdrop');
-    existingBackdrops.forEach(backdrop => backdrop.remove());
-    
-    // Reset modal state
-    modal.style.display = 'none';
-    modal.classList.remove('show');
-    document.body.classList.remove('modal-open');
-    modal.removeAttribute('aria-hidden');
-    
-    // Store the currently focused element to restore later
-    const previouslyFocused = document.activeElement;
-    
-    // Set up the modal content
-    messageElement.textContent = message;
-    inputElement.value = '';
-    validationElement.textContent = '';
-    validationElement.style.display = 'none';
-    
-    // Clear previous handlers
-    const newSubmitButton = submitButton.cloneNode(true);
-    submitButton.parentNode.replaceChild(newSubmitButton, submitButton);
-    
-    const newCancelButton = cancelButton.cloneNode(true);
-    cancelButton.parentNode.replaceChild(newCancelButton, cancelButton);
-    
-    const newCloseButton = closeButton.cloneNode(true);
-    closeButton.parentNode.replaceChild(newCloseButton, closeButton);
-    
-    const newInputElement = inputElement.cloneNode(true);
-    inputElement.parentNode.replaceChild(newInputElement, inputElement);
-    
-    // Function to hide the modal - ensure it's properly cleaned up
-    const hideModal = () => {
-      console.log('Hiding password modal');
-      
-      // First restore focus to the previously focused element
-      if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
-        try {
-          previouslyFocused.focus();
-        } catch (e) {
-          console.error('Error restoring focus:', e);
-        }
-      }
-      
-      // Try both jQuery and direct DOM methods for maximum compatibility
-      if (typeof $ !== 'undefined' && $.fn.modal) {
-        try {
-          $(modal).modal('hide');
-          // Also do manual cleanup in case jQuery doesn't handle it well
-          setTimeout(() => {
-            modal.style.display = 'none';
-            modal.classList.remove('show');
-            document.body.classList.remove('modal-open');
-          }, 100);
-        } catch (e) {
-          console.error('Error using jQuery to hide modal:', e);
-          manualHideModal();
-        }
-      } else {
-        manualHideModal();
-      }
-      
-      // Remove all modal backdrops
-      setTimeout(() => {
-        const backdrops = document.querySelectorAll('.modal-backdrop');
-        backdrops.forEach(backdrop => {
-          backdrop.remove();
-        });
-      }, 100);
-    };
-    
-    // Manual modal hiding as a fallback
-    function manualHideModal() {
-      modal.style.display = 'none';
-      modal.classList.remove('show');
-      document.body.classList.remove('modal-open');
-      const backdrops = document.querySelectorAll('.modal-backdrop');
-      backdrops.forEach(backdrop => backdrop.remove());
-    }
-    
-    // Function to validate the password
-    const validateAndSubmit = () => {
-      const password = document.getElementById('password-modal-input').value;
-      console.log('Validating password, length:', password.length);
-      
-      // Check if empty
-      if (!password || password.trim() === '') {
-        validationElement.textContent = 'Password cannot be empty.';
-        validationElement.style.display = 'block';
-        return;
-      }
-      
-      // Check length and numbers for new passwords (not for verification)
-      if (message.includes('set a password') && (password.length < 8 || !/\d/.test(password))) {
-        validationElement.textContent = 'Password must be at least 8 characters long and contain at least one number.';
-        validationElement.style.display = 'block';
-        return;
-      }
-      
-      // Copy the password value before we close the modal and potentially lose the value
-      const passwordValue = password;
-      
-      // Password is valid, hide modal
-      hideModal();
-      
-      // Call callback with the captured password after a brief delay to ensure modal is closed
-      setTimeout(() => {
-        callback(passwordValue);
-      }, 200);
-    };
-    
-    // Set up event handlers
-    newSubmitButton.addEventListener('click', function(e) {
-      e.preventDefault();
-      validateAndSubmit();
-    });
-    
-    newInputElement.addEventListener('keyup', function(e) {
-      if (e.key === 'Enter') {
-        validateAndSubmit();
-      }
-    });
-    
-    newInputElement.addEventListener('input', function() {
-      validationElement.textContent = '';
-      validationElement.style.display = 'none';
-    });
-    
-    newCancelButton.addEventListener('click', function(e) {
-      e.preventDefault();
-      hideModal();
+
+    // Check if empty
+    if (!password || password.trim() === '') {
+      alert('Password cannot be empty.');
       callback(null);
-    });
-    
-    newCloseButton.addEventListener('click', function(e) {
-      e.preventDefault();
-      hideModal();
-      callback(null);
-    });
-    
-    // Show the modal
-    modal.style.display = 'block';
-    modal.classList.add('show');
-    document.body.classList.add('modal-open');
-    
-    // Create backdrop if it doesn't exist
-    if (!document.querySelector('.modal-backdrop')) {
-      const backdrop = document.createElement('div');
-      backdrop.className = 'modal-backdrop fade show';
-      document.body.appendChild(backdrop);
+      return;
     }
-    
-    // Focus the input field
-    setTimeout(() => {
-      const currentInput = document.getElementById('password-modal-input');
-      if (currentInput) {
-        currentInput.focus();
-      }
-    }, 100);
+
+    // Check length and numbers for new passwords (not for verification)
+    if (message.includes('set a password') && (password.length < 8 || !/\d/.test(password))) {
+      alert('Password must be at least 8 characters long and contain at least one number.');
+      callback(null);
+      return;
+    }
+
+    // Password is valid, call callback
+    callback(password);
   }
 
   // Simple function to set a new WSL password
@@ -2028,10 +1851,12 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Function to handle changing password with verification
-  function handleChangePassword() {
+  async function handleChangePassword() {
     console.log('Handling password change');
     
-    chrome.storage.local.get('wslPassword', function(result) {
+    try {
+      const result = await new Promise(resolve => chrome.storage.local.get('wslPassword', resolve));
+      
       if (!result.wslPassword) {
         // No password set yet, just set a new one
         showSimplePasswordPrompt(
@@ -2042,83 +1867,68 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       
       // Verify current password first
-      showSimplePasswordPrompt('Please enter your current password:', async function(currentPassword) {
-        if (!currentPassword) {
-          console.log('Password verification cancelled');
-          return;
-        }
-        
-        try {
-          const hashedCurrentPassword = await digestPassword(currentPassword);
-          
-          if (hashedCurrentPassword === result.wslPassword) {
-            // Current password verified, prompt for new password after a delay
-            console.log('Current password verified, prompting for new password');
-            
-            // Wait a moment to ensure the previous modal is fully closed
-            setTimeout(() => {
-              showSimplePasswordPrompt(
-                'Please enter a new password (minimum 8 characters with at least one number):',
-                function(newPassword) {
-                  if (!newPassword) {
-                    console.log('New password entry cancelled');
-                    return;
-                  }
-                  
-                  if (newPassword.length < 8 || !/\d/.test(newPassword)) {
-                    alert('Password must be at least 8 characters long and contain at least one number.');
-                    // Try again after a delay
-                    setTimeout(() => handleChangePassword(), 500);
-                    return;
-                  }
-                  
-                  // Wait a moment to ensure the previous modal is fully closed
-                  setTimeout(() => {
-                    showSimplePasswordPrompt('Please confirm your new password:', async function(confirmPassword) {
-                      if (!confirmPassword) {
-                        console.log('Password confirmation cancelled');
-                        return;
-                      }
-                      
-                      if (confirmPassword !== newPassword) {
-                        alert('Passwords do not match. Please try again.');
-                        // Try again after a delay
-                        setTimeout(() => handleChangePassword(), 500);
-                        return;
-                      }
-                      
-                      try {
-                        // Save the new password
-                        const hashedNewPassword = await digestPassword(newPassword);
-                        chrome.storage.local.set({ 
-                          wslPassword: hashedNewPassword, 
-                          failedAttempts: 0, 
-                          lockoutTime: null 
-                        }, function() {
-                          // Show success message after modals are fully closed
-                          setTimeout(() => {
-                            alert('Password changed successfully!');
-                            // window.isPasswordVerifiedForSession = true;
-                          }, 300);
-                        });
-                      } catch (error) {
-                        console.error('Error saving new password:', error);
-                        alert('Error saving password. Please try again.');
-                      }
-                    });
-                  }, 500); // Longer delay to ensure proper modal cleanup
-                }
-              );
-            }, 500); // Longer delay to ensure proper modal cleanup
-          } else {
-            alert('Incorrect current password!');
-          }
-        } catch (error) {
-          console.error('Error verifying password:', error);
-          alert('Error verifying password. Please try again.');
-        }
+      const currentPassword = await new Promise(resolve => {
+        showSimplePasswordPrompt('Please enter your current password:', resolve);
       });
-    });
+      
+      if (!currentPassword) {
+        console.log('Password verification cancelled');
+        return;
+      }
+      
+      const hashedCurrentPassword = await digestPassword(currentPassword);
+      if (hashedCurrentPassword !== result.wslPassword) {
+        alert('Incorrect current password!');
+        return;
+      }
+      
+      // Get new password
+      const newPassword = await new Promise(resolve => {
+        showSimplePasswordPrompt(
+          'Please enter a new password (minimum 8 characters with at least one number):',
+          resolve
+        );
+      });
+      
+      if (!newPassword) {
+        console.log('New password entry cancelled');
+        return;
+      }
+      
+      if (newPassword.length < 8 || !/\d/.test(newPassword)) {
+        alert('Password must be at least 8 characters long and contain at least one number.');
+        return;
+      }
+      
+      // Confirm new password
+      const confirmPassword = await new Promise(resolve => {
+        showSimplePasswordPrompt('Please confirm your new password:', resolve);
+      });
+      
+      if (!confirmPassword) {
+        console.log('Password confirmation cancelled');
+        return;
+      }
+      
+      if (confirmPassword !== newPassword) {
+        alert('Passwords do not match. Please try again.');
+        return;
+      }
+      
+      // Save the new password
+      const hashedNewPassword = await digestPassword(newPassword);
+      await new Promise(resolve => chrome.storage.local.set({
+        wslPassword: hashedNewPassword,
+        failedAttempts: 0,
+        lockoutTime: null
+      }, resolve));
+      
+      alert('Password changed successfully!');
+      
+    } catch (error) {
+      console.error('Error changing password:', error);
+      alert('Error changing password. Please try again.');
+    }
   }
 
   // Function to verify a password against stored hash for secure buttons

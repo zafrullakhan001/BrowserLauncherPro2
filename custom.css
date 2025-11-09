@@ -1,3 +1,233 @@
+/* Custom modal implementation */
+.modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100000;
+  outline: none;
+}
+
+.modal-dialog {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 1.75rem auto;
+  transform: none;
+  transition: transform 0.3s ease-out;
+  z-index: 100001;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 99999;
+  background-color: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+}
+
+.modal.fade .modal-dialog {
+  transform: translate(0, -25%);
+  transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+  transform: translate(0, 0);
+}
+
+.modal-content {
+  position: relative;
+  background: var(--surface, #fff);
+  border: none;
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg, 0 10px 30px rgba(0,0,0,0.2));
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  pointer-events: auto;
+  outline: 0;
+}
+
+/* Dark mode support */
+[data-theme="dark"] .modal-content {
+  background: var(--surface-strong, #1e293b);
+  border: 1px solid var(--outline, rgba(96, 165, 250, 0.2));
+}
+
+[data-theme="dark"] .modal-backdrop {
+  background-color: rgba(0,0,0,0.8);
+}
+
+/* Password modal specific styles */
+#password-modal .modal-content {
+  max-width: 400px;
+  margin: auto;
+}
+
+#password-modal .modal-header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--outline, #e2e8f0);
+  align-items: center;
+  background: linear-gradient(135deg, var(--surface-strong, #f8fafc) 0%, var(--surface-soft, #f1f5f9) 100%);
+}
+
+[data-theme="dark"] #password-modal .modal-header {
+  background: linear-gradient(135deg, var(--surface, #1e293b) 0%, var(--surface-strong, #0f172a) 100%);
+  border-bottom-color: var(--outline, rgba(96, 165, 250, 0.2));
+}
+
+#password-modal .modal-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary, #1e293b);
+  margin: 0;
+}
+
+[data-theme="dark"] #password-modal .modal-title {
+  color: var(--text-primary, #e2e8f0);
+}
+
+#password-modal .modal-body {
+  padding: 1rem;
+}
+
+#password-modal .modal-body .form-group {
+  margin-bottom: 1rem;
+}
+
+#password-modal .modal-footer {
+  padding: 1rem;
+  border-top: 1px solid var(--outline, #e2e8f0);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--surface-strong, #f8fafc) 0%, var(--surface-soft, #f1f5f9) 100%);
+}
+
+[data-theme="dark"] #password-modal .modal-footer {
+  background: linear-gradient(135deg, var(--surface, #1e293b) 0%, var(--surface-strong, #0f172a) 100%);
+  border-top-color: var(--outline, rgba(96, 165, 250, 0.2));
+}
+
+/* Make sure modal buttons have proper spacing and styling */
+#password-modal .btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  transition: all 0.2s ease;
+}
+
+#password-modal .btn-primary {
+  background: var(--primary-gradient, linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%));
+  border: none;
+  color: white;
+}
+
+#password-modal .btn-primary:hover {
+  background: var(--primary-dark, #1d4ed8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+#password-modal .btn-secondary {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+
+[data-theme="dark"] #password-modal .btn-secondary {
+  background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+#password-modal .btn-secondary:hover {
+  background: #e2e8f0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] #password-modal .btn-secondary:hover {
+  background: #1e293b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Form input styling */
+#password-modal .form-control {
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--outline, #e2e8f0);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  width: 100%;
+  background: var(--surface-strong, white);
+  color: var(--text-primary, #1e293b);
+}
+
+[data-theme="dark"] #password-modal .form-control {
+  background: var(--surface, #1e293b);
+  border-color: var(--outline, #475569);
+  color: var(--text-primary, #e2e8f0);
+}
+
+#password-modal .form-control:focus {
+  border-color: var(--primary, #3b82f6);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  outline: none;
+}
+
+[data-theme="dark"] #password-modal .form-control:focus {
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+}
+
+/* Close button styling */
+#password-modal .close {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-secondary, #64748b);
+  transition: all 0.2s ease;
+  padding: 0.5rem;
+  margin: -0.5rem -0.5rem -0.5rem auto;
+}
+
+#password-modal .close:hover {
+  color: var(--text-primary, #1e293b);
+  transform: rotate(90deg);
+}
+
+[data-theme="dark"] #password-modal .close:hover {
+  color: var(--text-primary, #e2e8f0);
+}
+
+/* Error message styling */
+#password-validation-message {
+  color: var(--danger, #ef4444);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+/* Animation for modal */
+.modal.fade {
+  transition: opacity 0.15s linear;
+}
+
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out;
+  transform: translate(0, -50px);
+}
+
+.modal.show .modal-dialog {
+  transform: none;
+}
+
 /* Custom styles to improve license section appearance */
 .license-box {
   display: flex;
@@ -36,4 +266,4 @@
 
 #manage-license-btn {
   min-width: 200px;
-} 
+}
