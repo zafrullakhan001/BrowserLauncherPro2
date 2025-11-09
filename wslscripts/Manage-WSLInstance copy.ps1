@@ -105,41 +105,6 @@ function Write-Log {
     }
 }
 
-# Progress utilities
-function Initialize-Progress {
-    param(
-        [string]$Activity = 'WSL Instance Operation',
-        [int]$TotalSteps = 10
-    )
-    $script:ProgressActivity = $Activity
-    $script:ProgressTotalSteps = $TotalSteps
-    $script:ProgressCurrent = 0
-    Write-Progress -Activity $script:ProgressActivity -Status "Starting..." -PercentComplete 0
-}
-
-function Step-Progress {
-    param(
-        [string]$Status,
-        [int]$Increment = 1
-    )
-    if (-not $script:ProgressTotalSteps) { return }
-    $script:ProgressCurrent += $Increment
-    $pct = [math]::Min( (100 * $script:ProgressCurrent / $script:ProgressTotalSteps), 100 )
-    Write-Progress -Activity $script:ProgressActivity -Status $Status -PercentComplete $pct
-    Write-Log "Progress: $Status ($([math]::Round($pct,2))%)" "DEBUG"
-}
-
-function Complete-Progress {
-    param(
-        [string]$FinalStatus = 'Completed'
-    )
-    if ($script:ProgressActivity) {
-        Write-Progress -Activity $script:ProgressActivity -Status $FinalStatus -PercentComplete 100 -Completed
-        Write-Log "Progress activity '$script:ProgressActivity' completed" "DEBUG"
-    }
-    $script:ProgressActivity = $null
-}
-
 Write-Log "Script execution started" "DEBUG"
 
 try {
@@ -636,8 +601,6 @@ try {
                     # Install the selected distribution
                     Write-Host "Installing $selectedDistro..." -ForegroundColor Cyan
                     Write-Log "Installing $selectedDistro... This may take several minutes" "INFO"
-                    Initialize-Progress -Activity "Installing $selectedDistro" -TotalSteps 6
-                    Step-Progress -Status "Starting installer"
                     
                     try {
                         # Try the installation
@@ -653,44 +616,10 @@ try {
                         $elapsedSeconds = 0
                         Write-Host "Provisioning $selectedDistro. This can take several minutes." -ForegroundColor Cyan
                         Write-Log "Waiting on WSL provisioning (max ${maxWaitMinutes} minutes, ${checkIntervalSeconds}s interval)" "INFO"
-                        Step-Progress -Status "Provisioning in progress"
 
-                        # Enhanced provisioning loop: poll for distro presence and allow early exit
-                        $distroDetected = $false
                         while (-not $installProcess.HasExited) {
                             Start-Sleep -Seconds $checkIntervalSeconds
                             $elapsedSeconds += $checkIntervalSeconds
-
-                            # Every 15 seconds, check if the distro already registered. This usually happens
-                            # before the installer process fully exits for newer Ubuntu releases (24.04+).
-                            if ($elapsedSeconds -eq $checkIntervalSeconds -or ($elapsedSeconds % 15) -eq 0) {
-                                try {
-                                    $quickList = cmd.exe /c "wsl.exe --list --quiet 2>nul"
-                                    if ($quickList -is [string]) {
-                                        $quickList = $quickList -split "`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ }
-                                    }
-                                    foreach ($q in $quickList) {
-                                        if ($q -eq $selectedDistro) {
-                                            $distroDetected = $true
-                                            break
-                                        }
-                                    }
-                                    if ($distroDetected) {
-                                        Write-Host "Detected $selectedDistro in WSL list; ending wait loop early." -ForegroundColor Green
-                                        Write-Log "Early detection of $selectedDistro; attempting graceful installer termination" "INFO"
-                                        # Try to close gracefully if still running
-                                        try { $installProcess.CloseMainWindow() | Out-Null } catch { Write-Log "CloseMainWindow during early exit failed: $_" "DEBUG" }
-                                        Start-Sleep -Seconds 2
-                                        if (-not $installProcess.HasExited) {
-                                            Write-Log "Installer still running after graceful attempt; proceeding without waiting." "WARNING"
-                                        }
-                                        Step-Progress -Status "Distribution detected"
-                                        break
-                                    }
-                                } catch {
-                                    Write-Log "Quick distro presence check failed: $_" "DEBUG"
-                                }
-                            }
 
                             if (($elapsedSeconds % 60) -eq 0) {
                                 $elapsedMinutes = [math]::Round($elapsedSeconds / 60, 2)
@@ -698,50 +627,40 @@ try {
                                 Write-Log "Provisioning still running after ${elapsedMinutes} minutes" "INFO"
                             }
 
-                            # Timeout handling with user choice
-                            if ($elapsedSeconds -ge ($maxWaitMinutes * 60) -and -not $distroDetected) {
-                                Write-Host "Provisioning is taking longer than expected (>${maxWaitMinutes} min)." -ForegroundColor Yellow
-                                Write-Log "Provisioning exceeded ${maxWaitMinutes} minutes without detection" "WARNING"
-                                $userChoice = Read-Host "Press Enter to extend wait (${maxWaitMinutes} more min) or type 'C' to cancel, 'S' to skip and verify now"
-                                if ($userChoice) {
-                                    switch ($userChoice.ToUpper()) {
-                                        'C' {
-                                            Write-Log "User requested cancellation after timeout" "WARNING"
-                                            try { $installProcess.CloseMainWindow() | Out-Null; Start-Sleep -Seconds 2 } catch { Write-Log "CloseMainWindow failed: $_" "DEBUG" }
-                                            if (-not $installProcess.HasExited) { Stop-Process -Id $installProcess.Id -Force -ErrorAction SilentlyContinue }
-                                            Complete-Progress -FinalStatus "Cancelled"
-                                            throw "WSL installation cancelled by user after waiting ${maxWaitMinutes} minutes."
-                                        }
-                                        'S' {
-                                            Write-Log "User chose to skip remaining wait and proceed to verification" "INFO"
-                                            Step-Progress -Status "Skipping wait, verifying"
-                                            break
-                                        }
-                                        Default {
-                                            Write-Host "Extending wait..." -ForegroundColor Cyan
-                                            Write-Log "User extended wait period" "INFO"
-                                            $elapsedSeconds = 0
-                                        }
+                            if ($elapsedSeconds -ge ($maxWaitMinutes * 60)) {
+                                Write-Host "Provisioning is taking longer than expected." -ForegroundColor Yellow
+                                Write-Log "Provisioning exceeded ${maxWaitMinutes} minutes" "WARNING"
+                                $userChoice = Read-Host "Press Enter to keep waiting or type 'C' to cancel the installation"
+                                if ($userChoice -and $userChoice.ToUpper() -eq 'C') {
+                                    Write-Log "User requested cancellation after timeout" "WARNING"
+                                    try {
+                                        $installProcess.CloseMainWindow() | Out-Null
+                                        Start-Sleep -Seconds 2
+                                    } catch {
+                                        Write-Log "CloseMainWindow failed: $_" "DEBUG"
                                     }
-                                } else {
-                                    Write-Host "Extending wait..." -ForegroundColor Cyan
-                                    Write-Log "User extended wait period (blank input)" "INFO"
-                                    $elapsedSeconds = 0
+
+                                    if (-not $installProcess.HasExited) {
+                                        Write-Log "Forcing installation process to stop" "WARNING"
+                                        Stop-Process -Id $installProcess.Id -Force -ErrorAction SilentlyContinue
+                                    }
+
+                                    throw "WSL installation cancelled by user after waiting ${maxWaitMinutes} minutes."
                                 }
+
+                                Write-Host "Continuing to wait for provisioning..." -ForegroundColor Cyan
+                                Write-Log "User opted to continue waiting" "INFO"
+                                $elapsedSeconds = 0
                             }
                         }
 
-                        # Only wait for exit if the process has already finished; otherwise continue
-                        if ($installProcess.HasExited) {
-                            $installProcess.WaitForExit()
-                            $exitCode = $installProcess.ExitCode
-                            if ($exitCode -ne 0) {
-                                $errorMsg = "WSL installation process exited with code $exitCode"
-                                Write-Log $errorMsg "ERROR"
-                                throw $errorMsg
-                            }
-                        } else {
-                            Write-Log "Installer still running; proceeding to verify distro presence and continue workflow." "INFO"
+                        $installProcess.WaitForExit()
+                        $exitCode = $installProcess.ExitCode
+
+                        if ($exitCode -ne 0) {
+                            $errorMsg = "WSL installation process exited with code $exitCode"
+                            Write-Log $errorMsg "ERROR"
+                            throw $errorMsg
                         }
 
                         Write-Host "Distribution $selectedDistro installation initiated successfully." -ForegroundColor Green
@@ -751,7 +670,6 @@ try {
                         Write-Host "Verifying that installation completed..." -ForegroundColor Cyan
                         Write-Log "Waiting briefly before verification (5 seconds)..." "INFO"
                         Start-Sleep -Seconds 5
-                        Step-Progress -Status "Verifying installation"
                         
                         # Verify the installation
                         Write-Log "Verifying installation..." "INFO"
@@ -773,17 +691,14 @@ try {
                             Write-Host "The distribution was not found after installation. Installation may still be in progress." -ForegroundColor Yellow
                             Write-Log "Distribution not found after installation wait period. Installation may still be in progress." "WARNING"
                             Write-Host "Please wait for the installation to complete and then try again." -ForegroundColor Yellow
-                            Complete-Progress -FinalStatus "Pending"
                             return
                         }
                         
                         Write-Log "Installation verification successful. Distribution is installed." "INFO"
-                        Complete-Progress -FinalStatus "Installed"
                     }
                     catch {
                         Write-Host "Error during installation: $_" -ForegroundColor Red
                         Write-Log "Error during installation: $_" "ERROR"
-                        Complete-Progress -FinalStatus "Failed"
                         Write-Host "`nIf the automatic installation failed, please try manual installation:" -ForegroundColor Yellow
                         Write-Host "1. Open a Command Prompt as Administrator" -ForegroundColor Yellow
                         Write-Host "2. Run: wsl --install -d $selectedDistro" -ForegroundColor Yellow
@@ -909,9 +824,7 @@ try {
                     $tarFile = Join-Path $tempDir "$selectedDistro.tar"
                     Write-Log "Export tar file will be: $tarFile" "INFO"
                     
-                    # Initialize progress for rename path (export/import + user setup)
-                    Initialize-Progress -Activity "Renaming $selectedDistro to $customName" -TotalSteps 9
-                    Step-Progress -Status "Starting export of $selectedDistro"
+                    # Export the distribution
                     Write-Host "Exporting $selectedDistro..." -ForegroundColor Cyan
                     Write-Log "Exporting $selectedDistro... This may take several minutes" "INFO"
                     $exportProcess = Start-Process -FilePath "wsl.exe" -ArgumentList "--export $selectedDistro $tarFile" -Wait -PassThru -NoNewWindow
@@ -922,11 +835,9 @@ try {
                         throw $errorMsg
                     }
                     
-                    Step-Progress -Status "Export completed"
                     Write-Log "Export completed successfully" "INFO"
                     
                     # Create a directory for the custom distribution
-                    Step-Progress -Status "Preparing import directory"
                     $wslDir = Join-Path $env:USERPROFILE "WSL"
                     $customDir = Join-Path $wslDir $customName
                     Write-Log "Creating directory for import: $customDir" "INFO"
@@ -935,7 +846,6 @@ try {
                     }
                     
                     # Import with the custom name
-                    Step-Progress -Status "Importing distribution as $customName"
                     Write-Host "Importing as $customName..." -ForegroundColor Cyan
                     Write-Log "Importing as $customName... This may take several minutes" "INFO"
                     $importProcess = Start-Process -FilePath "wsl.exe" -ArgumentList "--import $customName $customDir $tarFile --version 2" -Wait -PassThru -NoNewWindow
@@ -946,12 +856,10 @@ try {
                         throw $errorMsg
                     }
                     
-                    Step-Progress -Status "Import completed"
                     Write-Log "Import completed successfully" "INFO"
                     
                     # Unregister the original distribution if requested
                     if ($shouldInstall) {
-                        Step-Progress -Status "Unregistering original $selectedDistro"
                         Write-Host "Cleaning up original distribution..." -ForegroundColor Cyan
                         Write-Log "Cleaning up original distribution '$selectedDistro'..." "INFO"
                         $unregisterProcess = Start-Process -FilePath "wsl.exe" -ArgumentList "--unregister $selectedDistro" -Wait -PassThru -NoNewWindow
@@ -959,7 +867,6 @@ try {
                     }
                     
                     # Clean up the tar file
-                    Step-Progress -Status "Cleaning temporary export file"
                     Write-Log "Cleaning up tar file: $tarFile" "INFO"
                     Remove-Item $tarFile -Force -ErrorAction SilentlyContinue
                     
@@ -1020,7 +927,6 @@ try {
                     }
                     
                     # Create the user in the WSL instance
-                    Step-Progress -Status "Creating user $wslUsername"
                     Write-Host "Creating user $wslUsername in the WSL instance..." -ForegroundColor Cyan
                     Write-Log "Creating user $wslUsername in the WSL instance..." "INFO"
                     try {
@@ -1037,7 +943,6 @@ try {
                     }
                     
                     # Update wsl.conf to set the default user
-                    Step-Progress -Status "Setting default user"
                     Write-Host "Setting $wslUsername as the default user..." -ForegroundColor Cyan
                     Write-Log "Setting $wslUsername as the default user..." "INFO"
                     try {
@@ -1054,7 +959,6 @@ try {
                     }
                     
                     # Restart the WSL instance to apply the user change
-                    Step-Progress -Status "Restarting instance"
                     Write-Host "Restarting WSL instance to apply user changes..." -ForegroundColor Cyan
                     Write-Log "Restarting WSL instance to apply user changes..." "INFO"
                     try {
@@ -1068,7 +972,6 @@ try {
                     }
                     
                     # Start the distribution with the user account
-                    Step-Progress -Status "Offering browser install"
                     Write-Host "`nSetup complete! Starting $customName..." -ForegroundColor Green
                     Write-Log "Setup complete! Starting $customName with user $wslUsername..." "INFO"
                     Write-Host "Launching with user: $wslUsername" -ForegroundColor Cyan
@@ -1080,7 +983,6 @@ try {
                     Read-Host "Press Enter to continue"
                     
                     # Launch the distribution with the user account (not as root)
-                    Step-Progress -Status "Launching instance"
                     try {
                         Write-Log "Launching WSL with command: wsl -d $customName -u $wslUsername" "INFO"
                         Start-Process -FilePath "wsl.exe" -ArgumentList "-d $customName -u $wslUsername"
@@ -1091,7 +993,6 @@ try {
                         Write-Log "Error launching distribution: $_" "ERROR"
                         Write-Host "Try launching manually with: wsl -d $customName -u $wslUsername" -ForegroundColor Yellow
                     }
-                    Complete-Progress -FinalStatus "Rename & setup complete"
                 }
                 catch {
                     Write-Host "Error creating custom-named instance: $_" -ForegroundColor Red
