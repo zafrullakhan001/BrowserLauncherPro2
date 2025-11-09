@@ -15,11 +15,14 @@
 
 <body>
   <div class="container">
-    <header class="mb-4">
-      <hr>
-      <h4>Browser Launcher Pro</h4>
+    <header class="mb-1">
+      <div class="header-content">
+        <h4>Browser Launcher Pro</h4>
+        <button id="theme-toggle" class="theme-toggle" title="Toggle dark/light mode">
+          <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
+      </div>
       <p class="subheading">Launch and manage multiple browsers across Windows and WSL with version tracking</p>
-      <hr>
     </header>
     <ul class="nav nav-tabs" id="settings-tabs">
       <li class="nav-item">
@@ -123,26 +126,19 @@
             </div>
           </div>
         </div>
-        <div style="position: relative; margin-top: 10px; margin-bottom: 3px;">
+        <div class="browser-timeline-section">
           <hr>
-          <!-- <hr style="border: none; border-top: 1px solid #a0a0a0; position: relative;"> -->
-
           <!-- Notches -->
-          <div style="position: absolute; top: -5px; left: 90px; width: 1px; height: 10px; background-color: #a0a0a0;">
-          </div>
-          <div style="position: absolute; top: -5px; left: 280px; width: 1px; height: 10px; background-color: #a0a0a0;">
-          </div>
-          <div style="position: absolute; top: -5px; left: 470px; width: 1px; height: 10px; background-color: #a0a0a0;">
-          </div>
+          <div class="timeline-tick" style="left: 90px;"></div>
+          <div class="timeline-tick" style="left: 280px;"></div>
+          <div class="timeline-tick" style="left: 470px;"></div>
 
-          <h7 style="display: inline-block; color : rgb(15, 14, 14)">
-            <span
-              style="position: relative; top: 5px; padding-bottom: 1px; padding-left: 20px; padding-right: 65px;">Production
-              support</span>
-            <span style="position: relative; top: 5px; padding-bottom: 1px; padding-right: 50px;">Pre go-live
-              check</span>
-            <span style="position: relative; top: 5px;">New features check</span>
-          </h7>
+          <!-- Badge Labels -->
+          <div class="timeline-badge-container">
+            <span class="timeline-badge badge-production">Production support</span>
+            <span class="timeline-badge badge-precheck">Pre go-live check</span>
+            <span class="timeline-badge badge-features">New features check</span>
+          </div>
         </div>
       </div>
 

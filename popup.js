@@ -1,4 +1,38 @@
 document.addEventListener('DOMContentLoaded', function () {
+  // ===== Theme Toggle Control =====
+  (function initThemeToggle() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    if (!themeToggle || !themeIcon) return;
+    
+    // Load saved theme or default to light
+    chrome.storage.local.get(['theme'], (result) => {
+      const theme = result.theme || 'light';
+      applyTheme(theme, false);
+    });
+    
+    function applyTheme(theme, persist = true) {
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeIcon.className = 'fas fa-sun';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        themeIcon.className = 'fas fa-moon';
+      }
+      
+      if (persist) {
+        chrome.storage.local.set({ theme });
+      }
+    }
+    
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      applyTheme(newTheme, true);
+    });
+  })();
+
   // ===== UI Zoom Control =====
   (function initUiZoomControl() {
     const slider = document.getElementById('ui-zoom-slider');
