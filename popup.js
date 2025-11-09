@@ -1711,6 +1711,40 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
     
+    // Function to handle password change with completion callback
+    function handleChangePasswordWithCompletion(completionCallback) {
+      console.log('Handling password change with completion callback');
+      
+      chrome.storage.local.get('wslPassword', function(result) {
+        if (!result.wslPassword) {
+          // No password set yet, just set a new one
+          showSimplePasswordPrompt(
+            'Please set a password for WSL operations (minimum 8 characters with at least one number):',
+            function(password) {
+              setNewWSLPassword(password);
+              // Re-enable button regardless of outcome
+              if (completionCallback) completionCallback();
+            }
+          );
+          return;
+        }
+        
+        // Use the new change password dialog
+        showChangePasswordDialog(function(result) {
+          if (!result) {
+            console.log('Password change cancelled');
+          } else if (result.success) {
+            alert(result.message);
+          } else {
+            alert(result.message || 'Password change failed');
+          }
+          
+          // Re-enable button regardless of outcome
+          if (completionCallback) completionCallback();
+        });
+      });
+    }
+
     // Set up change password button only if not already initialized
     if (!passwordButtonInitialized) {
       const changePasswordButton = document.getElementById('change-wsl-password');
@@ -1727,8 +1761,13 @@ document.addEventListener('DOMContentLoaded', function () {
           this.disabled = true;
           
           console.log('Change password button clicked');
-          handleChangePassword().finally(() => {
-            this.disabled = false;
+          
+          // Store reference to button for re-enabling
+          const button = this;
+          
+          // Call handleChangePassword and handle completion
+          handleChangePasswordWithCompletion(function() {
+            button.disabled = false;
           });
         });
         
@@ -1792,33 +1831,423 @@ document.addEventListener('DOMContentLoaded', function () {
   
   // A much simpler password modal
   function showSimplePasswordPrompt(message, callback) {
-    console.log('Showing simple password prompt:', message);
-
-    // Use system prompt to get password
-    const password = window.prompt(message);
+    console.log('Showing custom password prompt:', message);
     
-    // If user pressed Cancel, callback with null
-    if (password === null) {
-      callback(null);
-      return;
+    const modal = document.getElementById('password-modal');
+    const passwordInput = document.getElementById('password-input');
+    const passwordLabel = document.getElementById('password-label');
+    const passwordMessage = document.getElementById('password-message');
+    const singleMode = document.getElementById('single-password-mode');
+    const changeMode = document.getElementById('change-password-mode');
+    const modalTitle = document.getElementById('passwordModalLabel');
+    const okBtn = document.getElementById('password-modal-ok');
+    const cancelBtn = document.getElementById('password-modal-cancel');
+    const closeBtn = document.getElementById('password-modal-close');
+    
+    // Show single password mode
+    singleMode.style.display = 'block';
+    changeMode.style.display = 'none';
+    modalTitle.textContent = 'Password Required';
+    
+    // Set the label message
+    passwordLabel.textContent = message;
+    
+    // Clear previous input and messages
+    passwordInput.value = '';
+    passwordMessage.style.display = 'none';
+    
+    // Store callback for later use
+    modal._passwordCallback = callback;
+    modal._isChangePasswordMode = false;
+    
+    // Show modal using the same approach as license modal
+    showPasswordModal(modal);
+    
+    // Focus on password input
+    setTimeout(() => {
+      passwordInput.focus();
+    }, 300);
+    
+    // Handle Enter key in password input
+    passwordInput.onkeydown = function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        handleSinglePasswordOk();
+      }
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        handlePasswordCancel();
+      }
+    };
+    
+    // Handle OK button
+    okBtn.onclick = handleSinglePasswordOk;
+    
+    // Handle Cancel and Close buttons
+    cancelBtn.onclick = handlePasswordCancel;
+    closeBtn.onclick = handlePasswordCancel;
+    
+    function handleSinglePasswordOk() {
+      const password = passwordInput.value;
+      
+      if (!password || password.trim() === '') {
+        showPasswordMessage('Password cannot be empty.', false);
+        passwordInput.focus();
+        return;
+      }
+      
+      // Check length and numbers for new passwords (not for verification)
+      if (message.includes('set a password') && (password.length < 8 || !/\d/.test(password))) {
+        showPasswordMessage('Password must be at least 8 characters long and contain at least one number.', false);
+        passwordInput.focus();
+        return;
+      }
+      
+      hidePasswordModal(modal);
+      
+      // Call the callback with the password
+      setTimeout(() => {
+        if (modal._passwordCallback) {
+          modal._passwordCallback(password);
+          modal._passwordCallback = null;
+        }
+      }, 100);
     }
-
-    // Check if empty
-    if (!password || password.trim() === '') {
-      alert('Password cannot be empty.');
-      callback(null);
-      return;
+    
+    function handlePasswordCancel() {
+      hidePasswordModal(modal);
+      
+      // Call the callback with null (cancelled)
+      setTimeout(() => {
+        if (modal._passwordCallback) {
+          modal._passwordCallback(null);
+          modal._passwordCallback = null;
+        }
+      }, 100);
     }
-
-    // Check length and numbers for new passwords (not for verification)
-    if (message.includes('set a password') && (password.length < 8 || !/\d/.test(password))) {
-      alert('Password must be at least 8 characters long and contain at least one number.');
-      callback(null);
-      return;
+  }
+  
+  // New function for change password dialog with all fields
+  function showChangePasswordDialog(callback) {
+    console.log('Showing change password dialog');
+    
+    const modal = document.getElementById('password-modal');
+    const currentPasswordInput = document.getElementById('current-password-input');
+    const newPasswordInput = document.getElementById('new-password-input');
+    const confirmPasswordInput = document.getElementById('confirm-password-input');
+    const passwordMessage = document.getElementById('password-message');
+    const singleMode = document.getElementById('single-password-mode');
+    const changeMode = document.getElementById('change-password-mode');
+    const modalTitle = document.getElementById('passwordModalLabel');
+    const okBtn = document.getElementById('password-modal-ok');
+    const cancelBtn = document.getElementById('password-modal-cancel');
+    const closeBtn = document.getElementById('password-modal-close');
+    const verifyBtn = document.getElementById('verify-current-password-btn');
+    const currentPasswordStatus = document.getElementById('current-password-status');
+    
+    // Show change password mode
+    singleMode.style.display = 'none';
+    changeMode.style.display = 'block';
+    modalTitle.textContent = 'Change Password';
+    
+    // Clear previous inputs and messages
+    currentPasswordInput.value = '';
+    newPasswordInput.value = '';
+    confirmPasswordInput.value = '';
+    passwordMessage.style.display = 'none';
+    currentPasswordStatus.style.display = 'none';
+    
+    // Reset field states
+    newPasswordInput.disabled = true;
+    confirmPasswordInput.disabled = true;
+    verifyBtn.disabled = false;
+    okBtn.disabled = true;
+    
+    // Store callback and verification state
+    modal._passwordCallback = callback;
+    modal._isChangePasswordMode = true;
+    modal._currentPasswordVerified = false;
+    
+    // Show modal
+    showPasswordModal(modal);
+    
+    // Focus on current password input
+    setTimeout(() => {
+      currentPasswordInput.focus();
+    }, 300);
+    
+    // Handle current password input changes
+    currentPasswordInput.oninput = function() {
+      // Reset verification state when password changes
+      modal._currentPasswordVerified = false;
+      newPasswordInput.disabled = true;
+      confirmPasswordInput.disabled = true;
+      okBtn.disabled = true;
+      currentPasswordStatus.style.display = 'none';
+      
+      // Enable/disable verify button based on input
+      verifyBtn.disabled = !this.value.trim();
+    };
+    
+    // Handle Enter key navigation
+    currentPasswordInput.onkeydown = function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        if (!verifyBtn.disabled) {
+          handleVerifyCurrentPassword();
+        }
+      }
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        handlePasswordCancel();
+      }
+    };
+    
+    newPasswordInput.onkeydown = function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        if (!this.disabled) {
+          confirmPasswordInput.focus();
+        }
+      }
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        handlePasswordCancel();
+      }
+    };
+    
+    // Handle new password input changes for validation
+    newPasswordInput.oninput = function() {
+      validateNewPasswordFields();
+    };
+    
+    confirmPasswordInput.onkeydown = function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        if (!okBtn.disabled) {
+          handleChangePasswordOk();
+        }
+      }
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        handlePasswordCancel();
+      }
+    };
+    
+    // Handle confirm password input changes for validation
+    confirmPasswordInput.oninput = function() {
+      validateNewPasswordFields();
+    };
+    
+    // Handle Verify button
+    verifyBtn.onclick = handleVerifyCurrentPassword;
+    
+    // Handle OK button
+    okBtn.onclick = handleChangePasswordOk;
+    
+    // Handle Cancel and Close buttons
+    cancelBtn.onclick = handlePasswordCancel;
+    closeBtn.onclick = handlePasswordCancel;
+    
+    // Function to verify current password
+    function handleVerifyCurrentPassword() {
+      const currentPassword = currentPasswordInput.value.trim();
+      
+      if (!currentPassword) {
+        showCurrentPasswordStatus('Please enter your current password.', 'error');
+        return;
+      }
+      
+      // Show verifying status
+      showCurrentPasswordStatus('Verifying password...', 'verifying');
+      verifyBtn.disabled = true;
+      
+      // Get stored password and verify
+      chrome.storage.local.get('wslPassword', function(result) {
+        digestPassword(currentPassword).then(hashedCurrentPassword => {
+          if (hashedCurrentPassword !== result.wslPassword) {
+            showCurrentPasswordStatus('Current password is incorrect.', 'error');
+            verifyBtn.disabled = false;
+            modal._currentPasswordVerified = false;
+          } else {
+            showCurrentPasswordStatus('Password verified successfully!', 'success');
+            modal._currentPasswordVerified = true;
+            
+            // Enable new password fields
+            newPasswordInput.disabled = false;
+            confirmPasswordInput.disabled = false;
+            
+            // Focus on new password field
+            setTimeout(() => {
+              newPasswordInput.focus();
+            }, 500);
+            
+            // Validate new password fields
+            validateNewPasswordFields();
+          }
+        }).catch(error => {
+          console.error('Error verifying password:', error);
+          showCurrentPasswordStatus('Error verifying password. Please try again.', 'error');
+          verifyBtn.disabled = false;
+          modal._currentPasswordVerified = false;
+        });
+      });
     }
-
-    // Password is valid, call callback
-    callback(password);
+    
+    // Function to show current password status
+    function showCurrentPasswordStatus(message, type) {
+      currentPasswordStatus.textContent = message;
+      currentPasswordStatus.className = `status-${type}`;
+      currentPasswordStatus.style.display = 'block';
+    }
+    
+    // Function to validate new password fields and enable/disable OK button
+    function validateNewPasswordFields() {
+      const newPassword = newPasswordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+      
+      let isValid = modal._currentPasswordVerified && 
+                    newPassword && 
+                    newPassword.length >= 8 && 
+                    /\d/.test(newPassword) && 
+                    confirmPassword && 
+                    newPassword === confirmPassword;
+      
+      okBtn.disabled = !isValid;
+      
+      // Show inline validation for new password
+      if (newPassword && (newPassword.length < 8 || !/\d/.test(newPassword))) {
+        showPasswordMessage('Password must be at least 8 characters with at least one number.', false);
+      } else if (newPassword && confirmPassword && newPassword !== confirmPassword) {
+        showPasswordMessage('Passwords do not match.', false);
+      } else if (isValid) {
+        passwordMessage.style.display = 'none';
+      }
+    }
+    
+    function handleChangePasswordOk() {
+      // At this point, current password is already verified and validation is done
+      const currentPassword = currentPasswordInput.value;
+      const newPassword = newPasswordInput.value;
+      
+      // Check if new password is different from current
+      if (currentPassword === newPassword) {
+        showPasswordMessage('New password must be different from current password.', false);
+        newPasswordInput.focus();
+        return;
+      }
+      
+      // Save the new password
+      showPasswordMessage('Saving new password...', true);
+      okBtn.disabled = true;
+      
+      digestPassword(newPassword).then(hashedNewPassword => {
+        chrome.storage.local.set({
+          wslPassword: hashedNewPassword,
+          failedAttempts: 0,
+          lockoutTime: null
+        }, function() {
+          hidePasswordModal(modal);
+          
+          // Call the callback with success
+          setTimeout(() => {
+            if (modal._passwordCallback) {
+              modal._passwordCallback({
+                success: true,
+                message: 'Password changed successfully!'
+              });
+              modal._passwordCallback = null;
+            }
+          }, 100);
+        });
+      }).catch(error => {
+        console.error('Error hashing new password:', error);
+        showPasswordMessage('Error saving new password. Please try again.', false);
+        okBtn.disabled = false;
+      });
+    }
+    
+    function handlePasswordCancel() {
+      hidePasswordModal(modal);
+      
+      // Call the callback with null (cancelled)
+      setTimeout(() => {
+        if (modal._passwordCallback) {
+          modal._passwordCallback(null);
+          modal._passwordCallback = null;
+        }
+      }, 100);
+    }
+  }
+  
+  // Show password modal
+  function showPasswordModal(modal) {
+    modal.style.zIndex = '2147483647';
+    modal.style.display = 'block';
+    modal.style.backgroundColor = 'transparent';
+    modal.style.pointerEvents = 'none';
+    
+    // Make dialog clickable
+    const dialog = modal.querySelector('.modal-dialog');
+    if (dialog) {
+      dialog.style.pointerEvents = 'auto';
+    }
+    
+    // Remove inert attribute
+    modal.removeAttribute('inert');
+    
+    if (typeof jQuery !== 'undefined') {
+      // Use jQuery if available
+      $(modal).modal({
+        show: true,
+        backdrop: false, // Disable backdrop
+        keyboard: true
+      });
+      
+      // Remove any backdrop that jQuery might create
+      setTimeout(() => {
+        const jqueryBackdrop = document.querySelector('.modal-backdrop');
+        if (jqueryBackdrop) {
+          jqueryBackdrop.remove();
+        }
+      }, 100);
+    } else {
+      // Vanilla JS fallback
+      modal.classList.add('show');
+    }
+  }
+  
+  // Hide password modal
+  function hidePasswordModal(modal) {
+    if (typeof jQuery !== 'undefined') {
+      $(modal).modal('hide');
+      setTimeout(() => {
+        modal.setAttribute('inert', '');
+        modal.style.zIndex = '';
+        modal.style.backgroundColor = '';
+        modal.style.pointerEvents = '';
+      }, 300);
+    } else {
+      modal.classList.remove('show');
+      modal.style.display = 'none';
+      modal.style.zIndex = '';
+      modal.style.backgroundColor = '';
+      modal.style.pointerEvents = '';
+      modal.setAttribute('inert', '');
+    }
+  }
+  
+  // Show message in password modal
+  function showPasswordMessage(message, isSuccess) {
+    const passwordMessage = document.getElementById('password-message');
+    passwordMessage.textContent = message;
+    passwordMessage.className = isSuccess ? 'alert alert-info' : 'alert alert-danger';
+    passwordMessage.style.display = 'block';
+    
+    // Hide message after 3 seconds
+    setTimeout(() => {
+      passwordMessage.style.display = 'none';
+    }, 3000);
   }
 
   // Simple function to set a new WSL password
@@ -1851,12 +2280,10 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Function to handle changing password with verification
-  async function handleChangePassword() {
+  function handleChangePassword() {
     console.log('Handling password change');
     
-    try {
-      const result = await new Promise(resolve => chrome.storage.local.get('wslPassword', resolve));
-      
+    chrome.storage.local.get('wslPassword', function(result) {
       if (!result.wslPassword) {
         // No password set yet, just set a new one
         showSimplePasswordPrompt(
@@ -1866,70 +2293,23 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
       
-      // Verify current password first
-      const currentPassword = await new Promise(resolve => {
-        showSimplePasswordPrompt('Please enter your current password:', resolve);
+      // Use the new change password dialog
+      showChangePasswordDialog(function(result) {
+        if (!result) {
+          console.log('Password change cancelled');
+          return;
+        }
+        
+        if (result.success) {
+          alert(result.message);
+        } else {
+          alert(result.message || 'Password change failed');
+        }
       });
-      
-      if (!currentPassword) {
-        console.log('Password verification cancelled');
-        return;
-      }
-      
-      const hashedCurrentPassword = await digestPassword(currentPassword);
-      if (hashedCurrentPassword !== result.wslPassword) {
-        alert('Incorrect current password!');
-        return;
-      }
-      
-      // Get new password
-      const newPassword = await new Promise(resolve => {
-        showSimplePasswordPrompt(
-          'Please enter a new password (minimum 8 characters with at least one number):',
-          resolve
-        );
-      });
-      
-      if (!newPassword) {
-        console.log('New password entry cancelled');
-        return;
-      }
-      
-      if (newPassword.length < 8 || !/\d/.test(newPassword)) {
-        alert('Password must be at least 8 characters long and contain at least one number.');
-        return;
-      }
-      
-      // Confirm new password
-      const confirmPassword = await new Promise(resolve => {
-        showSimplePasswordPrompt('Please confirm your new password:', resolve);
-      });
-      
-      if (!confirmPassword) {
-        console.log('Password confirmation cancelled');
-        return;
-      }
-      
-      if (confirmPassword !== newPassword) {
-        alert('Passwords do not match. Please try again.');
-        return;
-      }
-      
-      // Save the new password
-      const hashedNewPassword = await digestPassword(newPassword);
-      await new Promise(resolve => chrome.storage.local.set({
-        wslPassword: hashedNewPassword,
-        failedAttempts: 0,
-        lockoutTime: null
-      }, resolve));
-      
-      alert('Password changed successfully!');
-      
-    } catch (error) {
-      console.error('Error changing password:', error);
-      alert('Error changing password. Please try again.');
-    }
+    });
   }
+  
+
 
   // Function to verify a password against stored hash for secure buttons
   async function verifyWSLPassword(callback) {
@@ -2913,6 +3293,17 @@ document.addEventListener('DOMContentLoaded', function () {
   // Initialize license functionality
   updateLicenseStatus();
   initializeLicenseModal();
+  
+  // Initialize password modal
+  function initializePasswordModal() {
+    const passwordModal = document.getElementById('password-modal');
+    if (passwordModal) {
+      // Initialize modal with inert attribute when hidden
+      passwordModal.setAttribute('inert', '');
+    }
+  }
+  
+  initializePasswordModal();
   
   // Direct event handler for the manage license button
   const manageBtn = document.getElementById('manage-license-btn');

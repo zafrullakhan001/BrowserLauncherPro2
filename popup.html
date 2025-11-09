@@ -911,6 +911,58 @@
           </div>
         </div>
       </div>
+
+      <!-- Password Modal -->
+      <div class="modal fade" id="password-modal" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="passwordModalLabel">Password Required</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="password-modal-close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <!-- Single password input mode -->
+              <div id="single-password-mode">
+                <div class="form-group">
+                  <label for="password-input" id="password-label">Enter Password:</label>
+                  <input type="password" class="form-control" id="password-input" placeholder="Enter your password">
+                </div>
+              </div>
+              
+              <!-- Change password mode with all fields -->
+              <div id="change-password-mode" style="display: none;">
+                <div class="form-group">
+                  <label for="current-password-input">Current Password:</label>
+                  <input type="password" class="form-control" id="current-password-input" placeholder="Enter your current password">
+                  <div class="verify-button-container">
+                    <button type="button" class="verify-button-standalone" id="verify-current-password-btn">
+                      <i class="fas fa-check"></i> Verify Current Password
+                    </button>
+                  </div>
+                  <div id="current-password-status" class="mt-2" style="display: none;"></div>
+                </div>
+                <div class="form-group">
+                  <label for="new-password-input">New Password:</label>
+                  <input type="password" class="form-control" id="new-password-input" placeholder="Enter new password (min 8 chars with 1 number)" disabled>
+                  <small class="form-text text-muted">Minimum 8 characters with at least one number</small>
+                </div>
+                <div class="form-group">
+                  <label for="confirm-password-input">Confirm New Password:</label>
+                  <input type="password" class="form-control" id="confirm-password-input" placeholder="Confirm your new password" disabled>
+                </div>
+              </div>
+              
+              <div id="password-message" style="display: none;" role="alert"></div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" id="password-modal-cancel">Cancel</button>
+              <button type="button" class="btn btn-primary" id="password-modal-ok">OK</button>
+            </div>
+          </div>
+        </div>
+      </div>
       
       <script src="popup.js"></script>
       <script src="import-settings.js"></script>
