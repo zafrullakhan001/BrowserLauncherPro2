@@ -454,6 +454,57 @@ header .subheading {
   color: #6b7280;
 }
 
+/* WSL tab now uses the same styling as Windows Local tab */
+
+/* WSL Linux Penguin (Tux) indicator styling */
+.wsl-penguin-indicator {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  z-index: 10;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  background-image: url('images/penguin.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.button-with-version:hover .wsl-penguin-indicator {
+  opacity: 1;
+}
+
+/* Additional badge colors for WSL browsers and tools */
+.badge-warning {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+.badge-info {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.badge-secondary {
+  background: #6b7280;
+  color: #ffffff;
+}
+
+.badge-primary {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.badge-danger {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+/* Dark theme support for WSL items - minimal clean look with no backgrounds */
+
 .button-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -522,8 +573,8 @@ header .subheading {
 
 /* Chrome icon sized to match Edge for consistency */
 .chrome-icon {
-  width: 88px;
-  height: 88px;
+  width: 48px;
+  height: 48px;
 }
 
 /* Badge-style labels under icons */
@@ -598,12 +649,12 @@ header .subheading {
 }
 
 /* Ensure browser icons are exactly the same size */
-.browser-btn-edge .browser-icon,
+/* .browser-btn-edge .browser-icon,
 .browser-btn-chrome .browser-icon {
   width: 48px !important;
   height: 48px !important;
   margin-bottom: 2px;
-}
+} */
 
 /* Force identical font styling for both Edge and Chrome buttons */
 .btn-primary.browser-btn-edge,

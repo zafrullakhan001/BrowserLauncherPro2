@@ -173,9 +173,27 @@
             <span data-i18n="wsl.edge.title">MICROSOFT EDGE</span>
           </div>
           <div class="button-container">
-            <button class="btn btn-primary" id="edge-stable"><i class="fab fa-edge"></i> <span>Edge </span><span data-i18n="browsers.stable">Stable</span></button>
-            <button class="btn btn-primary" id="edge-beta"><i class="fab fa-edge"></i> <span>Edge </span><span data-i18n="browsers.beta">Beta</span></button>
-            <button class="btn btn-primary" id="edge-dev"><i class="fab fa-edge"></i> <span>Edge </span><span data-i18n="browsers.dev">Dev</span></button>
+            <div class="button-with-version">
+              <span class="wsl-penguin-indicator"></span>
+              <button class="btn btn-primary browser-btn-edge" id="edge-stable">
+                <img src="images/edge.png" alt="Edge" class="browser-icon">
+                <span class="browser-label badge-stable" data-i18n="browsers.stable">Stable</span>
+              </button>
+            </div>
+            <div class="button-with-version">
+              <span class="wsl-penguin-indicator"></span>
+              <button class="btn btn-primary browser-btn-edge" id="edge-beta">
+                <img src="images/edge.png" alt="Edge" class="browser-icon">
+                <span class="browser-label badge-beta" data-i18n="browsers.beta">Beta</span>
+              </button>
+            </div>
+            <div class="button-with-version">
+              <span class="wsl-penguin-indicator"></span>
+              <button class="btn btn-primary browser-btn-edge" id="edge-dev">
+                <img src="images/edge.png" alt="Edge" class="browser-icon">
+                <span class="browser-label badge-dev" data-i18n="browsers.dev">Dev</span>
+              </button>
+            </div>
           </div>
         </div>
         <div class="browser-group">
@@ -184,9 +202,27 @@
             <span data-i18n="wsl.chrome.title">GOOGLE CHROME</span>
           </div>
           <div class="button-container">
-            <button class="btn btn-success" id="chrome-stable"><i class="fab fa-chrome"></i> <span>Chrome </span><span data-i18n="browsers.stable">Stable</span></button>
-            <button class="btn btn-success" id="chrome-beta"><i class="fab fa-chrome"></i> <span>Chrome </span><span data-i18n="browsers.beta">Beta</span></button>
-            <button class="btn btn-success" id="chrome-dev"><i class="fab fa-chrome"></i> <span>Chrome </span><span data-i18n="browsers.dev">Dev</span></button>
+            <div class="button-with-version">
+              <span class="wsl-penguin-indicator"></span>
+              <button class="btn btn-success browser-btn-chrome" id="chrome-stable">
+                <img src="images/chrome.png" alt="Chrome" class="browser-icon chrome-icon">
+                <span class="browser-label badge-stable" data-i18n="browsers.stable">Stable</span>
+              </button>
+            </div>
+            <div class="button-with-version">
+              <span class="wsl-penguin-indicator"></span>
+              <button class="btn btn-success browser-btn-chrome" id="chrome-beta">
+                <img src="images/chrome.png" alt="Chrome" class="browser-icon chrome-icon">
+                <span class="browser-label badge-beta" data-i18n="browsers.beta">Beta</span>
+              </button>
+            </div>
+            <div class="button-with-version">
+              <span class="wsl-penguin-indicator"></span>
+              <button class="btn btn-success browser-btn-chrome" id="chrome-dev">
+                <img src="images/chrome.png" alt="Chrome" class="browser-icon chrome-icon">
+                <span class="browser-label badge-dev" data-i18n="browsers.dev">Dev</span>
+              </button>
+            </div>
           </div>
         </div>
         <div class="browser-group">
@@ -195,9 +231,27 @@
             <span data-i18n="wsl.other.title">OTHER BROWSERS</span>
           </div>
           <div class="button-container">
-            <button class="btn btn-warning" id="firefox"><i class="fab fa-firefox"></i> <span data-i18n="wsl.firefox">Firefox</span></button>
-            <button class="btn btn-info" id="opera"><i class="fab fa-opera"></i> <span data-i18n="wsl.opera">Opera</span></button>
-            <button class="btn btn-secondary" id="brave"><i class="fab fa-brave"></i> <span data-i18n="wsl.brave">Brave</span></button>
+            <div class="button-with-version">
+              <span class="wsl-penguin-indicator"></span>
+              <button class="btn" id="firefox">
+                <img src="images/firefox.png" alt="Firefox" class="browser-icon">
+                <span class="browser-label badge-warning" data-i18n="wsl.firefox">Firefox</span>
+              </button>
+            </div>
+            <div class="button-with-version">
+              <span class="wsl-penguin-indicator"></span>
+              <button class="btn" id="opera">
+                <img src="images/opera.png" alt="Opera" class="browser-icon">
+                <span class="browser-label badge-info" data-i18n="wsl.opera">Opera</span>
+              </button>
+            </div>
+            <div class="button-with-version">
+              <span class="wsl-penguin-indicator"></span>
+              <button class="btn" id="brave">
+                <img src="images/brave.png" alt="Brave" class="browser-icon">
+                <span class="browser-label badge-secondary" data-i18n="wsl.brave">Brave</span>
+              </button>
+            </div>
           </div>
         </div>
         <div class="browser-group">
@@ -206,9 +260,25 @@
             <span data-i18n="wsl.tools.title">WSL UBUNTU TOOLS</span>
           </div>
           <div class="button-container">
-            <button class="btn btn-primary" id="launch-xterm"><i class="fas fa-terminal"></i> <span data-i18n="wsl.konsole">Launch Konsole</span></button>
-            <button class="btn btn-secondary" id="launch-powershell"><i class="fas fa-terminal"></i> <span data-i18n="wsl.powershell">Launch PowerShell</span></button>
-            <button class="btn btn-danger" id="launch-sandbox"><i class="fas fa-shield-alt"></i> <span data-i18n="wsl.sandbox">Launch Win Sandbox</span></button>
+            <div class="button-with-version">
+              <span class="wsl-penguin-indicator"></span>
+              <button class="btn" id="launch-xterm">
+                <img src="images/Konsole.png" alt="Konsole" class="browser-icon">
+                <span class="browser-label badge-primary" data-i18n="wsl.konsole">Konsole</span>
+              </button>
+            </div>
+            <div class="button-with-version">
+              <button class="btn" id="launch-powershell">
+                <img src="images/powershell.png" alt="PowerShell" class="browser-icon">
+                <span class="browser-label badge-secondary" data-i18n="wsl.powershell">PowerShell</span>
+              </button>
+            </div>
+            <div class="button-with-version">
+              <button class="btn" id="launch-sandbox">
+                <img src="images/sandbox.png" alt="Windows Sandbox" class="browser-icon">
+                <span class="browser-label badge-danger" data-i18n="wsl.sandbox">Sandbox</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
