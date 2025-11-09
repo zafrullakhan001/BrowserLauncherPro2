@@ -338,6 +338,122 @@ header .subheading {
   color: #94a3b8;
 }
 
+/* Browser section badge styling */
+.browser-section-badge {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 12px;
+  padding: 8px 0;
+  position: relative;
+  width: 100%;
+}
+
+.browser-section-badge i {
+  font-size: 18px;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.browser-section-badge span {
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #475569;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .browser-section-badge span {
+  color: #94a3b8;
+}
+
+/* Badge for "LOCAL" text - positioned at far right end */
+.browser-section-badge::after {
+  content: "LOCAL";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .browser-section-badge::after {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  color: #0f172a;
+  box-shadow: 0 2px 4px rgba(96, 165, 250, 0.3);
+}
+
+/* Edge specific badge styling */
+.browser-section-badge.edge-badge i {
+  color: #0078d4;
+}
+
+.browser-section-badge.edge-badge::after {
+  background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
+}
+
+[data-theme="dark"] .browser-section-badge.edge-badge::after {
+  background: linear-gradient(135deg, #40a9ff 0%, #0078d4 100%);
+}
+
+/* Chrome specific badge styling */
+.browser-section-badge.chrome-badge i {
+  color: #4285f4;
+}
+
+.browser-section-badge.chrome-badge::after {
+  background: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%);
+}
+
+[data-theme="dark"] .browser-section-badge.chrome-badge::after {
+  background: linear-gradient(135deg, #4fc3f7 0%, #4285f4 100%);
+}
+
+/* WSL specific badge styling */
+.browser-section-badge.wsl-edge-badge::after,
+.browser-section-badge.wsl-chrome-badge::after,
+.browser-section-badge.wsl-other-badge::after,
+.browser-section-badge.wsl-tools-badge::after {
+  content: "WSL";
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+[data-theme="dark"] .browser-section-badge.wsl-edge-badge::after,
+[data-theme="dark"] .browser-section-badge.wsl-chrome-badge::after,
+[data-theme="dark"] .browser-section-badge.wsl-other-badge::after,
+[data-theme="dark"] .browser-section-badge.wsl-tools-badge::after {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  color: #0f172a;
+}
+
+/* WSL specific icon colors */
+.browser-section-badge.wsl-edge-badge i {
+  color: #0078d4;
+}
+
+.browser-section-badge.wsl-chrome-badge i {
+  color: #4285f4;
+}
+
+.browser-section-badge.wsl-other-badge i {
+  color: #f59e0b;
+}
+
+.browser-section-badge.wsl-tools-badge i {
+  color: #6b7280;
+}
+
 .button-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -378,8 +494,8 @@ header .subheading {
 
 .btn {
   width: 100%;
-  margin-top: 6px; /* reduce vertical spacing */
-  padding: 8px 12px; /* smaller padding */
+  margin-top: 4px; /* reduce vertical spacing more */
+  padding: 6px 8px; /* smaller padding for tighter spacing */
   font-weight: 600;
   font-size: 12px;
   border-radius: 8px;
@@ -392,14 +508,14 @@ header .subheading {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px; /* reduced gap between icon and badge */
 }
 
 /* Browser icon styling (compact) */
 .browser-icon {
   width: 48px;
   height: 48px;
-  margin-bottom: 4px;
+  margin-bottom: 2px; /* reduced margin for tighter spacing */
   object-fit: contain;
   display: block;
 }
