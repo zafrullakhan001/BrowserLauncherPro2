@@ -199,6 +199,31 @@ const TRANSLATIONS = {
     'buttons.refresh': 'Refresh',
     'buttons.activate': 'Activate License',
     'buttons.deactivate': 'Deactivate License',
+    'buttons.done': 'Done',
+    
+    // EULA (End User License Agreement)
+    'eula.title': 'EULA - Browser Launcher Pro',
+    'eula.app.name': 'Browser Launcher',
+    'eula.header': 'End User License Agreement',
+    'eula.intro': 'This End User License Agreement ("Agreement") is a legal agreement between you ("User") and the developers ("Developers") of the Browser Launcher extension ("Extension"). By installing, copying, or otherwise using the Extension, you agree to be bound by the terms of this Agreement.',
+    'eula.section1.title': '1. License Grant',
+    'eula.section1.content': 'The Developers grant you a non-exclusive, non-transferable, revocable license to use the Extension in accordance with the terms of this Agreement.',
+    'eula.section2.title': '2. No Data Collection',
+    'eula.section2.content': 'The Developers affirm that the Extension does not capture or collect any information from the User\'s screen. The Extension operates locally on the User\'s device and does not transmit any data to external servers.',
+    'eula.section3.title': '3. Disclaimer of Warranties',
+    'eula.section3.content': 'The Extension is provided "as is" without warranty of any kind. The Developers disclaim all warranties, whether express, implied, or statutory, including but not limited to the implied warranties of merchantability, fitness for a particular purpose, and non-infringement of third-party rights.',
+    'eula.section4.title': '4. Limitation of Liability',
+    'eula.section4.content': 'In no event shall the Developers be liable for any loss, damage, or theft of data, or any other damages of any kind arising out of the use or inability to use the Extension. The User assumes full responsibility for any damages or losses incurred through the use of the Extension.',
+    'eula.section5.title': '5. User Responsibility',
+    'eula.section5.content': 'The User acknowledges that the use of the Extension is at their own risk. The Developers are not responsible for any data loss, security breaches, or any other issues that may arise from using the Extension. The User agrees to use the Extension in compliance with all applicable laws and regulations.',
+    'eula.section6.title': '6. Termination',
+    'eula.section6.content': 'This Agreement is effective until terminated by either party. The User may terminate this Agreement at any time by uninstalling and discontinuing the use of the Extension. The Developers may terminate this Agreement at any time if the User fails to comply with any terms of this Agreement.',
+    'eula.section7.title': '7. Governing Law',
+    'eula.section7.content': 'This Agreement shall be governed by and construed in accordance with the laws of the jurisdiction in which the Developers are located, without regard to its conflict of law principles.',
+    'eula.section8.title': '8. Entire Agreement',
+    'eula.section8.content': 'This Agreement constitutes the entire agreement between the parties with respect to the use of the Extension and supersedes all prior or contemporaneous understandings regarding such subject matter.',
+    'eula.closing': 'By clicking "Accept" or by installing, copying, or using the Extension, you acknowledge that you have read and understood this Agreement and agree to be bound by its terms.',
+    'eula.accept.checkbox': 'I have read and accept the EULA',
     
     // Paths and labels
     'paths.stable': 'Stable Path:',
@@ -299,7 +324,35 @@ const TRANSLATIONS = {
     'buttons.close': 'Fermer',
     'buttons.save': 'Sauvegarder',
     'buttons.export': 'Exporter',
-    'buttons.import': 'Importer'
+    'buttons.import': 'Importer',
+    'buttons.done': 'Terminé',
+    
+    // EULA (Contrat de Licence Utilisateur Final)
+    'eula.title': 'CLUF - Browser Launcher Pro',
+    'eula.app.name': 'Browser Launcher',
+    'eula.header': 'Contrat de Licence Utilisateur Final',
+    'eula.intro': 'Ce Contrat de Licence Utilisateur Final ("Contrat") est un accord juridique entre vous ("Utilisateur") et les développeurs ("Développeurs") de l\'extension Browser Launcher ("Extension"). En installant, copiant ou utilisant l\'Extension, vous acceptez d\'être lié par les termes de ce Contrat.',
+    'eula.section1.title': '1. Octroi de Licence',
+    'eula.section1.content': 'Les Développeurs vous accordent une licence non exclusive, non transférable et révocable d\'utiliser l\'Extension conformément aux termes de ce Contrat.',
+    'eula.section2.title': '2. Aucune Collecte de Données',
+    'eula.section2.content': 'Les Développeurs affirment que l\'Extension ne capture ni ne collecte aucune information de l\'écran de l\'Utilisateur. L\'Extension fonctionne localement sur l\'appareil de l\'Utilisateur et ne transmet aucune donnée vers des serveurs externes.',
+    'eula.section3.title': '3. Exclusion de Garanties',
+    'eula.section3.content': 'L\'Extension est fournie "en l\'état" sans garantie d\'aucune sorte. Les Développeurs déclinent toute garantie, qu\'elle soit expresse, implicite ou légale.',
+    'eula.section4.title': '4. Limitation de Responsabilité',
+    'eula.section4.content': 'En aucun cas les Développeurs ne seront responsables de toute perte, dommage ou vol de données, ou de tout autre dommage découlant de l\'utilisation ou de l\'impossibilité d\'utiliser l\'Extension.',
+    'eula.section5.title': '5. Responsabilité de l\'Utilisateur',
+    'eula.section5.content': 'L\'Utilisateur reconnaît que l\'utilisation de l\'Extension se fait à ses propres risques. Les Développeurs ne sont pas responsables de la perte de données, des violations de sécurité ou de tout autre problème pouvant survenir.',
+    'eula.section6.title': '6. Résiliation',
+    'eula.section6.content': 'Ce Contrat est effectif jusqu\'à sa résiliation par l\'une ou l\'autre partie. L\'Utilisateur peut résilier ce Contrat à tout moment en désinstallant l\'Extension.',
+    'eula.section7.title': '7. Loi Applicable',
+    'eula.section7.content': 'Ce Contrat sera régi et interprété conformément aux lois de la juridiction où se trouvent les Développeurs.',
+    'eula.section8.title': '8. Accord Intégral',
+    'eula.section8.content': 'Ce Contrat constitue l\'accord complet entre les parties concernant l\'utilisation de l\'Extension.',
+    'eula.closing': 'En cliquant sur "Accepter" ou en installant l\'Extension, vous reconnaissez avoir lu et compris ce Contrat et acceptez d\'être lié par ses termes.',
+    'eula.accept.checkbox': 'J\'ai lu et j\'accepte le CLUF',
+    
+    // Footer
+    'footer.disclaimer': 'Les icônes et marques de navigateurs sont la propriété de leurs entreprises respectives. Nous ne sommes affiliés à Microsoft, Google, Mozilla, Opera, ou toute autre entreprise de navigateur.'
   },
   
   'es': {
@@ -340,7 +393,10 @@ const TRANSLATIONS = {
     'buttons.ok': 'Aceptar',
     'buttons.cancel': 'Cancelar',
     'buttons.close': 'Cerrar',
-    'buttons.save': 'Guardar'
+    'buttons.save': 'Guardar',
+    
+    // Footer
+    'footer.disclaimer': 'Los iconos y marcas comerciales de navegadores son propiedad de sus respectivas empresas. No estamos afiliados con Microsoft, Google, Mozilla, Opera, o cualquier otra empresa de navegadores.'
   },
   
   'de': {
@@ -376,7 +432,10 @@ const TRANSLATIONS = {
     // Buttons
     'buttons.ok': 'OK',
     'buttons.cancel': 'Abbrechen',
-    'buttons.save': 'Speichern'
+    'buttons.save': 'Speichern',
+    
+    // Footer
+    'footer.disclaimer': 'Browser-Symbole und Markenzeichen sind Eigentum ihrer jeweiligen Unternehmen. Wir sind nicht mit Microsoft, Google, Mozilla, Opera oder anderen Browser-Unternehmen verbunden.'
   },
   
   'it': {
@@ -399,7 +458,10 @@ const TRANSLATIONS = {
     // Buttons
     'buttons.ok': 'OK',
     'buttons.cancel': 'Annulla',
-    'buttons.save': 'Salva'
+    'buttons.save': 'Salva',
+    
+    // Footer
+    'footer.disclaimer': 'Le icone e i marchi dei browser sono proprietà delle rispettive aziende. Non siamo affiliati con Microsoft, Google, Mozilla, Opera o qualsiasi altra azienda di browser.'
   },
   
   'ar': {
@@ -459,7 +521,10 @@ const TRANSLATIONS = {
     // Buttons
     'buttons.ok': '确定',
     'buttons.cancel': '取消',
-    'buttons.save': '保存'
+    'buttons.save': '保存',
+    
+    // Footer
+    'footer.disclaimer': '浏览器图标和商标属于其各自公司的财产。我们与Microsoft、Google、Mozilla、Opera或任何其他浏览器公司均无关联。'
   },
   
   'zh-TW': {
@@ -543,7 +608,10 @@ const TRANSLATIONS = {
     
     // Buttons
     'buttons.ok': 'ОК',
-    'buttons.save': 'Сохранить'
+    'buttons.save': 'Сохранить',
+    
+    // Footer
+    'footer.disclaimer': 'Иконки и торговые марки браузеров являются собственностью соответствующих компаний. Мы не связаны с Microsoft, Google, Mozilla, Opera или любыми другими компаниями браузеров.'
   },
   
   'pt': {
@@ -837,6 +905,55 @@ function getSupportedLanguages() {
 }
 
 /**
+ * Initialize language selector for any element ID
+ */
+function initializeLanguageSelectorById(elementId) {
+  const languageSelect = document.getElementById(elementId);
+  if (!languageSelect) return;
+  
+  // Clear existing options
+  languageSelect.innerHTML = '';
+  
+  // Use simplified format for compact selectors
+  const simpleLanguages = {
+    'en': '[US] English',
+    'es': '[ES] Spanish', 
+    'fr': '[FR] French',
+    'de': '[DE] German',
+    'it': '[IT] Italian',
+    'pt': '[PT] Portuguese',
+    'ru': '[RU] Russian',
+    'zh': '[CN] Chinese',
+    'ja': '[JP] Japanese',
+    'ko': '[KR] Korean',
+    'ar': '[SA] Arabic',
+    'hi': '[IN] Hindi',
+    'tr': '[TR] Turkish',
+    'nl': '[NL] Dutch',
+    'sv': '[SE] Swedish',
+    'no': '[NO] Norwegian',
+    'da': '[DK] Danish'
+  };
+  
+  // Add language options
+  Object.entries(simpleLanguages).forEach(([code, name]) => {
+    const option = document.createElement('option');
+    option.value = code;
+    option.textContent = name;
+    if (code === currentLanguage) {
+      option.selected = true;
+    }
+    languageSelect.appendChild(option);
+  });
+  
+  // Add event listener for language change
+  languageSelect.addEventListener('change', (e) => {
+    const selectedLang = e.target.value;
+    applyLanguage(selectedLang);
+  });
+}
+
+/**
  * Get RTL languages list
  */
 function isRTLLanguage(langCode = null) {
@@ -852,7 +969,9 @@ window.i18n = {
   getCurrentLanguage: getCurrentLanguage,
   getSupportedLanguages: getSupportedLanguages,
   isRTL: isRTLLanguage,
-  initializeLanguageSelector: initializeLanguageSelector
+  initializeLanguageSelector: initializeLanguageSelector,
+  initializeLanguageSelectorById: initializeLanguageSelectorById,
+  setLanguage: applyLanguage
 };
 
 // Auto-initialize when DOM is ready

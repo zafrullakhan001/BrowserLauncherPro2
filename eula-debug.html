@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EULA Simple Test</title>
+    <link rel="stylesheet" href="eula.css">
+    <link rel="stylesheet" href="custom.css">
+    <script src="js/i18n.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>EULA Language Selector Debug</h2>
+        
+        <div>
+            <label>Language Selector:</label>
+            <select id="eula-language-select" class="language-selector-compact" style="margin: 10px;">
+                <!-- Options should be populated by JavaScript -->
+            </select>
+        </div>
+        
+        <div>
+            <p>Test text: <span data-i18n="eula.header">End User License Agreement</span></p>
+            <p>Button: <span data-i18n="buttons.done">Done</span></p>
+        </div>
+        
+        <div id="debug-info" style="background: #f0f0f0; padding: 10px; margin: 10px 0; font-family: monospace; font-size: 12px;"></div>
+    </div>
+
+    <script>
+        function debugLog(message) {
+            const debugDiv = document.getElementById('debug-info');
+            debugDiv.innerHTML += message + '<br>';
+            console.log(message);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            debugLog('DOM loaded');
+            debugLog('window.i18n: ' + (window.i18n ? 'Available' : 'Not available'));
+            
+            if (window.i18n) {
+                debugLog('Available i18n methods: ' + Object.keys(window.i18n).join(', '));
+                
+                // Initialize i18n
+                try {
+                    window.i18n.initialize();
+                    debugLog('i18n initialized successfully');
+                } catch (e) {
+                    debugLog('Error initializing i18n: ' + e.message);
+                }
+                
+                // Try to get current language
+                try {
+                    const currentLang = window.i18n.getCurrentLanguage();
+                    debugLog('Current language: ' + currentLang);
+                } catch (e) {
+                    debugLog('Error getting current language: ' + e.message);
+                }
+                
+                // Manually populate selector
+                const selector = document.getElementById('eula-language-select');
+                debugLog('Language selector element: ' + (selector ? 'Found' : 'Not found'));
+                
+                if (selector) {
+                    const languages = {
+                        'en': '[US] English',
+                        'fr': '[FR] French', 
+                        'es': '[ES] Spanish',
+                        'de': '[DE] German'
+                    };
+                    
+                    debugLog('Adding language options...');
+                    Object.entries(languages).forEach(([code, name]) => {
+                        const option = document.createElement('option');
+                        option.value = code;
+                        option.textContent = name;
+                        selector.appendChild(option);
+                        debugLog('Added: ' + code + ' - ' + name);
+                    });
+                    
+                    // Add change listener
+                    selector.addEventListener('change', function() {
+                        debugLog('Language changed to: ' + this.value);
+                        try {
+                            window.i18n.setLanguage(this.value);
+                            debugLog('Language applied successfully');
+                        } catch (e) {
+                            debugLog('Error applying language: ' + e.message);
+                        }
+                    });
+                    
+                    debugLog('Selector setup complete. Options count: ' + selector.options.length);
+                }
+            } else {
+                debugLog('window.i18n not available - check if js/i18n.js is loaded');
+            }
+        });
+    </script>
+</body>
+</html>

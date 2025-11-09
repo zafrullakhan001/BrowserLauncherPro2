@@ -1263,6 +1263,27 @@ html {
   color: var(--text-primary, #e2e8f0);
 }
 
+/* EULA Page Language Selector */
+.eula-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.eula-titles {
+  flex-grow: 1;
+}
+
+.eula-language-selector {
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.eula-language-selector .language-selector-compact {
+  min-width: 100px;
+}
+
 /* Enhanced Footer Styles */
 .app-footer {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);

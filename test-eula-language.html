@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EULA Language Test</title>
+    <link rel="stylesheet" href="eula.css">
+    <link rel="stylesheet" href="custom.css">
+    <script src="js/i18n.js"></script>
+    <style>
+        .test-note {
+            background: #e0f2fe;
+            border: 1px solid #0277bd;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+            color: #01579b;
+        }
+        .language-demo {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="test-note">
+            <strong>EULA Language Switcher Test</strong><br>
+            Use the language selector in the top-right corner to test different languages.
+            This demonstrates how the EULA page will look with multilingual support.
+        </div>
+        
+        <header class="mb-4">
+            <div class="eula-header-content">
+                <div class="eula-titles">
+                    <h4 data-i18n="eula.app.name">Browser Launcher</h4>
+                    <h4 data-i18n="eula.header">End User License Agreement</h4>
+                </div>
+                <div class="eula-language-selector">
+                    <select id="eula-language-select" class="language-selector-compact" title="Select Language">
+                        <!-- Language options will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+        </header>
+        
+        <div class="eula-container">
+            <p data-i18n="eula.intro">This End User License Agreement ("Agreement") is a legal agreement between you ("User") and the developers ("Developers") of the Browser Launcher extension ("Extension"). By installing, copying, or otherwise using the Extension, you agree to be bound by the terms of this Agreement.</p>
+            
+            <p><strong data-i18n="eula.section1.title">1. License Grant</strong></p>
+            <p data-i18n="eula.section1.content">The Developers grant you a non-exclusive, non-transferable, revocable license to use the Extension in accordance with the terms of this Agreement.</p>
+            
+            <p><strong data-i18n="eula.section2.title">2. No Data Collection</strong></p>
+            <p data-i18n="eula.section2.content">The Developers affirm that the Extension does not capture or collect any information from the User's screen. The Extension operates locally on the User's device and does not transmit any data to external servers.</p>
+            
+            <div class="language-demo">
+                <strong>Key Terms Test:</strong><br>
+                <span data-i18n="eula.section3.title">3. Disclaimer of Warranties</span><br>
+                <span data-i18n="eula.section4.title">4. Limitation of Liability</span><br>
+                <span data-i18n="eula.section5.title">5. User Responsibility</span><br>
+            </div>
+        </div>
+        
+        <div class="eula-actions">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="eula-checkbox">
+                <label class="form-check-label" for="eula-checkbox" data-i18n="eula.accept.checkbox">I have read and accept the EULA</label>
+            </div>
+            <button class="btn btn-primary" id="accept-eula" disabled data-i18n="buttons.done">Done</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize internationalization for EULA page
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.i18n) {
+                // Initialize i18n system
+                window.i18n.initialize();
+                
+                // Initialize the EULA language selector using the i18n helper
+                window.i18n.initializeLanguageSelectorById('eula-language-select');
+            }
+            
+            // Enable/disable button based on checkbox
+            const checkbox = document.getElementById('eula-checkbox');
+            const button = document.getElementById('accept-eula');
+            
+            checkbox.addEventListener('change', function() {
+                button.disabled = !this.checked;
+            });
+        });
+    </script>
+</body>
+</html>

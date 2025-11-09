@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footer Translation Test</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link href="custom.css" rel="stylesheet">
+    <script src="js/i18n.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            margin: 20px;
+            background: #f8fafc;
+        }
+        .test-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .test-header {
+            background: #3b82f6;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .test-footer-container {
+            padding: 20px;
+        }
+        .language-test-selector {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .language-test-selector option {
+            background: #1e293b;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h5>Footer Translation Test</h5>
+            <select id="language-test-select" class="language-test-selector">
+                <option value="en">[US] English</option>
+                <option value="es">[ES] Spanish</option>
+                <option value="fr">[FR] French</option>
+                <option value="de">[DE] German</option>
+                <option value="zh">[CN] Chinese</option>
+            </select>
+        </div>
+        
+        <div class="test-footer-container">
+            <!-- Simulate footer elements -->
+            <div class="footer-section">
+                <h6 data-i18n="footer.browser.downloads">Browser Downloads</h6>
+                <div style="margin-left: 10px; font-size: 14px;">
+                    <p><i class="fab fa-edge"></i> <span data-i18n="footer.edge.beta.dev">MS Edge Beta & Dev</span></p>
+                    <p><i class="fab fa-chrome"></i> <span data-i18n="footer.chrome.beta">Chrome Beta</span></p>
+                </div>
+                
+                <h6 data-i18n="footer.release.schedules" style="margin-top: 15px;">Release Schedules</h6>
+                <div style="margin-left: 10px; font-size: 14px;">
+                    <p><i class="fas fa-calendar-alt"></i> <span data-i18n="footer.edge.schedule">Edge Schedule</span></p>
+                </div>
+                
+                <h6 data-i18n="footer.resources" style="margin-top: 15px;">Resources</h6>
+                <div style="margin-left: 10px; font-size: 14px;">
+                    <p><i class="fab fa-github"></i> <span data-i18n="footer.github">GitHub</span></p>
+                    <p><i class="fas fa-globe"></i> <span data-i18n="footer.website">Website</span></p>
+                </div>
+            </div>
+            
+            <hr style="margin: 20px 0;">
+            
+            <div class="version-section">
+                <p><span data-i18n="footer.version">Version 3.0</span> - <span data-i18n="footer.build">Build 2025.11.08</span></p>
+                <p data-i18n="footer.copyright">© 2025 Browser Launcher Pro. All rights reserved.</p>
+                <p><span data-i18n="footer.made.with.love">Made with ♥ for developers</span> • <span data-i18n="footer.trusted.users">Trusted by 10,000+ users</span></p>
+            </div>
+            
+            <hr style="margin: 20px 0;">
+            
+            <div class="status-section">
+                <p><i class="fas fa-circle" style="color: green;"></i> <span data-i18n="footer.active">Active</span></p>
+                <p><span data-i18n="footer.disclaimer">Browser icons and trademarks are the property of their respective companies. We are not affiliated with Microsoft, Google, Mozilla, Opera, or any other browser company.</span></p>
+                <p><a href="#" data-i18n="settings.view.eula">View EULA</a></p>
+            </div>
+            
+            <div class="trial-section" style="background: #fef3cd; padding: 10px; border-radius: 4px; margin-top: 15px;">
+                <p><i class="fas fa-clock"></i> <strong data-i18n="footer.trial.version">TRIAL VERSION</strong> - <span>60</span> <span data-i18n="footer.days.remaining">DAYS REMAINING</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize i18n
+        if (window.i18n) {
+            window.i18n.initialize();
+        }
+        
+        // Language selector
+        document.getElementById('language-test-select').addEventListener('change', function() {
+            if (window.i18n) {
+                window.i18n.setLanguage(this.value);
+            }
+        });
+    </script>
+</body>
+</html>

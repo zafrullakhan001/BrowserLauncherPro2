@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footer Disclaimer Translation Test</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="custom.css" rel="stylesheet">
+    <script src="js/i18n.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .test-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .disclaimer-box {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .language-selector {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .language-selector select {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h2>Footer Disclaimer Translation Test</h2>
+        
+        <div class="info-box">
+            <strong>Test Purpose:</strong> This page tests the footer disclaimer text translation across different languages. 
+            The disclaimer should change when you select different languages.
+        </div>
+        
+        <div class="language-selector">
+            <label><strong>Select Language:</strong></label>
+            <select id="language-test-selector">
+                <option value="en">[US] English</option>
+                <option value="fr">[FR] French</option>
+                <option value="es">[ES] Spanish</option>
+                <option value="de">[DE] German</option>
+                <option value="it">[IT] Italian</option>
+                <option value="ru">[RU] Russian</option>
+                <option value="zh">[CN] Chinese</option>
+            </select>
+        </div>
+        
+        <h4 data-i18n="footer.resources">Resources</h4>
+        <p>This is a sample section header to show other translations work too.</p>
+        
+        <h4>Footer Disclaimer:</h4>
+        <div class="disclaimer-box">
+            <i class="fas fa-info-circle" style="color: #0ea5e9; margin-right: 8px;"></i>
+            <span data-i18n="footer.disclaimer">Browser icons and trademarks are the property of their respective companies. We are not affiliated with Microsoft, Google, Mozilla, Opera, or any other browser company.</span>
+        </div>
+        
+        <div class="info-box">
+            <strong>Expected Behavior:</strong>
+            <ul>
+                <li><strong>English:</strong> "Browser icons and trademarks are the property..."</li>
+                <li><strong>French:</strong> "Les icônes et marques de navigateurs sont la propriété..."</li>
+                <li><strong>Spanish:</strong> "Los iconos y marcas comerciales de navegadores son propiedad..."</li>
+                <li><strong>German:</strong> "Browser-Symbole und Markenzeichen sind Eigentum..."</li>
+                <li><strong>Italian:</strong> "Le icone e i marchi dei browser sono proprietà..."</li>
+                <li><strong>Russian:</strong> "Иконки и торговые марки браузеров являются..."</li>
+                <li><strong>Chinese:</strong> "浏览器图标和商标属于..."</li>
+            </ul>
+        </div>
+        
+        <h4>Additional Footer Elements:</h4>
+        <p><span data-i18n="footer.made.with.love">Made with ♥ for developers</span></p>
+        <p><span data-i18n="footer.active">Active</span></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.i18n) {
+                // Initialize i18n
+                window.i18n.initialize();
+                
+                // Setup language selector
+                const languageSelector = document.getElementById('language-test-selector');
+                
+                languageSelector.addEventListener('change', function() {
+                    console.log('Changing language to:', this.value);
+                    if (window.i18n.setLanguage) {
+                        window.i18n.setLanguage(this.value);
+                    }
+                });
+                
+                // Set current language
+                try {
+                    const currentLang = window.i18n.getCurrentLanguage();
+                    languageSelector.value = currentLang;
+                } catch (e) {
+                    console.log('Could not get current language, defaulting to English');
+                    languageSelector.value = 'en';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
