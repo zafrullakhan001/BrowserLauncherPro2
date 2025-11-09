@@ -855,5 +855,28 @@ window.BrowserLauncherLicense = {
   // Regenerate hardware ID
   regenerateHardwareId: async function() {
     return await regenerateHardwareId();
+  },
+  
+  // Copy hardware ID to clipboard
+  copyHardwareId: async function() {
+    try {
+      const licenseInfo = await getLicenseInfo();
+      if (!licenseInfo.hardwareId) {
+        throw new Error('Hardware ID not available');
+      }
+      
+      // Copy to clipboard
+      await navigator.clipboard.writeText(licenseInfo.hardwareId);
+      return {
+        success: true,
+        message: 'Hardware ID copied to clipboard'
+      };
+    } catch (error) {
+      console.error('Error copying hardware ID:', error);
+      return {
+        success: false,
+        message: 'Failed to copy hardware ID: ' + error.message
+      };
+    }
   }
 }; 

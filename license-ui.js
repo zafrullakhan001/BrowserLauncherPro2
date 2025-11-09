@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   const licenseMessageEl = document.getElementById('licenseMessage');
   const diagnosticsButton = document.getElementById('diagnosticsButton');
   const regenerateButton = document.getElementById('regenerateButton');
+  const copyHardwareIdBtn = document.getElementById('copyHardwareIdBtn');
   const hardwareIdDiagnosticsEl = document.getElementById('hardwareIdDiagnostics');
   
   // Hardware ID diagnostics elements
@@ -31,6 +32,44 @@ document.addEventListener('DOMContentLoaded', async function() {
         diagnosticsButton.textContent = 'Show Diagnostics';
       }
     });
+  }
+  
+  // Copy Hardware ID functionality
+  if (copyHardwareIdBtn) {
+    console.log('Copy Hardware ID button found, setting up event listeners...');
+    
+    copyHardwareIdBtn.addEventListener('click', async function() {
+      console.log('Copy Hardware ID button clicked');
+      try {
+        const result = await window.BrowserLauncherLicense.copyHardwareId();
+        console.log('Copy result:', result);
+        
+        if (result.success) {
+          // Update button appearance to show success
+          const originalHTML = copyHardwareIdBtn.innerHTML;
+          const originalClass = copyHardwareIdBtn.className;
+          
+          copyHardwareIdBtn.innerHTML = '<i class="fas fa-check"></i><span>COPIED!</span>';
+          copyHardwareIdBtn.classList.add('success');
+          
+          // Show success message
+          showMessage(result.message, true);
+          
+          // Restore original button after 2 seconds
+          setTimeout(() => {
+            copyHardwareIdBtn.innerHTML = originalHTML;
+            copyHardwareIdBtn.className = originalClass;
+          }, 2000);
+        } else {
+          showMessage(result.message, false);
+        }
+      } catch (error) {
+        console.error('Error copying hardware ID:', error);
+        showMessage('Failed to copy hardware ID', false);
+      }
+    });
+  } else {
+    console.log('Copy Hardware ID button not found');
   }
   
   // Regenerate hardware ID

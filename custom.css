@@ -1191,7 +1191,7 @@ body:has(#license-modal.show) {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .version-badge {
@@ -1308,6 +1308,57 @@ body:has(#license-modal.show) {
 @keyframes pulse-trial {
   0%, 100% { transform: scale(1); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2); }
   50% { transform: scale(1.02); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); }
+}
+
+/* Footer Disclaimer */
+.footer-disclaimer {
+  border-top: 1px solid #e2e8f0;
+  padding: 0.75rem 0;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+[data-theme="dark"] .footer-disclaimer {
+  border-top-color: #334155;
+}
+
+.disclaimer-text {
+  font-size: 0.65rem;
+  color: var(--text-secondary, #64748b);
+  line-height: 1.4;
+  margin: 0;
+  opacity: 0.8;
+  font-style: italic;
+}
+
+[data-theme="dark"] .disclaimer-text {
+  color: var(--text-secondary, #94a3b8);
+}
+
+.disclaimer-text i {
+  opacity: 0.7;
+  margin-right: 0.25rem;
+}
+
+.disclaimer-link {
+  color: var(--primary, #3b82f6);
+  text-decoration: none;
+  margin-left: 0.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.disclaimer-link:hover {
+  color: var(--primary-dark, #1d4ed8);
+  text-decoration: underline;
+}
+
+[data-theme="dark"] .disclaimer-link {
+  color: var(--primary, #60a5fa);
+}
+
+[data-theme="dark"] .disclaimer-link:hover {
+  color: var(--primary, #93c5fd);
 }
 
 /* Footer Status Bar */
@@ -1486,5 +1537,20 @@ body:has(#license-modal.show) {
   
   .meta-divider {
     display: none;
+  }
+  
+  .footer-disclaimer {
+    padding: 0.5rem 0;
+  }
+  
+  .disclaimer-text {
+    font-size: 0.6rem;
+    line-height: 1.3;
+  }
+  
+  .disclaimer-link {
+    display: block;
+    margin-top: 0.25rem;
+    margin-left: 0;
   }
 }

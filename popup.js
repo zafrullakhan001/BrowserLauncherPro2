@@ -707,6 +707,12 @@ document.addEventListener('DOMContentLoaded', function () {
     chrome.tabs.create({ url: 'eula.html' });
   });
 
+  // Footer EULA link handler
+  document.getElementById('view-eula-footer').addEventListener('click', function (e) {
+    e.preventDefault();
+    chrome.tabs.create({ url: 'eula.html' });
+  });
+
   const testNotificationButton = document.getElementById('test-notification');
   if (testNotificationButton) {
     testNotificationButton.addEventListener('click', function () {
@@ -1372,62 +1378,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // document.getElementById('clone-wsl-instance').addEventListener('click', cloneWSLInstance);
   
   document.getElementById('create-wsl-instance-scratch').addEventListener('click', createWSLInstanceFromScratch);
-
-  const backgroundColorLink = document.getElementById('background-color-link');
-  const fontColorLink = document.getElementById('font-color-link');
-  const resetColorsLink = document.getElementById('reset-colors');
-
-  // Load saved colors or set defaults
-  chrome.storage.local.get(['backgroundColor', 'fontColor'], function(result) {
-    const backgroundColor = result.backgroundColor || '#f8f9fa';
-    const fontColor = result.fontColor || '#000000';
-
-    document.body.style.backgroundColor = backgroundColor;
-    document.body.style.color = fontColor;
-  });
-
-  // Function to open color picker
-  function openColorPicker(callback) {
-    const input = document.createElement('input');
-    input.type = 'color';
-    input.addEventListener('change', function() {
-      callback(this.value);
-    });
-    input.click();
-  }
-
-  // Update background color
-  backgroundColorLink.addEventListener('click', function(e) {
-    e.preventDefault();
-    openColorPicker(function(color) {
-      document.body.style.backgroundColor = color;
-      chrome.storage.local.set({ backgroundColor: color });
-    });
-  });
-
-  // Update font color
-  fontColorLink.addEventListener('click', function(e) {
-    e.preventDefault();
-    openColorPicker(function(color) {
-      document.body.style.color = color;
-      chrome.storage.local.set({ fontColor: color });
-    });
-  });
-
-  // Reset colors to default
-  resetColorsLink.addEventListener('click', function(e) {
-    e.preventDefault();
-    const defaultBackgroundColor = '#f8f9fa';
-    const defaultFontColor = '#000000';
-
-    document.body.style.backgroundColor = defaultBackgroundColor;
-    document.body.style.color = defaultFontColor;
-
-    chrome.storage.local.set({
-      backgroundColor: defaultBackgroundColor,
-      fontColor: defaultFontColor
-    });
-  });
 
   const updateWSLInstanceNames = () => {
     chrome.storage.local.get('wslInstance', function(result) {
@@ -4445,9 +4395,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const footerRefreshBtn = document.getElementById('footer-refresh-btn');
     if (footerRefreshBtn) {
       footerRefreshBtn.addEventListener('click', function() {
-        // Refresh all browser versions and status
+        // Refresh all browser versions
         updateBrowserVersions();
-        updateNativeHostStatus();
         
         // Provide visual feedback
         this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -4469,29 +4418,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
     
-    // Native host status updater
-    function updateNativeHostStatus() {
-      const statusEl = document.getElementById('native-host-status');
-      if (!statusEl) return;
-      
-      chrome.runtime.sendMessage({ action: 'ping' }, (response) => {
-        if (chrome.runtime.lastError || !response) {
-          statusEl.className = 'status-indicator status-error';
-          statusEl.innerHTML = '<i class="fas fa-unlink"></i> Disconnected';
-          statusEl.title = 'Native Host Disconnected';
-        } else {
-          statusEl.className = 'status-indicator status-info';
-          statusEl.innerHTML = '<i class="fas fa-link"></i> Connected';
-          statusEl.title = 'Native Host Connected';
-        }
-      });
-    }
-    
-    // Update status on load
-    updateNativeHostStatus();
-    
-    // Update status periodically
-    setInterval(updateNativeHostStatus, 30000); // Every 30 seconds
+
     
     // Update build info with current date if not already set
     function updateBuildInfo() {
