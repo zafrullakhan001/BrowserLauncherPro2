@@ -50,10 +50,10 @@ const TRANSLATIONS = {
     'browsers.watchVersions': 'Watch for version changes',
     
     // WSL sections
-    'wsl.edge.title': 'Microsoft Edge',
-    'wsl.chrome.title': 'Google Chrome',
-    'wsl.other.title': 'Other Browsers',
-    'wsl.tools.title': 'WSL Ubuntu Tools',
+    'wsl.edge.title': 'MICROSOFT EDGE',
+    'wsl.chrome.title': 'GOOGLE CHROME',
+    'wsl.other.title': 'OTHER BROWSERS',
+    'wsl.tools.title': 'WSL UBUNTU TOOLS',
     'wsl.firefox': 'Firefox',
     'wsl.opera': 'Opera',
     'wsl.brave': 'Brave',
@@ -262,10 +262,10 @@ const TRANSLATIONS = {
     'browsers.watchVersions': 'Surveiller les changements de version',
     
     // WSL sections
-    'wsl.edge.title': 'Microsoft Edge',
-    'wsl.chrome.title': 'Google Chrome',
-    'wsl.other.title': 'Autres Navigateurs',
-    'wsl.tools.title': 'Outils WSL Ubuntu',
+    'wsl.edge.title': 'MICROSOFT EDGE',
+    'wsl.chrome.title': 'GOOGLE CHROME',
+    'wsl.other.title': 'AUTRES NAVIGATEURS',
+    'wsl.tools.title': 'OUTILS WSL UBUNTU',
     'wsl.firefox': 'Firefox',
     'wsl.opera': 'Opera',
     'wsl.brave': 'Brave',

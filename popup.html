@@ -168,7 +168,10 @@
 
       <div class="tab-pane fade" id="wsl">
         <div class="browser-group">
-          <h5><span data-i18n="wsl.edge.title">Microsoft Edge</span> (<span id="wsl-instance-edge"></span>)</h5>
+          <div class="browser-section-badge wsl-edge-badge">
+            <i class="fab fa-edge"></i>
+            <span data-i18n="wsl.edge.title">MICROSOFT EDGE</span>
+          </div>
           <div class="button-container">
             <button class="btn btn-primary" id="edge-stable"><i class="fab fa-edge"></i> <span>Edge </span><span data-i18n="browsers.stable">Stable</span></button>
             <button class="btn btn-primary" id="edge-beta"><i class="fab fa-edge"></i> <span>Edge </span><span data-i18n="browsers.beta">Beta</span></button>
@@ -176,7 +179,10 @@
           </div>
         </div>
         <div class="browser-group">
-          <h5><span data-i18n="wsl.chrome.title">Google Chrome</span> (<span id="wsl-instance-chrome"></span>)</h5>
+          <div class="browser-section-badge wsl-chrome-badge">
+            <i class="fab fa-chrome"></i>
+            <span data-i18n="wsl.chrome.title">GOOGLE CHROME</span>
+          </div>
           <div class="button-container">
             <button class="btn btn-success" id="chrome-stable"><i class="fab fa-chrome"></i> <span>Chrome </span><span data-i18n="browsers.stable">Stable</span></button>
             <button class="btn btn-success" id="chrome-beta"><i class="fab fa-chrome"></i> <span>Chrome </span><span data-i18n="browsers.beta">Beta</span></button>
@@ -184,7 +190,10 @@
           </div>
         </div>
         <div class="browser-group">
-          <h5><span data-i18n="wsl.other.title">Other Browsers</span> (<span id="wsl-instance-other"></span>)</h5>
+          <div class="browser-section-badge wsl-other-badge">
+            <i class="fas fa-globe"></i>
+            <span data-i18n="wsl.other.title">OTHER BROWSERS</span>
+          </div>
           <div class="button-container">
             <button class="btn btn-warning" id="firefox"><i class="fab fa-firefox"></i> <span data-i18n="wsl.firefox">Firefox</span></button>
             <button class="btn btn-info" id="opera"><i class="fab fa-opera"></i> <span data-i18n="wsl.opera">Opera</span></button>
@@ -192,7 +201,10 @@
           </div>
         </div>
         <div class="browser-group">
-          <h5><span data-i18n="wsl.tools.title">WSL Ubuntu Tools</span> (<span id="wsl-instance-tools"></span>)</h5>
+          <div class="browser-section-badge wsl-tools-badge">
+            <i class="fas fa-tools"></i>
+            <span data-i18n="wsl.tools.title">WSL UBUNTU TOOLS</span>
+          </div>
           <div class="button-container">
             <button class="btn btn-primary" id="launch-xterm"><i class="fas fa-terminal"></i> <span data-i18n="wsl.konsole">Launch Konsole</span></button>
             <button class="btn btn-secondary" id="launch-powershell"><i class="fas fa-terminal"></i> <span data-i18n="wsl.powershell">Launch PowerShell</span></button>
