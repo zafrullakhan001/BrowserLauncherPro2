@@ -406,8 +406,8 @@ header .subheading {
 
 /* Slightly upsize Chrome icon to visually match Edge */
 .chrome-icon {
-  width: 52px;
-  height: 52px;
+  width: 84px;
+  height: 84px;
 }
 
 /* Badge-style labels under icons */
