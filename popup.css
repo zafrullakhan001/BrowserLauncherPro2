@@ -189,6 +189,7 @@ header .subheading {
   color: #94a3b8;
 }
 
+/* Theme toggle: default absolute positioning (header use) overridden when inside language selector container */
 .theme-toggle {
   position: absolute;
   right: 0;
@@ -2367,6 +2368,43 @@ button:disabled {
 /* Add subtle animations */
 * {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Language selector + theme toggle inline container */
+.language-selector-above-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 4px 0 2px;
+  position: relative;
+}
+
+/* Compact styling for the language dropdown (was existing class name) */
+.language-selector-compact {
+  min-width: 140px;
+  padding: 4px 8px;
+  border: 1px solid var(--outline);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .language-selector-compact {
+  background: var(--surface-soft);
+  color: var(--text-primary, #e2e8f0);
+}
+
+/* Override theme toggle when in the flex row so it is not absolutely positioned */
+.language-selector-above-tabs .theme-toggle {
+  position: static;
+  font-size: 16px;
+  padding: 4px 6px;
+}
+
+.language-selector-above-tabs .theme-toggle:hover {
+  background: rgba(37,99,235,0.12);
 }
 
 /* Browser support timeline section */

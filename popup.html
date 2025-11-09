@@ -26,11 +26,7 @@
     <header class="mb-1">
       <div class="header-content">
         <h4 data-i18n="header.title">Browser Launcher Pro</h4>
-        <div class="header-controls">
-          <button id="theme-toggle" class="theme-toggle" title="Toggle dark/light mode">
-            <i class="fas fa-moon" id="theme-icon"></i>
-          </button>
-        </div>
+        <!-- header-controls removed: theme toggle has been moved next to language selector -->
       </div>
       <p class="subheading" data-i18n="header.subtitle">Launch and manage multiple browsers across Windows and WSL with version tracking</p>
     </header>
@@ -40,6 +36,9 @@
       <select id="language-select" class="language-selector-compact" title="Select Language">
         <!-- Language options will be populated by JavaScript -->
       </select>
+      <button id="theme-toggle" class="theme-toggle" title="Toggle dark/light mode">
+        <i class="fas fa-moon" id="theme-icon"></i>
+      </button>
     </div>
     
     <ul class="nav nav-tabs" id="settings-tabs">
