@@ -192,7 +192,7 @@ try {
         Write-Host "  .\Manage-WSLInstance.ps1 -CreateInstance"
         Write-Host "  .\Manage-WSLInstance.ps1 -CreateInstance -NoDebug"
         Write-Host "  .\Manage-WSLInstance.ps1 -CreateInstance -QuietMode"
-        Write-Host "  .\Manage-WSLInstance.ps1 -CreateInstance -SelectedDistro 'Ubuntu-22.04' -CustomName 'MyUbuntu'"
+        Write-Host "  .\Manage-WSLInstance.ps1 -CreateInstance -SelectedDistro 'Ubuntu-24.04' -CustomName 'MyUbuntu'"
         Write-Host ""
     }
 
@@ -388,7 +388,7 @@ try {
                     Where-Object { $_ -notmatch '^\s*-\s*$' } |  # Remove separator lines
                     Where-Object { $_ -notmatch '^The following' } |  # Remove instruction lines
                     Where-Object { $_ -notmatch '^Install using' } |  # Remove instruction lines
-                    Where-Object { $_ -match '^Ubuntu' } |  # Only keep Ubuntu distributions
+                    Where-Object { $_ -match '^Ubuntu-24\.04\b' } |  # Only keep Ubuntu-24.04
                     ForEach-Object { 
                         # Extract just the distribution name (first part before spaces)
                         ($_ -split '\s+')[0]
@@ -397,7 +397,7 @@ try {
                     Sort-Object
                 
                 if ($cleanOutput -and $cleanOutput.Count -gt 0) {
-                    return $cleanOutput
+                    return @($cleanOutput)  # Ensure array even when single item
                 }
             }
             
@@ -417,32 +417,24 @@ try {
                     $cleanOutput = $output | 
                         Where-Object { $_ -and $_.Trim() } | 
                         ForEach-Object { $_.Trim() } | 
-                        Where-Object { $_ -match '^Ubuntu' } |  # Only keep Ubuntu distributions
+                        Where-Object { $_ -eq 'Ubuntu-24.04' } |  # Only keep Ubuntu-24.04
                         Select-Object -Unique | 
                         Sort-Object
                     
                     if ($cleanOutput -and $cleanOutput.Count -gt 0) {
-                        return $cleanOutput
+                        return @($cleanOutput)  # Ensure array even when single item
                     }
                 }
             }
             
             # Return fallback list with only Ubuntu distributions
             return @(
-                "Ubuntu",
-                "Ubuntu-18.04",
-                "Ubuntu-20.04",
-                "Ubuntu-22.04",
                 "Ubuntu-24.04"
             )
         }
         catch {
             # Return fallback list with only Ubuntu distributions
             return @(
-                "Ubuntu",
-                "Ubuntu-18.04",
-                "Ubuntu-20.04",
-                "Ubuntu-22.04",
                 "Ubuntu-24.04"
             )
         }
@@ -468,23 +460,17 @@ try {
                 try {
                     # Try to get online distributions, but use a fallback list if it fails
                     $ubuntuDistros = Get-OnlineDistributions
+                    # Ensure it's an array even if a single string is returned
+                    $ubuntuDistros = @($ubuntuDistros)
                     
                     if ($null -eq $ubuntuDistros -or $ubuntuDistros.Count -eq 0) {
                         $ubuntuDistros = @(
-                            "Ubuntu",
-                            "Ubuntu-18.04",
-                            "Ubuntu-20.04",
-                            "Ubuntu-22.04",
                             "Ubuntu-24.04"
                         )
                     }
                 }
                 catch {
                     $ubuntuDistros = @(
-                        "Ubuntu",
-                        "Ubuntu-18.04",
-                        "Ubuntu-20.04",
-                        "Ubuntu-22.04",
                         "Ubuntu-24.04"
                     )
                 }
