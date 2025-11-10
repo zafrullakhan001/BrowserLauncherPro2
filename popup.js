@@ -42,6 +42,99 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   })();
 
+  // ===== Memory Usage Monitor =====
+  (function initMemoryUsage() {
+    const statusEl = document.getElementById('memory-status');
+    const statusTextEl = document.getElementById('memory-status-text');
+    const memoryUsageEl = document.getElementById('memory-usage');
+
+    if (!statusEl || !statusTextEl || !memoryUsageEl) return;
+
+    function setMemoryStatus(kind, text, usage) {
+      // kind: 'normal' | 'warning' | 'critical' | 'info'
+      statusEl.classList.remove('status-online', 'status-info', 'status-error', 'status-warning');
+      if (kind === 'normal') statusEl.classList.add('status-online');
+      else if (kind === 'warning') statusEl.classList.add('status-warning');
+      else if (kind === 'critical') statusEl.classList.add('status-error');
+      else statusEl.classList.add('status-info');
+
+      statusTextEl.textContent = text;
+      memoryUsageEl.textContent = usage || '';
+    }
+
+    async function updateMemoryUsage() {
+      try {
+        setMemoryStatus('info', 'Memory: Checking…', '');
+        
+        // Use chrome.system.memory API to get memory info
+        if (chrome?.system?.memory) {
+          chrome.system.memory.getInfo((info) => {
+            if (chrome.runtime.lastError) {
+              setMemoryStatus('error', 'Memory: Error', '');
+              return;
+            }
+
+            const totalMemoryMB = Math.round(info.capacity / (1024 * 1024));
+            const availableMemoryMB = Math.round(info.availableCapacity / (1024 * 1024));
+            const usedMemoryMB = totalMemoryMB - availableMemoryMB;
+            const usagePercent = Math.round((usedMemoryMB / totalMemoryMB) * 100);
+
+            // Determine status based on usage
+            let kind = 'normal';
+            if (usagePercent >= 90) {
+              kind = 'critical';
+            } else if (usagePercent >= 75) {
+              kind = 'warning';
+            }
+
+            setMemoryStatus(
+              kind,
+              `${usedMemoryMB} MB`,
+              `/ ${totalMemoryMB} MB (${usagePercent}%)`
+            );
+            statusEl.title = `System Memory: ${usedMemoryMB} MB used of ${totalMemoryMB} MB total (${usagePercent}% used)`;
+          });
+        } else {
+          // Fallback if chrome.system.memory is not available
+          if (performance?.memory) {
+            const usedJSHeapMB = Math.round(performance.memory.usedJSHeapSize / (1024 * 1024));
+            const totalJSHeapMB = Math.round(performance.memory.totalJSHeapSize / (1024 * 1024));
+            const limitJSHeapMB = Math.round(performance.memory.jsHeapSizeLimit / (1024 * 1024));
+            const usagePercent = Math.round((usedJSHeapMB / limitJSHeapMB) * 100);
+
+            let kind = 'normal';
+            if (usagePercent >= 90) {
+              kind = 'critical';
+            } else if (usagePercent >= 75) {
+              kind = 'warning';
+            }
+
+            setMemoryStatus(
+              kind,
+              `${usedJSHeapMB} MB`,
+              `(${usagePercent}%)`
+            );
+            statusEl.title = `Extension Memory: ${usedJSHeapMB} MB used of ${limitJSHeapMB} MB limit (${usagePercent}% used)`;
+          } else {
+            setMemoryStatus('info', 'Memory: N/A', '');
+          }
+        }
+      } catch (err) {
+        setMemoryStatus('error', 'Memory: Error', '');
+        console.error('Memory check error:', err);
+      }
+    }
+
+    // Expose for other parts if needed
+    window.updateMemoryUsage = updateMemoryUsage;
+
+    // Initial check on open
+    updateMemoryUsage();
+
+    // Update memory every 5 seconds
+    setInterval(updateMemoryUsage, 5000);
+  })();
+
   // ===== Native Messaging Health Check =====
   (function initNativeMessagingHealth() {
     const statusEl = document.getElementById('native-status');
@@ -64,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function checkHealth() {
       try {
-        setStatus('checking', 'Native Messaging: Checking…');
+        setStatus('checking', 'Checking…');
         const start = performance.now();
 
         const result = await new Promise((resolve) => {
@@ -92,12 +185,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const latency = Math.round(performance.now() - start);
 
         if (result.timeout) {
-          setStatus('error', 'Native Messaging: Timeout');
+          setStatus('error', 'Timeout');
           chrome.storage.local.set({ nativeMessagingLastStatus: 'timeout', nativeMessagingLastLatency: latency, nativeMessagingLastChecked: Date.now() });
           return;
         }
         if (result.error) {
-          setStatus('error', 'Native Messaging: Error');
+          setStatus('error', 'Error');
           statusEl.title = `Native Messaging Error: ${result.error}`;
           chrome.storage.local.set({ nativeMessagingLastStatus: 'error', nativeMessagingLastLatency: latency, nativeMessagingLastChecked: Date.now(), nativeMessagingLastError: result.error });
           return;
@@ -105,16 +198,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const ok = !!(result.response && (result.response.pong === true));
         if (ok) {
-          setStatus('online', 'Native Messaging: Active', latency);
+          setStatus('online', 'Active', latency);
           statusEl.title = 'Native messaging host responded successfully';
           chrome.storage.local.set({ nativeMessagingLastStatus: 'online', nativeMessagingLastLatency: latency, nativeMessagingLastChecked: Date.now(), nativeMessagingSystemInfo: result.response.system_info || null });
         } else {
-          setStatus('error', 'Native Messaging: Unavailable');
+          setStatus('error', 'Unavailable');
           statusEl.title = 'Unexpected response from native messaging host';
           chrome.storage.local.set({ nativeMessagingLastStatus: 'bad-response', nativeMessagingLastLatency: latency, nativeMessagingLastChecked: Date.now(), nativeMessagingLastRaw: result.response || null });
         }
       } catch (err) {
-        setStatus('error', 'Native Messaging: Error');
+        setStatus('error', 'Error');
         statusEl.title = `Native Messaging Error: ${err?.message || err}`;
         chrome.storage.local.set({ nativeMessagingLastStatus: 'exception', nativeMessagingLastLatency: null, nativeMessagingLastChecked: Date.now(), nativeMessagingLastError: err?.message || String(err) });
       }
@@ -128,9 +221,9 @@ document.addEventListener('DOMContentLoaded', function () {
       chrome.storage.local.get(['nativeMessagingLastStatus', 'nativeMessagingLastLatency'], (res) => {
         const st = res.nativeMessagingLastStatus;
         const lat = res.nativeMessagingLastLatency;
-        if (st === 'online') setStatus('online', 'Native Messaging: Active', lat);
-        else if (st) setStatus('error', 'Native Messaging: Unavailable', lat);
-        else setStatus('checking', 'Native Messaging: Checking…');
+        if (st === 'online') setStatus('online', 'Active', lat);
+        else if (st) setStatus('error', 'Unavailable', lat);
+        else setStatus('checking', 'Checking…');
       });
     } catch { /* ignore */ }
 

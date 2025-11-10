@@ -12,7 +12,8 @@
         "scripting",
         "storage",
         "notifications",
-        "alarms"
+        "alarms",
+        "system.memory"
     ],
     "background": {
         "service_worker": "background.js"
