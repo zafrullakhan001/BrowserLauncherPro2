@@ -86,4 +86,4 @@ We respect your privacy. This extension:
 - Only accesses browser version information when explicitly enabled
 - Stores settings locally on your device
 
-For more information, see our [Privacy Policy](https://browserlauncher.pro/privacy). 
+For more information, see our [Privacy Policy](https://browserlauncherpro.blogspot.com/2025/11/browser-launcher-pro-v30.html). 

@@ -51,4 +51,4 @@ We may update this Privacy Policy from time to time. We will notify you of any c
 
 If you have any questions about this Privacy Policy, please contact us at:
 - Email: privacy@browserlauncher.pro
-- Website: https://browserlauncher.pro/privacy 
+- Website: https://browserlauncherpro.blogspot.com/2025/11/browser-launcher-pro-v30.html 
