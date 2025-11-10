@@ -64,60 +64,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function updateMemoryUsage() {
       try {
-        setMemoryStatus('info', 'Memory: Checking…', '');
+        setMemoryStatus('info', 'Loading…', '');
         
-        // Use chrome.system.memory API to get memory info
-        if (chrome?.system?.memory) {
-          chrome.system.memory.getInfo((info) => {
-            if (chrome.runtime.lastError) {
-              setMemoryStatus('error', 'Memory: Error', '');
-              return;
-            }
+        // Use performance.memory to show extension's actual memory usage
+        if (performance?.memory) {
+          const usedJSHeapMB = Math.round(performance.memory.usedJSHeapSize / (1024 * 1024));
+          const totalJSHeapMB = Math.round(performance.memory.totalJSHeapSize / (1024 * 1024));
+          const limitJSHeapMB = Math.round(performance.memory.jsHeapSizeLimit / (1024 * 1024));
+          const usagePercent = Math.round((usedJSHeapMB / limitJSHeapMB) * 100);
 
-            const totalMemoryMB = Math.round(info.capacity / (1024 * 1024));
-            const availableMemoryMB = Math.round(info.availableCapacity / (1024 * 1024));
-            const usedMemoryMB = totalMemoryMB - availableMemoryMB;
-            const usagePercent = Math.round((usedMemoryMB / totalMemoryMB) * 100);
-
-            // Determine status based on usage
-            let kind = 'normal';
-            if (usagePercent >= 90) {
-              kind = 'critical';
-            } else if (usagePercent >= 75) {
-              kind = 'warning';
-            }
-
-            setMemoryStatus(
-              kind,
-              `${usedMemoryMB} MB`,
-              `/ ${totalMemoryMB} MB (${usagePercent}%)`
-            );
-            statusEl.title = `System Memory: ${usedMemoryMB} MB used of ${totalMemoryMB} MB total (${usagePercent}% used)`;
-          });
-        } else {
-          // Fallback if chrome.system.memory is not available
-          if (performance?.memory) {
-            const usedJSHeapMB = Math.round(performance.memory.usedJSHeapSize / (1024 * 1024));
-            const totalJSHeapMB = Math.round(performance.memory.totalJSHeapSize / (1024 * 1024));
-            const limitJSHeapMB = Math.round(performance.memory.jsHeapSizeLimit / (1024 * 1024));
-            const usagePercent = Math.round((usedJSHeapMB / limitJSHeapMB) * 100);
-
-            let kind = 'normal';
-            if (usagePercent >= 90) {
-              kind = 'critical';
-            } else if (usagePercent >= 75) {
-              kind = 'warning';
-            }
-
-            setMemoryStatus(
-              kind,
-              `${usedJSHeapMB} MB`,
-              `(${usagePercent}%)`
-            );
-            statusEl.title = `Extension Memory: ${usedJSHeapMB} MB used of ${limitJSHeapMB} MB limit (${usagePercent}% used)`;
-          } else {
-            setMemoryStatus('info', 'Memory: N/A', '');
+          let kind = 'normal';
+          if (usagePercent >= 90) {
+            kind = 'critical';
+          } else if (usagePercent >= 75) {
+            kind = 'warning';
           }
+
+          setMemoryStatus(
+            kind,
+            `${usedJSHeapMB} MB`,
+            `/ ${limitJSHeapMB} MB (${usagePercent}%)`
+          );
+          statusEl.title = `Extension Memory: ${usedJSHeapMB} MB used of ${limitJSHeapMB} MB limit (${usagePercent}% used)`;
+        } else {
+          setMemoryStatus('info', 'N/A', '');
+          statusEl.title = 'Memory information not available';
         }
       } catch (err) {
         setMemoryStatus('error', 'Memory: Error', '');
