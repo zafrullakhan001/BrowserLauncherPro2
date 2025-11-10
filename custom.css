@@ -322,59 +322,7 @@
   width: 100%;
 }
 
-.license-status {
-  font-weight: 500;
-  padding: 10px 15px;
-  border-radius: 4px;
-  margin-bottom: 15px !important;
-  width: auto;
-  display: inline-block !important;
-  min-width: 200px;
-}
-
-#license-status.status-licensed {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  border: 1px solid #a5d6a7;
-}
-
-/* License status in modal should be full width */
-#modal-license-status {
-  width: 100% !important;
-  display: block !important;
-  text-align: center;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  min-width: unset !important;
-}
-
-/* Ensure all license status variations in modal are full width */
-#license-modal .license-status {
-  width: 100% !important;
-  display: block !important;
-  text-align: center;
-}
-
-#manage-license-btn {
-  min-width: 200px;
-}
-
-/* Additional safety measures to ensure license modal is always on top */
-body.modal-open #license-modal {
-  z-index: 2147483647 !important;
-}
-
-/* Ensure license modal elements are interactive */
-#license-modal * {
-  pointer-events: auto;
-}
-
-/* Force license modal to be visible when shown */
-#license-modal.show,
-#license-modal.in {
-  display: block !important;
-  z-index: 2147483647 !important;
-}
+/* Removed settings tab language dropdown styles (selectors previously targeting #language-select-settings deleted) */
 
 /* Override any conflicting styles that might hide the modal */
 #license-modal .modal-dialog {

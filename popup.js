@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.i18n.initialize();
     
     // Set up additional language selector in settings
-    setupSettingsLanguageSelector();
+  // Settings language selector removed; header selector remains
   }
   
   // ===== Theme Toggle Control =====
@@ -176,114 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
     { id: 'chromeDevCheckbox', elementId: 'chrome-dev-checkbox' }
   ];
 
-  // ===== Language Selector Setup =====
-  function setupSettingsLanguageSelector() {
-    const settingsLanguageSelect = document.getElementById('language-select-settings');
-    if (!settingsLanguageSelect || !window.i18n) return;
-    
-    // Clear existing options
-    settingsLanguageSelect.innerHTML = '';
-    
-    // Get supported languages
-    const supportedLanguages = window.i18n.getSupportedLanguages();
-    
-    // Group languages by region
-    const languagesByRegion = {};
-    Object.entries(supportedLanguages).forEach(([code, info]) => {
-      if (!languagesByRegion[info.region]) {
-        languagesByRegion[info.region] = [];
-      }
-      languagesByRegion[info.region].push({ code, ...info });
-    });
-    
-    // Create optgroups for each region
-    Object.entries(languagesByRegion).forEach(([region, languages]) => {
-      const optgroup = document.createElement('optgroup');
-      optgroup.label = region;
-      
-    languages.forEach(lang => {
-      const option = document.createElement('option');
-      option.value = lang.code;
-      
-      // Use safer text formatting to avoid encoding issues
-      try {
-        option.textContent = `${lang.nativeName || lang.name} (${lang.flag || lang.code.toUpperCase()})`;
-      } catch (e) {
-        // Fallback to simple name if there are any issues
-        option.textContent = lang.name || lang.code;
-      }
-      
-      if (lang.code === window.i18n.getCurrentLanguage()) {
-        option.selected = true;
-      }
-      optgroup.appendChild(option);
-    });      settingsLanguageSelect.appendChild(optgroup);
-    });
-    
-    // Add event listener for language change
-    settingsLanguageSelect.addEventListener('change', (e) => {
-      const selectedLang = e.target.value;
-      window.i18n.apply(selectedLang);
-      
-      // Also update the header language selector if it exists
-      const headerLanguageSelect = document.getElementById('language-select');
-      if (headerLanguageSelect) {
-        headerLanguageSelect.value = selectedLang;
-      }
-      
-      // Show success message
-      showLanguageChangeMessage(selectedLang);
-    });
-  }
-  
-  // Function to show language change success message
-  function showLanguageChangeMessage(langCode) {
-    // Create a temporary message element
-    const message = document.createElement('div');
-    message.className = 'language-change-message';
-    message.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
-      z-index: 2147483647;
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-      max-width: 300px;
-    `;
-    
-    // Get the language info for display
-    const supportedLanguages = window.i18n.getSupportedLanguages();
-    const langInfo = supportedLanguages[langCode];
-    
-    message.innerHTML = `
-      <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
-      Language changed to ${langInfo ? langInfo.flag + ' ' + langInfo.nativeName : langCode}
-    `;
-    
-    document.body.appendChild(message);
-    
-    // Animate in
-    setTimeout(() => {
-      message.style.transform = 'translateX(0)';
-    }, 100);
-    
-    // Auto-remove after 3 seconds
-    setTimeout(() => {
-      message.style.transform = 'translateX(100%)';
-      setTimeout(() => {
-        if (message.parentNode) {
-          message.parentNode.removeChild(message);
-        }
-      }, 300);
-    }, 3000);
-  }
+  // Settings tab language selector removed; header language selector remains handled by i18n module
 
   // Initialize versionCheckbox element
   const versionCheckbox = document.getElementById('version-checkbox');

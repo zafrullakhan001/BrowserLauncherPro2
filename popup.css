@@ -1373,18 +1373,7 @@ select.form-control option {
   color: #1e293b;
 }
 
-/* Ensure proper encoding and rendering for language dropdown */
-#language-select-settings {
-  unicode-bidi: embed;
-  direction: ltr;
-  text-align: left;
-}
-
-#language-select-settings option {
-  unicode-bidi: embed;
-  direction: ltr;
-  text-align: left;
-}
+/* Settings tab language dropdown removed; keep header selector defaults */
 
 select.form-control:focus {
   background: white;
@@ -2395,6 +2384,8 @@ button:disabled {
   background: var(--surface-soft);
   color: var(--text-primary, #e2e8f0);
 }
+
+/* Settings tab language selector removed; header selector remains using .language-selector-compact */
 
 /* Override theme toggle when in the flex row so it is not absolutely positioned */
 .language-selector-above-tabs .theme-toggle {
