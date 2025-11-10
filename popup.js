@@ -42,6 +42,105 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   })();
 
+  // ===== Native Messaging Health Check =====
+  (function initNativeMessagingHealth() {
+    const statusEl = document.getElementById('native-status');
+    const statusTextEl = document.getElementById('native-status-text');
+    const latencyEl = document.getElementById('native-latency');
+    const btn = document.getElementById('footer-healthcheck-btn');
+
+    if (!statusEl || !statusTextEl || !latencyEl) return;
+
+    function setStatus(kind, text, latencyMs) {
+      // kind: 'checking' | 'online' | 'error'
+      statusEl.classList.remove('status-online', 'status-error', 'status-info');
+      if (kind === 'online') statusEl.classList.add('status-online');
+      else if (kind === 'error') statusEl.classList.add('status-error');
+      else statusEl.classList.add('status-info');
+
+      statusTextEl.textContent = text;
+      latencyEl.textContent = typeof latencyMs === 'number' ? `(${latencyMs} ms)` : '';
+    }
+
+    async function checkHealth() {
+      try {
+        setStatus('checking', 'Native Messaging: Checking…');
+        const start = performance.now();
+
+        const result = await new Promise((resolve) => {
+          let settled = false;
+          const timeoutMs = 4000;
+          const timeoutId = setTimeout(() => {
+            if (settled) return; settled = true; resolve({ timeout: true });
+          }, timeoutMs);
+
+          try {
+            chrome.runtime.sendNativeMessage('com.example.browserlauncher', { action: 'ping' }, (response) => {
+              if (settled) return; settled = true; clearTimeout(timeoutId);
+              if (chrome.runtime.lastError) {
+                resolve({ error: chrome.runtime.lastError.message });
+              } else {
+                resolve({ response });
+              }
+            });
+          } catch (e) {
+            if (settled) return; settled = true; clearTimeout(timeoutId);
+            resolve({ error: e?.message || 'Unknown error' });
+          }
+        });
+
+        const latency = Math.round(performance.now() - start);
+
+        if (result.timeout) {
+          setStatus('error', 'Native Messaging: Timeout');
+          chrome.storage.local.set({ nativeMessagingLastStatus: 'timeout', nativeMessagingLastLatency: latency, nativeMessagingLastChecked: Date.now() });
+          return;
+        }
+        if (result.error) {
+          setStatus('error', 'Native Messaging: Error');
+          statusEl.title = `Native Messaging Error: ${result.error}`;
+          chrome.storage.local.set({ nativeMessagingLastStatus: 'error', nativeMessagingLastLatency: latency, nativeMessagingLastChecked: Date.now(), nativeMessagingLastError: result.error });
+          return;
+        }
+
+        const ok = !!(result.response && (result.response.pong === true));
+        if (ok) {
+          setStatus('online', 'Native Messaging: Active', latency);
+          statusEl.title = 'Native messaging host responded successfully';
+          chrome.storage.local.set({ nativeMessagingLastStatus: 'online', nativeMessagingLastLatency: latency, nativeMessagingLastChecked: Date.now(), nativeMessagingSystemInfo: result.response.system_info || null });
+        } else {
+          setStatus('error', 'Native Messaging: Unavailable');
+          statusEl.title = 'Unexpected response from native messaging host';
+          chrome.storage.local.set({ nativeMessagingLastStatus: 'bad-response', nativeMessagingLastLatency: latency, nativeMessagingLastChecked: Date.now(), nativeMessagingLastRaw: result.response || null });
+        }
+      } catch (err) {
+        setStatus('error', 'Native Messaging: Error');
+        statusEl.title = `Native Messaging Error: ${err?.message || err}`;
+        chrome.storage.local.set({ nativeMessagingLastStatus: 'exception', nativeMessagingLastLatency: null, nativeMessagingLastChecked: Date.now(), nativeMessagingLastError: err?.message || String(err) });
+      }
+    }
+
+    // Expose for other parts if needed
+    window.checkNativeMessagingHealth = checkHealth;
+
+    // Restore last known state quickly
+    try {
+      chrome.storage.local.get(['nativeMessagingLastStatus', 'nativeMessagingLastLatency'], (res) => {
+        const st = res.nativeMessagingLastStatus;
+        const lat = res.nativeMessagingLastLatency;
+        if (st === 'online') setStatus('online', 'Native Messaging: Active', lat);
+        else if (st) setStatus('error', 'Native Messaging: Unavailable', lat);
+        else setStatus('checking', 'Native Messaging: Checking…');
+      });
+    } catch { /* ignore */ }
+
+    // Wire button
+    if (btn) btn.addEventListener('click', () => { btn.disabled = true; const prev = btn.innerHTML; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; checkHealth().finally(() => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-heartbeat"></i>'; }); });
+
+    // Initial check on open
+    checkHealth();
+  })();
+
   // ===== WSL Instance Badge (inside WSL tab content) =====
   function updateWSLInstanceBadge() {
     const badge = document.getElementById('wsl-instance-badge');

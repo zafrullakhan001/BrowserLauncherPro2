@@ -997,13 +997,20 @@
         <!-- Status Indicators -->
         <div class="footer-status">
           <div class="status-indicators">
-            <span class="status-indicator status-online" title="Extension Active">
-              <i class="fas fa-circle"></i> <span data-i18n="footer.active">Active</span>
+            <span id="native-status" class="status-indicator status-info" title="Native Messaging Status">
+              <i class="fas fa-circle"></i>
+              <span id="native-status-text">Native Messaging: Checking…</span>
+              <span id="native-latency" style="margin-left:6px; opacity:0.8; font-weight:600;">
+                
+              </span>
             </span>
           </div>
           <div class="quick-actions">
             <button type="button" class="footer-action-btn" id="footer-refresh-btn" title="Refresh Extension">
               <i class="fas fa-sync-alt"></i>
+            </button>
+            <button type="button" class="footer-action-btn" id="footer-healthcheck-btn" title="Check Native Messaging Health">
+              <i class="fas fa-heartbeat"></i>
             </button>
             <button type="button" class="footer-action-btn" id="footer-settings-btn" title="Quick Settings">
               <i class="fas fa-cog"></i>
