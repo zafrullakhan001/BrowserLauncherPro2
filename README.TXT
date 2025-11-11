@@ -1,6 +1,9 @@
 Browser Launcher Extension
 Overview
 Browser Launcher is a powerful browser extension designed to launch web applications in different browser versions. It's built for Chrome and Edge browsers using Manifest V3 and includes native messaging capabilities for enhanced system integration.
+Availability & Disclaimer
+-------------------------
+This is a custom-developed extension and is NOT listed on the Chrome Web Store or Microsoft Edge Add-ons store. You may download and use it freely at your own discretion by loading it as an unpacked extension. The software is provided "AS IS" without any warranty; the developer assumes no liability for damages, data loss, or other issues arising from its use.
 Key Features
 Multi-Browser Support: Ability to launch web applications in different browser versions
 Native Integration: Uses native messaging to communicate with the system, allowing for deeper OS-level interactions
@@ -26,11 +29,15 @@ popup.html/js/css: User interface and frontend logic
 background.js: Background service worker for event handling
 native_messaging.py: Python-based native messaging host
 Various setup and installation scripts for system integration
-Installation
-The extension requires a proper setup process that includes:
-Extension installation in the browser
-Native messaging host setup
-System configuration via provided setup scripts
+Installation (Load Unpacked)
+Because it is not available in the Chrome or Edge stores, install manually:
+1. Download or clone the repository and extract it to a folder.
+2. Open the extensions page:
+   Chrome: chrome://extensions/
+   Edge: edge://extensions/
+3. Enable Developer Mode (toggle top-right).
+4. Run the native messaging setup script (e.g., setup_native_messaging.bat) as Administrator if system integration is required.
+5. Click "Load unpacked" and select the extracted folder.
 Security Features
 Uses native messaging for secure system-level operations
 Implements strict content security policies
@@ -38,26 +45,10 @@ Requires explicit permissions for various operations
 Includes EULA and user agreement functionality
 This extension appears to be a sophisticated tool that bridges the gap between web browsers and system-level operations, particularly focused on managing and launching web applications across different browser versions. Its architecture suggests it's designed for enterprise or power-user scenarios where precise control over browser instances is required.
 
-Browser Launcher installation  Guide
-======================================
-
-Follow these steps to install and set up the Browser Launcher extension:
-
-1. Download and extract the "Browser Launcher" extension to a folder on your computer.
-
-2. Open your Chrome or Edge browser and navigate to the Extensions page:
-   - For Chrome: `chrome://extensions/`
-   - For Edge: `edge://extensions/`
-
-3. Enable Developer mode:
-   - Toggle the "Developer mode" switch located at the top-right corner of the Extensions page.
-
-4. Run the setup script from the extracted folder
-   - Right-click on `setup_native_messaging.bat`.
-   - Select “Run as administrator”.
-
-5. Load the extension:
-   - Click on the "Load unpacked" button.
-   - Select the folder where you extracted the "Browser Launcher" extension in Step 1.
-   
-Once these steps are completed, the Browser Launcher extension should be fully set up and ready to use.
+Browser Launcher Installation Guide (Summary)
+============================================
+1. Clone or download and extract the repository.
+2. Open Chrome or Edge extensions page and enable Developer Mode.
+3. (Optional) Run native messaging setup script as Administrator.
+4. Click "Load unpacked" and select the extracted folder.
+5. Extension is ready for use. Use at your own risk; no warranties.

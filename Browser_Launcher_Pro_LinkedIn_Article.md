@@ -92,6 +92,13 @@ Browser Launcher Pro is a sophisticated browser extension that transforms how de
 
 ## Installation and Setup
 
+## Availability & Disclaimer
+
+- Not published on the Chrome Web Store or Microsoft Edge Add-ons. This is a custom-developed tool distributed directly from the project repository.
+- Free to download and use at your discretion. Provided "AS IS" without warranties or guarantees. Use at your own risk.
+- The developer assumes no liability for any damages or issues arising from use of this software.
+- Installation is manual via "Load unpacked" in Chrome/Edge. Automatic store updates are not available.
+
 ### Prerequisites
 - Windows 10/11 with WSL support (for Linux features)
 - Chrome or Edge browser
@@ -99,7 +106,10 @@ Browser Launcher Pro is a sophisticated browser extension that transforms how de
 - PowerShell execution policy configured for script execution
 
 ### Installation Process
-1. **Extension Installation**: Install from Chrome Web Store or load unpacked extension
+1. **Extension Installation (Manual - Load Unpacked)**
+	- Download this repository (Code → Download ZIP) or clone it
+	- Chrome: open chrome://extensions → enable Developer mode → Load unpacked → select the repo folder
+	- Edge: open edge://extensions → enable Developer mode → Load unpacked → select the repo folder
 2. **Native Host Setup**: Run the provided PowerShell scripts for system integration
 3. **WSL Configuration**: Configure WSL instances and browser installations
 4. **License Activation**: Activate trial or purchase license for full functionality
@@ -199,7 +209,7 @@ Whether you're a solo developer working on cross-browser compatibility or a larg
 
 ## Get Started Today
 
-Ready to revolutionize your browser management workflow? Visit the Chrome Web Store to install Browser Launcher Pro and start your 60-day free trial. Experience the difference that professional-grade browser management can make in your development process.
+Ready to streamline your browser management workflow? Install manually by loading the extension unpacked (Developer mode) and start your 60-day trial. For step-by-step instructions, see the project's README. Experience the difference that professional-grade browser management can make in your development process.
 
 ---
 

@@ -107,10 +107,21 @@ Your data stays yours:
 
 ## 🎯 Getting Started in Minutes
 
+### Availability & Disclaimer
+
+- Not published on the Chrome Web Store or Microsoft Edge Add-ons. This is a custom-developed tool distributed directly from the project repository.
+- Free to download and use at your discretion. Provided "AS IS" without warranties or guarantees. Use at your own risk.
+- The developer assumes no liability for any damages or issues arising from use of this software.
+- Installation is manual via "Load unpacked" in Chrome/Edge. Automatic store updates are not available.
+
 ### Installation
-1. **Download**: Get Browser Launcher Pro from the Chrome Web Store
-2. **Install**: Click "Add to Chrome" and accept permissions
-3. **Configure**: Open the extension and customize your preferences
+1. **Get the Code**: Download this repository (Code → Download ZIP) or clone it
+2. **Load the Extension (Manual - Load Unpacked)**:
+	- Chrome: open chrome://extensions → enable Developer mode → Load unpacked → select the repo folder
+	- Edge: open edge://extensions → enable Developer mode → Load unpacked → select the repo folder
+3. **Native Host Setup**: Run the provided PowerShell scripts for system integration (see README)
+4. **Optional – WSL Configuration**: Configure WSL instances and browser installations
+5. **Configure Preferences**: Open the extension and customize your preferences
 
 ### Quick Setup Tips
 - **Enable Version Tracking**: Get notified when your browsers need updates
@@ -142,7 +153,7 @@ Browser Launcher Pro is trusted by **over 10,000 developers, designers, and powe
 
 Don't let inefficient browser management slow down your productivity. Download Browser Launcher Pro 3.0 today and experience the future of multi-browser workflow management.
 
-**[Download Now from Chrome Web Store](#)** | **[Visit Website](https://browserlauncherpro.blogspot.com/)** | **[Documentation](https://browserlauncherpro.blogspot.com/)**
+**[Install Manually (Load Unpacked)](README.md)** | **[Visit Website](https://browserlauncherpro.blogspot.com/)** | **[Documentation](https://browserlauncherpro.blogspot.com/)**
 
 ---
 
@@ -156,7 +167,7 @@ Don't let inefficient browser management slow down your productivity. Download B
 **Platforms**: Windows 10/11, WSL1/WSL2  
 **Size**: < 2MB download  
 **Permissions**: Minimal required permissions only  
-**Updates**: Automatic updates via Chrome Web Store  
+**Updates**: Manual updates (pull latest release/clone updates; reload unpacked extension)  
 **Support**: Community support and professional support options available
 
 *This blog post showcases the power and elegance of Browser Launcher Pro 3.0. Experience the difference that professional browser management can make in your daily workflow.*

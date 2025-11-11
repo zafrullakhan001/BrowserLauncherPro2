@@ -2,6 +2,11 @@
 
 A powerful browser extension for managing multiple browser versions and enhancing your web browsing experience with a professional, modern interface.
 
+## Availability & Disclaimer
+- This is a custom-developed extension and is NOT published on the Chrome Web Store or Microsoft Edge Add-ons store.
+- You can download the source freely from this repository and use it at your own discretion by loading it as an unpacked extension.
+- The software is provided “as is,” without warranty of any kind. No liability of any sort shall be assumed by the developer for any damages or losses arising from the use of this software. See the license for full terms.
+
 ## ✨ What's New in v3.0
 - **Enhanced Footer Design**: Complete redesign with comprehensive resources, status indicators, and quick actions
 - **Professional UI**: Modern gradient backgrounds, smooth animations, and improved typography
@@ -19,11 +24,17 @@ A powerful browser extension for managing multiple browser versions and enhancin
 - **Keyboard Shortcuts**: Quick access to common functions
 - **Incognito Mode Support**: Launch browsers in private browsing mode
 
-## Installation
+## Installation (Load Unpacked)
 
-1. Download the extension from the Chrome Web Store
-2. Click "Add to Chrome" to install
-3. Accept the permissions when prompted
+Because the extension is not available in the Chrome/Edge stores, install it locally as an unpacked extension:
+
+1. Download or clone this repository to your computer and extract it to a folder.
+2. Open your browser’s Extensions page:
+	- Chrome: `chrome://extensions/`
+	- Edge: `edge://extensions/`
+3. Enable Developer mode (toggle in the top-right of the extensions page).
+4. Optional but recommended for full functionality: run the native host setup scripts included in the repo (see scripts under the repo root) with administrator privileges.
+5. Click “Load unpacked” and select the extracted repository folder.
 
 ## Usage
 
@@ -76,7 +87,7 @@ For support, feature requests, or bug reports, please visit our [GitHub reposito
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for details. The MIT license includes a full disclaimer of warranties and limitation of liability.
 
 ## Privacy Policy
 

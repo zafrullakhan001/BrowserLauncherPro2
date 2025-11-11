@@ -57,6 +57,9 @@
 
         <h2>Overview</h2>
         <p>Browser Launcher is a powerful browser extension designed to launch web applications in different browser versions. It's built for Chrome and Edge browsers using Manifest V3 and includes native messaging capabilities for enhanced system integration.</p>
+        <div class="note">
+            <strong>Availability & Disclaimer:</strong> This is a custom-developed extension and is <u>not published</u> on the Chrome Web Store or Microsoft Edge Add-ons store. You can freely download the source and load it as an unpacked extension. The software is provided "AS IS" without any warranty; the developer assumes no liability for any damages, data loss, or issues arising from its use.
+        </div>
 
         <h2>Key Features</h2>
         <ul>
@@ -98,12 +101,20 @@
             <li>Various setup and installation scripts for system integration</li>
         </ul>
 
-        <h2>Installation</h2>
-        <p>The extension requires a proper setup process that includes:</p>
+        <h2>Installation (Load Unpacked)</h2>
+        <p>Since the extension is not available in the Chrome or Edge stores, install it manually as an unpacked extension:</p>
         <ol>
-            <li>Extension installation in the browser</li>
-            <li>Native messaging host setup</li>
-            <li>System configuration via provided setup scripts</li>
+            <li>Clone or download this repository and extract it to a folder.</li>
+            <li>Open the extensions management page:
+                <ul>
+                    <li>Chrome: <code>chrome://extensions/</code></li>
+                    <li>Edge: <code>edge://extensions/</code></li>
+                </ul>
+            </li>
+            <li>Enable <strong>Developer mode</strong> (toggle in the top-right corner).</li>
+            <li>(Optional) Run the native messaging setup script (e.g., <code>setup_native_messaging.bat</code>) as Administrator for system integration.</li>
+            <li>Click <strong>"Load unpacked"</strong> and select the extracted repository folder.</li>
+            <li>The extension loads and is ready for use. Use at your own discretion.</li>
         </ol>
 
         <div class="note">

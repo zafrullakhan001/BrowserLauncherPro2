@@ -29,7 +29,7 @@ const TRANSLATIONS = {
   'en': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': 'Launch and manage multiple browsers across Windows and WSL with version tracking',
+  'header.subtitle': 'Launch and manage multiple browsers across Windows and WSL with version update tracking and notification',
     
     // Navigation tabs
     'nav.windows': 'Windows Local',
@@ -241,7 +241,7 @@ const TRANSLATIONS = {
   'fr': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': 'Lancez et gérez plusieurs navigateurs sur Windows et WSL avec suivi de version',
+    'header.subtitle': 'Lancez et gérez plusieurs navigateurs sur Windows et WSL avec suivi des mises à jour de version et notifications',
     
     // Navigation tabs
     'nav.windows': 'Windows Local',
@@ -358,7 +358,7 @@ const TRANSLATIONS = {
   'es': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': 'Lanza y gestiona múltiples navegadores en Windows y WSL con seguimiento de versiones',
+    'header.subtitle': 'Lanza y gestiona múltiples navegadores en Windows y WSL con seguimiento de actualizaciones de versión y notificaciones',
     
     // Navigation tabs
     'nav.windows': 'Windows Local',
@@ -402,7 +402,7 @@ const TRANSLATIONS = {
   'de': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': 'Starten und verwalten Sie mehrere Browser auf Windows und WSL mit Versionsverfolgung',
+    'header.subtitle': 'Starten und verwalten Sie mehrere Browser auf Windows und WSL mit Nachverfolgung von Versionsupdates und Benachrichtigungen',
     
     // Navigation tabs
     'nav.windows': 'Windows Lokal',
@@ -441,7 +441,7 @@ const TRANSLATIONS = {
   'it': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': 'Avvia e gestisci più browser su Windows e WSL con tracciamento delle versioni',
+    'header.subtitle': 'Avvia e gestisci più browser su Windows e WSL con tracciamento degli aggiornamenti di versione e notifiche',
     
     // Navigation
     'nav.settings': 'Impostazioni',
@@ -467,7 +467,7 @@ const TRANSLATIONS = {
   'ar': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': 'إطلاق وإدارة متصفحات متعددة على Windows و WSL مع تتبع الإصدار',
+    'header.subtitle': 'إطلاق وإدارة متصفحات متعددة على Windows و WSL مع تتبع تحديثات الإصدار والإشعارات',
     
     // Navigation
     'nav.windows': 'Windows محلي',
@@ -497,7 +497,7 @@ const TRANSLATIONS = {
   'zh': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': '在 Windows 和 WSL 上启动和管理多个浏览器，支持版本跟踪',
+    'header.subtitle': '在 Windows 和 WSL 上启动和管理多个浏览器，支持版本更新跟踪和通知',
     
     // Navigation
     'nav.windows': 'Windows 本地',
@@ -530,7 +530,7 @@ const TRANSLATIONS = {
   'zh-TW': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': '在 Windows 和 WSL 上啟動和管理多個瀏覽器，支援版本追蹤',
+    'header.subtitle': '在 Windows 和 WSL 上啟動和管理多個瀏覽器，支援版本更新追蹤與通知',
     
     // Navigation
     'nav.settings': '設定',
@@ -551,7 +551,7 @@ const TRANSLATIONS = {
   'ja': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': 'バージョン追跡機能付きで、WindowsおよびWSL上で複数のブラウザを起動・管理',
+    'header.subtitle': 'バージョン更新の追跡と通知に対応し、WindowsおよびWSL上で複数のブラウザを起動・管理',
     
     // Navigation
     'nav.settings': '設定',
@@ -572,7 +572,7 @@ const TRANSLATIONS = {
   'ko': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': '버전 추적이 가능한 Windows 및 WSL에서 여러 브라우저 실행 및 관리',
+    'header.subtitle': '버전 업데이트 추적과 알림을 지원하며, Windows 및 WSL에서 여러 브라우저를 실행 및 관리',
     
     // Navigation
     'nav.settings': '설정',
@@ -593,7 +593,7 @@ const TRANSLATIONS = {
   'ru': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': 'Запуск и управление несколькими браузерами в Windows и WSL с отслеживанием версий',
+    'header.subtitle': 'Запуск и управление несколькими браузерами в Windows и WSL с отслеживанием обновлений версий и уведомлениями',
     
     // Navigation
     'nav.settings': 'Настройки',
@@ -617,7 +617,7 @@ const TRANSLATIONS = {
   'pt': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': 'Lance e gerencie múltiplos navegadores no Windows e WSL com rastreamento de versões',
+    'header.subtitle': 'Lance e gerencie múltiplos navegadores no Windows e WSL com rastreamento de atualizações de versão e notificações',
     
     // Navigation
     'nav.settings': 'Configurações',
@@ -638,7 +638,7 @@ const TRANSLATIONS = {
   'nl': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': 'Start en beheer meerdere browsers op Windows en WSL met versietracking',
+    'header.subtitle': 'Start en beheer meerdere browsers op Windows en WSL met tracking van versie-updates en meldingen',
     
     // Navigation
     'nav.settings': 'Instellingen',
@@ -659,7 +659,7 @@ const TRANSLATIONS = {
   'pl': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': 'Uruchamiaj i zarządzaj wieloma przeglądarkami w Windows i WSL ze śledzeniem wersji',
+    'header.subtitle': 'Uruchamiaj i zarządzaj wieloma przeglądarkami w Windows i WSL ze śledzeniem aktualizacji wersji i powiadomieniami',
     
     // Navigation
     'nav.settings': 'Ustawienia',
@@ -680,7 +680,7 @@ const TRANSLATIONS = {
   'he': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': 'הפעלה וניהול של דפדפנים מרובים ב-Windows וב-WSL עם מעקב גרסאות',
+    'header.subtitle': 'הפעלה וניהול של דפדפנים מרובים ב-Windows וב-WSL עם מעקב אחר עדכוני גרסה והתראות',
     
     // Navigation
     'nav.settings': 'הגדרות',
@@ -701,7 +701,7 @@ const TRANSLATIONS = {
   'fa': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': 'راه‌اندازی و مدیریت چندین مرورگر در Windows و WSL با ردیابی نسخه',
+    'header.subtitle': 'راه‌اندازی و مدیریت چندین مرورگر در Windows و WSL با ردیابی به‌روزرسانی‌های نسخه و اعلان‌ها',
     
     // Navigation
     'nav.settings': 'تنظیمات',
@@ -722,7 +722,7 @@ const TRANSLATIONS = {
   'tr': {
     // Header
     'header.title': 'Browser Launcher Pro',
-    'header.subtitle': 'Windows ve WSL\'de sürüm takibi ile birden fazla tarayıcıyı başlatın ve yönetin',
+    'header.subtitle': 'Windows ve WSL\'de sürüm güncellemesi takibi ve bildirimleriyle birden fazla tarayıcıyı başlatın ve yönetin',
     
     // Navigation
     'nav.settings': 'Ayarlar',
