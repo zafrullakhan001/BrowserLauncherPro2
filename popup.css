@@ -593,6 +593,32 @@ header .subheading {
   display: block;
 }
 
+/* Bounce animation on hover (lightweight) */
+@keyframes browserIconBounce {
+  0% { transform: translateY(0); }
+  30% { transform: translateY(-8px); }
+  50% { transform: translateY(0); }
+  70% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
+/* Apply bounce while hovering over the card or button */
+.button-with-version:hover .browser-icon,
+.button-with-version:focus-within .browser-icon,
+.btn:hover .browser-icon,
+.btn:focus .browser-icon {
+  animation: browserIconBounce 0.9s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .button-with-version:hover .browser-icon,
+  .btn:hover .browser-icon {
+    animation: none;
+  }
+}
+
 /* Chrome icon sized to match Edge for consistency */
 .chrome-icon {
   width: 48px;
