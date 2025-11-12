@@ -13,3 +13,6 @@ install_log.txt
 browser_settings.json
 browser_settings.json
 BrowserPathDetection.log
+license_generate.py
+license_generate.py
+wsl-manager-run*.log

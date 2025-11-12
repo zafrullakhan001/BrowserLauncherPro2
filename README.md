@@ -1,5 +1,7 @@
 # Browser Launcher Pro v3.0
 
+Launch and manage multiple browsers across Windows and WSL with version update tracking and notification.
+
 A powerful browser extension for managing multiple browser versions and enhancing your web browsing experience with a professional, modern interface.
 
 ## Availability & Disclaimer
@@ -16,7 +18,7 @@ A powerful browser extension for managing multiple browser versions and enhancin
 
 ## Features
 
-- **Multi-Browser Management**: Launch and manage different versions of Chrome and Edge browsers
+- **Multi-Browser Management**: Launch and manage Chrome and Edge (Stable, Beta, Dev) across Windows; integrate with WSL workflows
 - **Version Tracking**: Monitor browser versions and receive update notifications
 - **WSL Integration**: Seamlessly work with Windows Subsystem for Linux
 - **Quick Search**: Search across multiple engines (YouTube, Google, DuckDuckGo, etc.)
@@ -33,8 +35,15 @@ Because the extension is not available in the Chrome/Edge stores, install it loc
 	- Chrome: `chrome://extensions/`
 	- Edge: `edge://extensions/`
 3. Enable Developer mode (toggle in the top-right of the extensions page).
-4. Optional but recommended for full functionality: run the native host setup scripts included in the repo (see scripts under the repo root) with administrator privileges.
-5. Click “Load unpacked” and select the extracted repository folder.
+4. Click “Load unpacked” and select the extracted repository folder.
+5. Optional but recommended for full functionality: run the native host setup scripts included in the repo (see scripts under the repo root) with administrator privileges.
+
+### Manual Updates (for unpacked installs)
+
+Since this extension isn’t published in the Chrome/Edge stores, updates are manual:
+- Pull or download the latest changes from this repository
+- Replace the local extension folder with the updated files
+- In `chrome://extensions` or `edge://extensions`, click the refresh/reload icon on the extension card
 
 ## Usage
 
@@ -83,7 +92,9 @@ The new footer provides quick access to essential resources and real-time status
 
 ## Support
 
-For support, feature requests, or bug reports, please visit our [GitHub repository](https://github.com/browserlauncher/pro) or contact us at support@browserlauncher.pro
+For support, feature requests, or bug reports:
+- Open an issue on the GitHub repository: https://github.com/zafrullakhan001/BrowserLauncherPro2/issues
+- Or contact us at support@browserlauncher.pro
 
 ## License
 
