@@ -1446,6 +1446,81 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log('Executing command:', request.command);
     sendResponse({ success: true });
   }
+
+  // Handle link opening from third-party landing pages
+  if (request.action === 'openLinkInBrowser') {
+    const { url, browserId } = request;
+    
+    // Map browserId to command setting
+    const browserMap = {
+      'edge-stable-local': 'edgeStablePath',
+      'edge-beta-local': 'edgeBetaPath',
+      'edge-dev-local': 'edgeDevPath',
+      'chrome-stable-local': 'chromeStablePath',
+      'chrome-beta-local': 'chromeBetaPath',
+      'chrome-dev-local': 'chromeDevPath',
+      'edge-stable': 'wslEdgeStablePath',
+      'edge-beta': 'wslEdgeBetaPath',
+      'edge-dev': 'wslEdgeDevPath',
+      'chrome-stable': 'wslChromeStablePath',
+      'chrome-beta': 'wslChromeBetaPath',
+      'chrome-dev': 'wslChromeDevPath',
+      'firefox': 'wslFirefoxPath',
+      'opera': 'wslOperaPath',
+      'brave': 'wslBravePath'
+    };
+    
+    const commandSetting = browserMap[browserId];
+    if (!commandSetting) {
+      sendResponse({ 
+        success: false, 
+        error: 'Invalid browser ID: ' + browserId 
+      });
+      return true;
+    }
+    
+    chrome.storage.local.get([commandSetting], async function (result) {
+      let command = result[commandSetting];
+      
+      if (!command || command === 'NA') {
+        sendResponse({ 
+          success: false, 
+          error: 'Browser path not configured for ' + browserId 
+        });
+        return;
+      }
+      
+      // Prepare command based on WSL or local
+      if (commandSetting.startsWith('wsl')) {
+        command = await prepareWSLCommand(command);
+        command = `${command} "${url}"`;
+      } else {
+        command = `"${command}" "${url}"`;
+      }
+      
+      console.log('Opening link in browser:', command);
+      
+      // Send immediate response to prevent timeout
+      // The browser launch is asynchronous, so we respond immediately
+      sendResponse({ success: true, message: 'Browser launch initiated' });
+      
+      // Send to native messaging host (fire and forget for faster response)
+      chrome.runtime.sendNativeMessage('com.example.browserlauncher', {
+        command: command
+      }, (response) => {
+        // Log result but don't block the response
+        if (chrome.runtime.lastError) {
+          console.error('Native messaging error:', chrome.runtime.lastError.message);
+        } else if (response && response.result && response.result.startsWith("Error:")) {
+          console.error('Browser launch error:', response.result);
+        } else {
+          console.log('Browser launched successfully');
+        }
+      });
+    });
+    
+    return true; // Keep channel open for async response
+  }
 });
 
 // Function to execute PowerShell script
