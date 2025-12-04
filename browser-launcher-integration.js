@@ -168,12 +168,9 @@
 
       log('Opening URL in browser:', url, '->', normalizedBrowserId);
 
-      // Method 1: Use postMessage (works across domains, most reliable)
-      // The content script will handle the message and forward to background
+      // Always try to send the message first - the content script might be available
+      // even if the marker isn't set yet (race condition)
       sendPostMessage(url, normalizedBrowserId, options, callback, resolve, reject);
-      
-      // Note: Direct chrome.runtime.sendMessage from web pages is restricted
-      // We use postMessage which the content script listens for
     });
   }
 
@@ -250,6 +247,11 @@
     window.addEventListener('message', responseListener);
 
     // Timeout handling
+    // Check if extension marker exists (but don't rely on it exclusively due to race conditions)
+    const extensionMarkerExists = typeof window !== 'undefined' && window.BrowserLauncherProExtension;
+    // Use shorter timeout if marker doesn't exist (extension likely not available)
+    const timeoutDuration = extensionMarkerExists ? config.responseTimeout : 3000; // 3 seconds if marker not found
+    
     timeoutId = setTimeout(() => {
       // Only proceed if we haven't received a response
       if (!hasResponded) {
@@ -259,12 +261,21 @@
         if (shouldFallback) {
           const error = 'Timeout waiting for extension response';
           logError(error);
-          log('Timeout occurred, but browser may have opened. Waiting before fallback...');
           
-          // Give it a bit more time - sometimes browser opens but response is slow
+          // If extension marker wasn't found, fallback faster
+          if (!extensionMarkerExists) {
+            log('Extension marker not found and no response, falling back to normal navigation');
+            window.location.href = url;
+            if (callback) callback({ success: false, error: 'Extension not available - using fallback' });
+            reject(new Error('Extension not available'));
+            return;
+          }
+          
+          // Extension marker exists but no response - give it a grace period
+          log('Timeout occurred, but browser may have opened. Waiting briefly before fallback...');
           gracePeriodId = setTimeout(() => {
-            // Double-check we still haven't responded (check multiple times to be safe)
-            if (!hasResponded) {
+            // Double-check we still haven't responded
+            if (!hasResponded && !navigationPrevented) {
               log('No response received after grace period, falling back to normal navigation');
               // Final check before navigation
               setTimeout(() => {
@@ -278,7 +289,7 @@
             } else {
               log('Response received during grace period, skipping fallback');
             }
-          }, 2000); // Additional 2 second grace period
+          }, 1000); // 1 second grace period
         } else {
           const error = 'Timeout waiting for extension response';
           logError(error);
@@ -289,7 +300,7 @@
         // Response received, just clean up
         window.removeEventListener('message', responseListener);
       }
-    }, config.responseTimeout);
+    }, timeoutDuration);
   }
 
   /**
