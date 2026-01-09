@@ -1650,6 +1650,70 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'openLinkInBrowser') {
     const { url, browserId } = request;
 
+    console.log('[API] openLinkInBrowser called:', { url, browserId });
+
+    // Check if this is a custom browser (starts with 'custom-')
+    if (browserId && browserId.startsWith('custom-')) {
+      console.log('[API] Detected custom browser request');
+
+      chrome.storage.local.get(['customBrowsers'], async function (result) {
+        const customBrowsers = result.customBrowsers || [];
+        const customBrowser = customBrowsers.find(b => b.id === browserId);
+
+        if (!customBrowser) {
+          console.error('[API] Custom browser not found:', browserId);
+          sendResponse({
+            success: false,
+            error: 'Custom browser not found: ' + browserId
+          });
+          return;
+        }
+
+        if (!customBrowser.enabled) {
+          console.error('[API] Custom browser is disabled:', browserId);
+          sendResponse({
+            success: false,
+            error: 'Custom browser is disabled: ' + browserId
+          });
+          return;
+        }
+
+        console.log('[API] Found custom browser:', customBrowser);
+
+        let command = customBrowser.path;
+
+        // Handle WSL browsers
+        if (customBrowser.platform === 'wsl') {
+          command = await prepareWSLCommand(command);
+          command = `${command} "${url}"`;
+        } else {
+          // Windows browsers
+          command = `"${command}" "${url}"`;
+        }
+
+        console.log('[API] Executing custom browser command:', command);
+
+        // Send immediate response
+        sendResponse({ success: true, message: 'Custom browser launch initiated', browser: customBrowser.name });
+
+        // Launch browser
+        chrome.runtime.sendNativeMessage('com.example.browserlauncher', {
+          command: command
+        }, (response) => {
+          if (chrome.runtime.lastError) {
+            console.error('[API] Native messaging error:', chrome.runtime.lastError.message);
+          } else if (response && response.result && response.result.startsWith("Error:")) {
+            console.error('[API] Browser launch error:', response.result);
+          } else {
+            console.log('[API] Custom browser launched successfully');
+          }
+        });
+      });
+
+      return true; // Keep channel open for async response
+    }
+
+    // Handle built-in browsers (existing code)
     // Map browserId to command setting
     const browserMap = {
       'edge-stable-local': 'edgeStablePath',
