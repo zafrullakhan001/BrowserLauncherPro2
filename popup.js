@@ -4956,6 +4956,11 @@ Next steps:
     });
   }
 
+  // Load custom browsers when custom browsers tab is clicked
+  document.getElementById('custom-browsers-tab').addEventListener('click', function () {
+    loadCustomBrowsers();
+  });
+
   // Load custom browsers when settings tab is clicked
   document.getElementById('settings-tab').addEventListener('click', function () {
     loadCustomBrowsers();
