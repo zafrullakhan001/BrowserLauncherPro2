@@ -4856,7 +4856,9 @@ document.addEventListener('DOMContentLoaded', function () {
       chrome.runtime.sendMessage({ action: 'refreshContextMenus' }, function (response) {
         console.log('[SAVE] refreshContextMenus response:', response);
         if (chrome.runtime.lastError) {
-          console.error('[SAVE] Error refreshing menus:', chrome.runtime.lastError);
+          console.error('[SAVE] Error refreshing menus:', chrome.runtime.lastError.message);
+        } else {
+          console.log('[SAVE] Context menus refreshed successfully');
         }
       });
 
