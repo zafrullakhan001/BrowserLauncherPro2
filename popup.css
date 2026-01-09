@@ -445,7 +445,8 @@ header .subheading {
 .browser-section-badge.wsl-edge-badge::after,
 .browser-section-badge.wsl-chrome-badge::after,
 .browser-section-badge.wsl-other-badge::after,
-.browser-section-badge.wsl-tools-badge::after {
+.browser-section-badge.wsl-tools-badge::after,
+.browser-section-badge.wsl-custom-badge::after {
   content: "WSL";
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
@@ -454,7 +455,8 @@ header .subheading {
 [data-theme="dark"] .browser-section-badge.wsl-edge-badge::after,
 [data-theme="dark"] .browser-section-badge.wsl-chrome-badge::after,
 [data-theme="dark"] .browser-section-badge.wsl-other-badge::after,
-[data-theme="dark"] .browser-section-badge.wsl-tools-badge::after {
+[data-theme="dark"] .browser-section-badge.wsl-tools-badge::after,
+[data-theme="dark"] .browser-section-badge.wsl-custom-badge::after {
   background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
   color: #0f172a;
 }

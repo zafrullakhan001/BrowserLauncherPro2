@@ -318,7 +318,7 @@
         <!-- Custom Browsers (WSL) - Moved below WSL Tools -->
         <div class="browser-group" id="custom-browsers-wsl-group"
           style="display: none; padding-top: 20px; padding-bottom: 20px;">
-          <div class="browser-section-badge">
+          <div class="browser-section-badge wsl-custom-badge">
             <i class="fas fa-plus-circle"></i>
             <span>CUSTOM BROWSERS (WSL)</span>
           </div>
@@ -331,9 +331,23 @@
       <!-- Custom Browsers Tab -->
       <div class="tab-pane fade" id="custom-browsers">
         <div class="custom-browsers-header mb-3">
-          <h5 class="mb-2"><i class="fas fa-plus-circle mr-2"></i>Custom Browsers</h5>
-          <p class="text-muted mb-3" style="font-size: 0.9rem;">Add and manage your own custom browsers for Windows and
-            WSL platforms. Launch them from the main tabs or via context menu.</p>
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h5 class="mb-2"><i class="fas fa-plus-circle mr-2"></i>Custom Browsers</h5>
+              <p class="text-muted mb-0" style="font-size: 0.9rem;">Add and manage your own custom browsers for Windows
+                and
+                WSL platforms. Launch them from the main tabs or via context menu.</p>
+            </div>
+            <div class="d-flex">
+              <button class="btn btn-outline-primary btn-sm mr-2" id="export-custom-browsers" title="Export to JSON">
+                <i class="fas fa-download mr-1"></i>Export
+              </button>
+              <button class="btn btn-outline-success btn-sm" id="import-custom-browsers" title="Import from JSON">
+                <i class="fas fa-upload mr-1"></i>Import
+              </button>
+              <input type="file" id="import-custom-browsers-file" accept=".json" style="display: none;">
+            </div>
+          </div>
         </div>
 
         <!-- Custom Browsers List -->

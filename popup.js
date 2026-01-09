@@ -4969,6 +4969,134 @@ Next steps:
   // Load custom browsers on initial page load
   loadCustomBrowsers();
 
+  // Export custom browsers to JSON
+  const exportCustomBrowsersBtn = document.getElementById('export-custom-browsers');
+  if (exportCustomBrowsersBtn) {
+    exportCustomBrowsersBtn.addEventListener('click', function () {
+      chrome.storage.local.get(['customBrowsers'], function (result) {
+        const customBrowsers = result.customBrowsers || [];
+
+        if (customBrowsers.length === 0) {
+          alert('No custom browsers to export!');
+          return;
+        }
+
+        const exportData = {
+          version: '1.0',
+          exportDate: new Date().toISOString(),
+          customBrowsers: customBrowsers
+        };
+
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `custom-browsers-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        console.log('[EXPORT] Exported', customBrowsers.length, 'custom browsers');
+        alert(`Successfully exported ${customBrowsers.length} custom browser(s)!`);
+      });
+    });
+  }
+
+  // Import custom browsers from JSON
+  const importCustomBrowsersBtn = document.getElementById('import-custom-browsers');
+  const importCustomBrowsersFile = document.getElementById('import-custom-browsers-file');
+
+  if (importCustomBrowsersBtn && importCustomBrowsersFile) {
+    importCustomBrowsersBtn.addEventListener('click', function () {
+      importCustomBrowsersFile.click();
+    });
+
+    importCustomBrowsersFile.addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        try {
+          const importData = JSON.parse(event.target.result);
+
+          // Validate import data
+          if (!importData.customBrowsers || !Array.isArray(importData.customBrowsers)) {
+            throw new Error('Invalid custom browsers file format');
+          }
+
+          // Validate each browser entry
+          const validBrowsers = importData.customBrowsers.filter(browser => {
+            return browser.name && browser.platform && browser.path;
+          });
+
+          if (validBrowsers.length === 0) {
+            throw new Error('No valid browsers found in import file');
+          }
+
+          // Ask user if they want to merge or replace
+          const merge = confirm(
+            `Found ${validBrowsers.length} browser(s) in the import file.\n\n` +
+            `Click OK to MERGE with existing browsers.\n` +
+            `Click Cancel to REPLACE all existing browsers.`
+          );
+
+          chrome.storage.local.get(['customBrowsers'], function (result) {
+            let finalBrowsers;
+
+            if (merge) {
+              // Merge: combine existing and imported browsers
+              const existingBrowsers = result.customBrowsers || [];
+              const existingIds = new Set(existingBrowsers.map(b => b.id));
+
+              // Add imported browsers that don't already exist
+              const newBrowsers = validBrowsers.filter(b => !existingIds.has(b.id));
+              finalBrowsers = [...existingBrowsers, ...newBrowsers];
+
+              console.log('[IMPORT] Merged', newBrowsers.length, 'new browsers with', existingBrowsers.length, 'existing');
+            } else {
+              // Replace: use only imported browsers
+              finalBrowsers = validBrowsers;
+              console.log('[IMPORT] Replaced all browsers with', validBrowsers.length, 'imported browsers');
+            }
+
+            // Save to storage
+            chrome.storage.local.set({ customBrowsers: finalBrowsers }, function () {
+              console.log('[IMPORT] Custom browsers imported successfully');
+
+              // Refresh context menus
+              chrome.runtime.sendMessage({ action: 'refreshContextMenus' }, function (response) {
+                if (chrome.runtime.lastError) {
+                  console.error('[IMPORT] Error refreshing menus:', chrome.runtime.lastError.message);
+                }
+              });
+
+              // Reload the list
+              loadCustomBrowsers();
+
+              alert(
+                `Successfully imported ${validBrowsers.length} browser(s)!\n\n` +
+                `Total browsers: ${finalBrowsers.length}`
+              );
+            });
+          });
+
+        } catch (error) {
+          console.error('[IMPORT] Error importing custom browsers:', error);
+          alert(`Error importing custom browsers:\n${error.message}`);
+        }
+      };
+
+      reader.readAsText(file);
+
+      // Reset file input
+      e.target.value = '';
+    });
+  }
+
 
 
   // Password validation function (used by multiple places)
