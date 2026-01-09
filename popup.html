@@ -29,9 +29,10 @@
         <span class="version-badge-header">Ver 3.0</span>
         <!-- header-controls removed: theme toggle has been moved next to language selector -->
       </div>
-      <p class="subheading" data-i18n="header.subtitle">Launch and manage multiple browsers across Windows and WSL with version update tracking and notification</p>
+      <p class="subheading" data-i18n="header.subtitle">Launch and manage multiple browsers across Windows and WSL with
+        version update tracking and notification</p>
     </header>
-    
+
     <!-- Language Selector - Right aligned above tabs -->
     <div class="language-selector-above-tabs">
       <select id="language-select" class="language-selector-compact" title="Select Language">
@@ -41,28 +42,35 @@
         <i class="fas fa-moon" id="theme-icon"></i>
       </button>
     </div>
-    
+
     <ul class="nav nav-tabs" id="settings-tabs">
       <li class="nav-item">
-        <a class="nav-link active" href="#windows" id="windows-tab"><i class="fas fa-desktop mr-1"></i><span data-i18n="nav.windows">Windows Local</span></a>
+        <a class="nav-link active" href="#windows" id="windows-tab"><i class="fas fa-desktop mr-1"></i><span
+            data-i18n="nav.windows">Windows Local</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#wsl" id="wsl-tab"><i class="fab fa-linux mr-1"></i><span data-i18n="nav.wsl">WSL Ubuntu Linux</span></a>
+        <a class="nav-link" href="#wsl" id="wsl-tab"><i class="fab fa-linux mr-1"></i><span data-i18n="nav.wsl">WSL
+            Ubuntu Linux</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#settings" id="settings-tab"><i class="fas fa-cog mr-1"></i><span data-i18n="nav.settings">Settings</span></a>
+        <a class="nav-link" href="#settings" id="settings-tab"><i class="fas fa-cog mr-1"></i><span
+            data-i18n="nav.settings">Settings</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#version-log" id="version-log-tab"><i class="fas fa-history mr-1"></i><span data-i18n="nav.versionLog">Version Update Log</span></a>
+        <a class="nav-link" href="#version-log" id="version-log-tab"><i class="fas fa-history mr-1"></i><span
+            data-i18n="nav.versionLog">Version Update Log</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#wsl-manager" id="wsl-manager-tab"><i class="fas fa-server mr-1"></i><span data-i18n="nav.wslManager">WSL Manager</span></a>
+        <a class="nav-link" href="#wsl-manager" id="wsl-manager-tab"><i class="fas fa-server mr-1"></i><span
+            data-i18n="nav.wslManager">WSL Manager</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#search-settings" id="search-settings-tab"><i class="fas fa-search mr-1"></i><span data-i18n="nav.searchSettings">Search Settings</span></a>
+        <a class="nav-link" href="#search-settings" id="search-settings-tab"><i class="fas fa-search mr-1"></i><span
+            data-i18n="nav.searchSettings">Search Settings</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#help-support" id="help-support-tab"><i class="fas fa-question-circle mr-1"></i><span data-i18n="nav.helpSupport">Help/Support</span></a>
+        <a class="nav-link" href="#help-support" id="help-support-tab"><i class="fas fa-question-circle mr-1"></i><span
+            data-i18n="nav.helpSupport">Help/Support</span></a>
       </li>
     </ul>
     <div class="tab-content">
@@ -150,7 +158,20 @@
             </div>
           </div>
         </div>
+
+        <!-- Custom Browsers (Windows) -->
+        <div class="browser-group" id="custom-browsers-windows-group" style="display: none;">
+          <div class="browser-section-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <i class="fas fa-plus-circle"></i>
+            <span>CUSTOM BROWSERS (WINDOWS)</span>
+          </div>
+          <div class="button-container" id="custom-browsers-windows-container">
+            <!-- Custom Windows browsers will be added here dynamically -->
+          </div>
+        </div>
+
         <div class="browser-timeline-section">
+
           <hr>
           <!-- Notches -->
           <div class="timeline-tick" style="left: 90px;"></div>
@@ -169,7 +190,8 @@
       <div class="tab-pane fade" id="wsl">
         <div class="wsl-context-badges mb-2">
           <span class="badge badge-success">WSL</span>
-          <span id="wsl-instance-badge" class="badge badge-info ml-1" style="display:none;" title="Default WSL instance"></span>
+          <span id="wsl-instance-badge" class="badge badge-info ml-1" style="display:none;"
+            title="Default WSL instance"></span>
         </div>
         <div class="browser-group">
           <div class="browser-section-badge wsl-edge-badge">
@@ -258,8 +280,21 @@
             </div>
           </div>
         </div>
+
+        <!-- Custom Browsers (WSL) -->
+        <div class="browser-group" id="custom-browsers-wsl-group" style="display: none;">
+          <div class="browser-section-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <i class="fas fa-plus-circle"></i>
+            <span>CUSTOM BROWSERS (WSL)</span>
+          </div>
+          <div class="button-container" id="custom-browsers-wsl-container">
+            <!-- Custom WSL browsers will be added here dynamically -->
+          </div>
+        </div>
+
         <div class="browser-group">
           <div class="browser-section-badge wsl-tools-badge">
+
             <i class="fas fa-tools"></i>
             <span data-i18n="wsl.tools.title">WSL UBUNTU TOOLS</span>
           </div>
@@ -300,14 +335,16 @@
         <!-- General Settings Card -->
         <div class="card mb-2">
           <div class="card-header bg-light py-1">
-            <h6 class="mb-0"><i class="fas fa-cog mr-1"></i><span data-i18n="settings.general.title">General Settings</span></h6>
+            <h6 class="mb-0"><i class="fas fa-cog mr-1"></i><span data-i18n="settings.general.title">General
+                Settings</span></h6>
           </div>
           <div class="card-body p-2">
             <!-- Language Selection removed from Settings as language can be changed from header selector -->
-            
+
             <!-- UI Zoom / Display size -->
             <div class="form-group mb-2">
-              <label class="mb-1 d-block"><i class="fas fa-text-height mr-1"></i><span data-i18n="settings.display.size">Display size</span></label>
+              <label class="mb-1 d-block"><i class="fas fa-text-height mr-1"></i><span
+                  data-i18n="settings.display.size">Display size</span></label>
               <div class="ui-zoom-control" aria-label="Adjust popup zoom/size">
                 <button type="button" id="ui-zoom-minus" class="zoom-btn" title="Smaller (A-)">A-</button>
                 <input type="range" id="ui-zoom-slider" min="70" max="150" step="5" aria-label="Zoom slider">
@@ -323,14 +360,16 @@
               <button class="btn btn-warning btn-sm" id="repair-browser-launching">
                 <i class="fas fa-tools mr-1"></i> Repair Browser Launching
               </button>
-              <small class="text-muted d-block mt-1">If browsers aren't launching, click this to fix registry settings and permissions</small>
+              <small class="text-muted d-block mt-1">If browsers aren't launching, click this to fix registry settings
+                and permissions</small>
             </div>
 
             <!-- Show/hide WSL Ubuntu tab -->
             <div class="form-group mb-2">
               <div class="custom-control custom-switch">
                 <input type="checkbox" class="custom-control-input" id="show-wsl-checkbox">
-                <label class="custom-control-label" for="show-wsl-checkbox" data-i18n="settings.show.wsl">Show WSL Ubuntu Linux and WSL Manager tabs</label>
+                <label class="custom-control-label" for="show-wsl-checkbox" data-i18n="settings.show.wsl">Show WSL
+                  Ubuntu Linux and WSL Manager tabs</label>
               </div>
             </div>
 
@@ -338,7 +377,8 @@
             <div class="form-group mb-2">
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="context-menu-toggle" checked>
-                <label class="custom-control-label" for="context-menu-toggle" data-i18n="settings.context.menu">Enable Context Menu</label>
+                <label class="custom-control-label" for="context-menu-toggle" data-i18n="settings.context.menu">Enable
+                  Context Menu</label>
               </div>
             </div>
 
@@ -346,7 +386,8 @@
             <div class="form-group mb-2">
               <div class="custom-control custom-switch">
                 <input type="checkbox" class="custom-control-input" id="version-checkbox" checked>
-                <label class="custom-control-label" for="version-checkbox" data-i18n="settings.version.check">Check browser version every time</label>
+                <label class="custom-control-label" for="version-checkbox" data-i18n="settings.version.check">Check
+                  browser version every time</label>
               </div>
             </div>
 
@@ -354,14 +395,16 @@
             <div class="form-group mb-2">
               <div class="custom-control custom-switch">
                 <input type="checkbox" class="custom-control-input" id="sandbox-context-toggle" checked>
-                <label class="custom-control-label" for="sandbox-context-toggle" data-i18n="settings.sandbox.context">Enable Windows Sandbox in context menu</label>
+                <label class="custom-control-label" for="sandbox-context-toggle"
+                  data-i18n="settings.sandbox.context">Enable Windows Sandbox in context menu</label>
               </div>
             </div>
 
             <!-- Check interval -->
             <div class="form-group mb-0">
               <label for="check-interval" class="d-flex align-items-center">
-                <i class="fas fa-clock mr-1"></i><span data-i18n="settings.check.interval">Check Interval (minutes)</span>
+                <i class="fas fa-clock mr-1"></i><span data-i18n="settings.check.interval">Check Interval
+                  (minutes)</span>
               </label>
               <div class="input-group input-group-sm">
                 <input type="number" class="form-control" id="check-interval" min="1" max="60" value="60">
@@ -377,7 +420,8 @@
         <!-- Browser Paths Card -->
         <div class="card mb-2">
           <div class="card-header bg-light py-1">
-            <h6 class="mb-0"><i class="fas fa-folder-open mr-1"></i><span data-i18n="settings.browser.paths">Browser Paths</span></h6>
+            <h6 class="mb-0"><i class="fas fa-folder-open mr-1"></i><span data-i18n="settings.browser.paths">Browser
+                Paths</span></h6>
           </div>
           <div class="card-body p-2">
             <form>
@@ -392,7 +436,8 @@
                       <label for="edge-stable-na-checkbox" data-i18n="paths.not.available">Not Available</label>
                     </div>
                   </div>
-                  <input type="text" class="form-control form-control-sm" id="edge-stable-path" placeholder="Enter Edge Stable Path or NA to ignore">
+                  <input type="text" class="form-control form-control-sm" id="edge-stable-path"
+                    placeholder="Enter Edge Stable Path or NA to ignore">
                 </div>
                 <div class="form-group mb-1">
                   <div class="label-row">
@@ -402,7 +447,8 @@
                       <label for="edge-beta-na-checkbox" data-i18n="paths.not.available">Not Available</label>
                     </div>
                   </div>
-                  <input type="text" class="form-control form-control-sm" id="edge-beta-path" placeholder="Enter Edge Beta Path or NA to ignore">
+                  <input type="text" class="form-control form-control-sm" id="edge-beta-path"
+                    placeholder="Enter Edge Beta Path or NA to ignore">
                 </div>
                 <div class="form-group mb-0">
                   <div class="label-row">
@@ -412,7 +458,8 @@
                       <label for="edge-dev-na-checkbox" data-i18n="paths.not.available">Not Available</label>
                     </div>
                   </div>
-                  <input type="text" class="form-control form-control-sm" id="edge-dev-path" placeholder="Enter Edge Dev Path or NA to ignore">
+                  <input type="text" class="form-control form-control-sm" id="edge-dev-path"
+                    placeholder="Enter Edge Dev Path or NA to ignore">
                 </div>
               </div>
 
@@ -427,7 +474,8 @@
                       <label for="chrome-stable-na-checkbox">Not Available</label>
                     </div>
                   </div>
-                  <input type="text" class="form-control form-control-sm" id="chrome-stable-path" placeholder="Enter Chrome Stable Path or NA to ignore">
+                  <input type="text" class="form-control form-control-sm" id="chrome-stable-path"
+                    placeholder="Enter Chrome Stable Path or NA to ignore">
                 </div>
                 <div class="form-group mb-1">
                   <div class="label-row">
@@ -437,7 +485,8 @@
                       <label for="chrome-beta-na-checkbox">Not Available</label>
                     </div>
                   </div>
-                  <input type="text" class="form-control form-control-sm" id="chrome-beta-path" placeholder="Enter Chrome Beta Path or NA to ignore">
+                  <input type="text" class="form-control form-control-sm" id="chrome-beta-path"
+                    placeholder="Enter Chrome Beta Path or NA to ignore">
                 </div>
                 <div class="form-group mb-0">
                   <div class="label-row">
@@ -447,7 +496,8 @@
                       <label for="chrome-dev-na-checkbox">Not Available</label>
                     </div>
                   </div>
-                  <input type="text" class="form-control form-control-sm" id="chrome-dev-path" placeholder="Enter Chrome Dev Path or NA to ignore">
+                  <input type="text" class="form-control form-control-sm" id="chrome-dev-path"
+                    placeholder="Enter Chrome Dev Path or NA to ignore">
                 </div>
               </div>
             </form>
@@ -462,7 +512,8 @@
           <div class="card-body p-2">
             <div class="form-group mb-2">
               <label for="wsl-instance" class="mb-0">WSL Instance:</label>
-              <input type="text" class="form-control form-control-sm" id="wsl-instance" placeholder="Enter WSL Instance">
+              <input type="text" class="form-control form-control-sm" id="wsl-instance"
+                placeholder="Enter WSL Instance">
             </div>
 
             <div class="form-group mb-2">
@@ -483,15 +534,18 @@
               <h6 class="text-primary mb-1"><i class="fab fa-edge mr-1"></i>Microsoft Edge (WSL)</h6>
               <div class="form-group mb-1">
                 <label for="wsl-edge-stable-path" class="mb-0">Stable Path:</label>
-                <input type="text" class="form-control form-control-sm" id="wsl-edge-stable-path" placeholder="/usr/bin/microsoft-edge-stable">
+                <input type="text" class="form-control form-control-sm" id="wsl-edge-stable-path"
+                  placeholder="/usr/bin/microsoft-edge-stable">
               </div>
               <div class="form-group mb-1">
                 <label for="wsl-edge-beta-path" class="mb-0">Beta Path:</label>
-                <input type="text" class="form-control form-control-sm" id="wsl-edge-beta-path" placeholder="/usr/bin/microsoft-edge-beta">
+                <input type="text" class="form-control form-control-sm" id="wsl-edge-beta-path"
+                  placeholder="/usr/bin/microsoft-edge-beta">
               </div>
               <div class="form-group mb-0">
                 <label for="wsl-edge-dev-path" class="mb-0">Dev Path:</label>
-                <input type="text" class="form-control form-control-sm" id="wsl-edge-dev-path" placeholder="/usr/bin/microsoft-edge-dev">
+                <input type="text" class="form-control form-control-sm" id="wsl-edge-dev-path"
+                  placeholder="/usr/bin/microsoft-edge-dev">
               </div>
             </div>
 
@@ -499,15 +553,18 @@
               <h6 class="text-success mb-1"><i class="fab fa-chrome mr-1"></i>Google Chrome (WSL)</h6>
               <div class="form-group mb-1">
                 <label for="wsl-chrome-stable-path" class="mb-0">Stable Path:</label>
-                <input type="text" class="form-control form-control-sm" id="wsl-chrome-stable-path" placeholder="/usr/bin/google-chrome-stable">
+                <input type="text" class="form-control form-control-sm" id="wsl-chrome-stable-path"
+                  placeholder="/usr/bin/google-chrome-stable">
               </div>
               <div class="form-group mb-1">
                 <label for="wsl-chrome-beta-path" class="mb-0">Beta Path:</label>
-                <input type="text" class="form-control form-control-sm" id="wsl-chrome-beta-path" placeholder="/usr/bin/google-chrome-beta">
+                <input type="text" class="form-control form-control-sm" id="wsl-chrome-beta-path"
+                  placeholder="/usr/bin/google-chrome-beta">
               </div>
               <div class="form-group mb-0">
                 <label for="wsl-chrome-dev-path" class="mb-0">Dev Path:</label>
-                <input type="text" class="form-control form-control-sm" id="wsl-chrome-dev-path" placeholder="/usr/bin/google-chrome-unstable">
+                <input type="text" class="form-control form-control-sm" id="wsl-chrome-dev-path"
+                  placeholder="/usr/bin/google-chrome-unstable">
               </div>
             </div>
 
@@ -515,26 +572,97 @@
               <h6 class="text-warning mb-1"><i class="fab fa-firefox mr-1"></i>Other Browsers (WSL)</h6>
               <div class="form-group mb-1">
                 <label for="wsl-firefox-path" class="mb-0">Firefox Path:</label>
-                <input type="text" class="form-control form-control-sm" id="wsl-firefox-path" placeholder="/usr/bin/firefox">
+                <input type="text" class="form-control form-control-sm" id="wsl-firefox-path"
+                  placeholder="/usr/bin/firefox">
               </div>
               <div class="form-group mb-1">
                 <label for="wsl-opera-path" class="mb-0">Opera Path:</label>
-                <input type="text" class="form-control form-control-sm" id="wsl-opera-path" placeholder="/usr/bin/opera">
+                <input type="text" class="form-control form-control-sm" id="wsl-opera-path"
+                  placeholder="/usr/bin/opera">
               </div>
               <div class="form-group mb-0">
                 <label for="wsl-brave-path" class="mb-0">Brave Path:</label>
-                <input type="text" class="form-control form-control-sm" id="wsl-brave-path" placeholder="/usr/bin/brave-browser">
+                <input type="text" class="form-control form-control-sm" id="wsl-brave-path"
+                  placeholder="/usr/bin/brave-browser">
               </div>
             </div>
 
             <div class="form-group mb-0">
               <label for="powershell-user" class="mb-0">PowerShell User:</label>
-              <input type="text" class="form-control form-control-sm" id="powershell-user" placeholder="Enter PowerShell username">
+              <input type="text" class="form-control form-control-sm" id="powershell-user"
+                placeholder="Enter PowerShell username">
               <div class="form-check mt-1">
                 <input type="checkbox" class="form-check-input" id="use-powershell-user-checkbox">
-                <label class="form-check-label" for="use-powershell-user-checkbox">Use this name to launch PowerShell</label>
+                <label class="form-check-label" for="use-powershell-user-checkbox">Use this name to launch
+                  PowerShell</label>
               </div>
               <small class="text-muted">Also, add underlining user credentials in Windows Credential Manager</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Browsers Card -->
+        <div class="card mb-2">
+          <div class="card-header bg-light py-1 d-flex justify-content-between align-items-center">
+            <h6 class="mb-0"><i class="fas fa-plus-circle mr-1"></i>Custom Browsers</h6>
+            <button type="button" class="btn btn-primary btn-sm" id="add-custom-browser">
+              <i class="fas fa-plus"></i> Add Browser
+            </button>
+          </div>
+          <div class="card-body p-2">
+            <p class="text-muted mb-2" style="font-size: 0.85rem;">Add your own custom browsers for Windows and WSL
+              platforms.</p>
+            <div id="custom-browsers-list">
+              <!-- Custom browsers will be added here dynamically -->
+            </div>
+
+            <!-- Template for new custom browser (hidden by default) -->
+            <div id="custom-browser-template" class="d-none">
+              <div class="custom-browser-item mb-3 border rounded p-2" style="background-color: #f8f9fa;">
+                <div class="form-group mb-2">
+                  <label class="mb-1" style="font-size: 0.85rem; font-weight: 600;">Browser Name:</label>
+                  <input type="text" class="form-control form-control-sm custom-browser-name"
+                    placeholder="e.g., Vivaldi, Arc, Waterfox">
+                </div>
+                <div class="form-group mb-2">
+                  <label class="mb-1" style="font-size: 0.85rem; font-weight: 600;">Platform:</label>
+                  <select class="form-control form-control-sm custom-browser-platform">
+                    <option value="windows">Windows</option>
+                    <option value="wsl">WSL Linux</option>
+                  </select>
+                </div>
+                <div class="form-group mb-2">
+                  <label class="mb-1" style="font-size: 0.85rem; font-weight: 600;">Browser Path:</label>
+                  <input type="text" class="form-control form-control-sm custom-browser-path"
+                    placeholder="e.g., C:\Program Files\Browser\browser.exe or /usr/bin/browser">
+                  <small class="form-text text-muted">Windows: Full path with .exe | WSL: Linux path like
+                    /usr/bin/browser</small>
+                </div>
+                <div class="form-group mb-2">
+                  <label class="mb-1" style="font-size: 0.85rem; font-weight: 600;">Icon (optional):</label>
+                  <input type="text" class="form-control form-control-sm custom-browser-icon"
+                    placeholder="e.g., 🌐 or emoji">
+                  <small class="form-text text-muted">Use an emoji or leave blank for default icon</small>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input custom-browser-enabled" checked>
+                    <label class="form-check-label" style="font-size: 0.85rem;">Enabled</label>
+                  </div>
+                  <button class="btn btn-sm btn-danger remove-custom-browser">
+                    <i class="fas fa-trash"></i> Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-right mt-2">
+              <button class="btn btn-info btn-sm mr-2" id="test-custom-browsers">
+                <i class="fas fa-bug mr-1"></i> Test & Debug
+              </button>
+              <button class="btn btn-success btn-sm" id="save-custom-browsers">
+                <i class="fas fa-save mr-1"></i> Save Custom Browsers
+              </button>
             </div>
           </div>
         </div>
@@ -608,7 +736,8 @@
           </div>
           <div class="col">
             <label for="wsl-tar-path" class="mb-0">WSL tar Image Path File:</label>
-            <input type="text" id="wsl-tar-path" class="form-control form-control-sm" placeholder="e.g., C:\ubuntu-export.tar">
+            <input type="text" id="wsl-tar-path" class="form-control form-control-sm"
+              placeholder="e.g., C:\ubuntu-export.tar">
           </div>
         </div>
         <div class="form-row mb-2">
@@ -634,7 +763,8 @@
             WSL Instances
             <a href="#" id="refresh-wsl-instances" class="ml-1"><small>Refresh</small></a>
             <a href="#" id="export-wsl-instance" class="ml-1"><small>Export to TAR</small></a>
-            <a href="#" id="create-wsl-instance-scratch" class="ml-1" style="display: none;"><small>Create WSL instance from scratch</small></a>            
+            <a href="#" id="create-wsl-instance-scratch" class="ml-1" style="display: none;"><small>Create WSL instance
+                from scratch</small></a>
           </label>
           <select id="wsl-instances" class="form-control form-control-sm" size="5" multiple></select>
         </div>
@@ -686,10 +816,10 @@
             <input type="file" id="import-search-file" style="display: none;">
           </div>
         </div>
-        
+
         <div class="container-fluid p-0">
           <p>Control which search engines appear in the context menu when text is selected:</p>
-          
+
           <!-- Built-in Search Engines -->
           <div class="card mb-3">
             <div class="card-header">
@@ -700,29 +830,32 @@
                 <input class="form-check-input search-toggle" type="checkbox" id="youtube-toggle" data-engine="youtube">
                 <label class="form-check-label" for="youtube-toggle">YouTube Search</label>
               </div>
-              
+
               <div class="form-check form-switch mb-2">
                 <input class="form-check-input search-toggle" type="checkbox" id="google-toggle" data-engine="google">
                 <label class="form-check-label" for="google-toggle">Google Search</label>
               </div>
-              
+
               <div class="form-check form-switch mb-2">
-                <input class="form-check-input search-toggle" type="checkbox" id="duckduckgo-toggle" data-engine="duckduckgo">
+                <input class="form-check-input search-toggle" type="checkbox" id="duckduckgo-toggle"
+                  data-engine="duckduckgo">
                 <label class="form-check-label" for="duckduckgo-toggle">DuckDuckGo Search</label>
               </div>
-              
+
               <div class="form-check form-switch mb-2">
-                <input class="form-check-input search-toggle" type="checkbox" id="perplexity-toggle" data-engine="perplexity">
+                <input class="form-check-input search-toggle" type="checkbox" id="perplexity-toggle"
+                  data-engine="perplexity">
                 <label class="form-check-label" for="perplexity-toggle">Perplexity.ai Search</label>
               </div>
-              
+
               <div class="form-check form-switch mb-2">
                 <input class="form-check-input search-toggle" type="checkbox" id="chatgpt-toggle" data-engine="chatgpt">
                 <label class="form-check-label" for="chatgpt-toggle">ChatGPT Search</label>
               </div>
 
               <div class="form-check form-switch mb-2">
-                <input class="form-check-input search-toggle" type="checkbox" id="googlemaps-toggle" data-engine="googlemaps">
+                <input class="form-check-input search-toggle" type="checkbox" id="googlemaps-toggle"
+                  data-engine="googlemaps">
                 <label class="form-check-label" for="googlemaps-toggle">Google Maps Search</label>
               </div>
 
@@ -750,7 +883,7 @@
               <div id="custom-search-engines-list">
                 <!-- Custom search engines will be added here dynamically -->
               </div>
-              
+
               <!-- Template for new custom search engine (hidden by default) -->
               <div id="custom-search-template" class="d-none">
                 <div class="custom-search-engine mb-3 border-bottom pb-3">
@@ -760,12 +893,15 @@
                   </div>
                   <div class="form-group mb-2">
                     <label>Search URL Template:</label>
-                    <input type="text" class="form-control form-control-sm custom-url" placeholder="e.g., https://wikipedia.org/w/index.php?search={searchTerms}">
-                    <small class="form-text text-muted">Use {searchTerms} where the search text should be inserted</small>
+                    <input type="text" class="form-control form-control-sm custom-url"
+                      placeholder="e.g., https://wikipedia.org/w/index.php?search={searchTerms}">
+                    <small class="form-text text-muted">Use {searchTerms} where the search text should be
+                      inserted</small>
                   </div>
                   <div class="form-group mb-2">
                     <label>Icon (emoji or URL):</label>
-                    <input type="text" class="form-control form-control-sm custom-icon" placeholder="e.g., 📚 or https://example.com/icon.png">
+                    <input type="text" class="form-control form-control-sm custom-icon"
+                      placeholder="e.g., 📚 or https://example.com/icon.png">
                   </div>
                   <div class="form-check mb-2">
                     <input type="checkbox" class="form-check-input custom-enabled" checked>
@@ -791,15 +927,17 @@
         <div class="settings-header">
           <h5 data-i18n="help.title">Help & Support</h5>
         </div>
-        
+
         <div class="container mt-3">
           <div class="action-box license-box">
             <div class="license-info">
-              <div id="license-status" class="license-status status-licensed" data-i18n="help.license.status">Licensed Version</div>
-              <button id="manage-license-btn" class="btn btn-outline-primary" data-i18n="help.manage.license">Manage License</button>
+              <div id="license-status" class="license-status status-licensed" data-i18n="help.license.status">Licensed
+                Version</div>
+              <button id="manage-license-btn" class="btn btn-outline-primary" data-i18n="help.manage.license">Manage
+                License</button>
             </div>
           </div>
-          
+
           <div class="card mb-3">
             <div class="card-header">
               <h6 class="mb-0">Documentation & Resources</h6>
@@ -812,12 +950,14 @@
                   </a>
                 </li>
                 <li class="mb-2">
-                  <a href="https://browserlauncherpro.blogspot.com/2025/11/browser-launcher-pro-v30.html" target="_blank" class="help-link">
+                  <a href="https://browserlauncherpro.blogspot.com/2025/11/browser-launcher-pro-v30.html"
+                    target="_blank" class="help-link">
                     <i class="fas fa-file-alt"></i> User Guide & Documentation
                   </a>
                 </li>
                 <li class="mb-2">
-                  <a href="https://github.com/zafrullakhan001/BrowserLauncherPro2/issues" target="_blank" class="help-link">
+                  <a href="https://github.com/zafrullakhan001/BrowserLauncherPro2/issues" target="_blank"
+                    class="help-link">
                     <i class="fas fa-bug"></i> Report Issues
                   </a>
                 </li>
@@ -833,7 +973,8 @@
               <ul class="list-unstyled">
                 <li class="mb-2">
                   <strong>Email Support:</strong>
-                  <a href="mailto:support@browserlauncherpro.com"><i class="fas fa-envelope"></i> support@browserlauncherpro.com</a>
+                  <a href="mailto:support@browserlauncherpro.com"><i class="fas fa-envelope"></i>
+                    support@browserlauncherpro.com</a>
                 </li>
                 <li class="mb-2">
                   <strong>GitHub Discussions:</strong>
@@ -855,17 +996,20 @@
             <div class="card-body">
               <ul class="list-unstyled">
                 <li class="mb-2">
-                  <a href="https://github.com/zafrullakhan001/BrowserLauncherPro2/blob/main/CHANGELOG.md" target="_blank" class="help-link">
+                  <a href="https://github.com/zafrullakhan001/BrowserLauncherPro2/blob/main/CHANGELOG.md"
+                    target="_blank" class="help-link">
                     <i class="fas fa-history"></i> Changelog
                   </a>
                 </li>
                 <li class="mb-2">
-                  <a href="https://github.com/zafrullakhan001/BrowserLauncherPro2/blob/main/LICENSE.md" target="_blank" class="help-link">
+                  <a href="https://github.com/zafrullakhan001/BrowserLauncherPro2/blob/main/LICENSE.md" target="_blank"
+                    class="help-link">
                     <i class="fas fa-gavel"></i> License Information
                   </a>
                 </li>
                 <li class="mb-2">
-                  <a href="https://browserlauncherpro.blogspot.com/2025/11/browser-launcher-pro-v30.html" target="_blank" class="help-link">
+                  <a href="https://browserlauncherpro.blogspot.com/2025/11/browser-launcher-pro-v30.html"
+                    target="_blank" class="help-link">
                     <i class="fas fa-code-branch"></i> Contributing Guidelines
                   </a>
                 </li>
@@ -880,7 +1024,8 @@
             <div class="card-body">
               <p class="mb-3">If you find this extension helpful, consider supporting its development:</p>
               <div class="d-flex flex-wrap gap-2">
-                <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_PAYPAL_BUTTON_ID" target="_blank" class="btn btn-primary">
+                <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_PAYPAL_BUTTON_ID" target="_blank"
+                  class="btn btn-primary">
                   <i class="fab fa-paypal"></i> PayPal
                 </a>
                 <a href="https://ko-fi.com/YOUR_KOFI_USERNAME" target="_blank" class="btn btn-success">
@@ -914,37 +1059,42 @@
               <h6 class="footer-heading" data-i18n="footer.browser.downloads">Browser Downloads</h6>
               <div class="footer-links">
                 <a href="https://www.microsoft.com/en-us/edge/download/insider?form=MA13FJ" target="_blank"
-                  class="footer-link"><i class="fab fa-edge mr-1"></i><span data-i18n="footer.edge.beta.dev">MS Edge Beta & Dev</span></a>
-                <a href="https://www.google.com/chrome/beta/" target="_blank" 
-                  class="footer-link"><i class="fab fa-chrome mr-1"></i><span data-i18n="footer.chrome.beta">Chrome Beta</span></a>
-                <a href="https://www.google.com/chrome/dev/" target="_blank" 
-                  class="footer-link"><i class="fab fa-chrome mr-1"></i><span data-i18n="footer.chrome.dev">Chrome Dev</span></a>
-                <a href="https://www.mozilla.org/en-US/firefox/developer/" target="_blank" 
-                  class="footer-link"><i class="fab fa-firefox mr-1"></i><span data-i18n="footer.firefox.developer">Firefox Developer</span></a>
+                  class="footer-link"><i class="fab fa-edge mr-1"></i><span data-i18n="footer.edge.beta.dev">MS Edge
+                    Beta & Dev</span></a>
+                <a href="https://www.google.com/chrome/beta/" target="_blank" class="footer-link"><i
+                    class="fab fa-chrome mr-1"></i><span data-i18n="footer.chrome.beta">Chrome Beta</span></a>
+                <a href="https://www.google.com/chrome/dev/" target="_blank" class="footer-link"><i
+                    class="fab fa-chrome mr-1"></i><span data-i18n="footer.chrome.dev">Chrome Dev</span></a>
+                <a href="https://www.mozilla.org/en-US/firefox/developer/" target="_blank" class="footer-link"><i
+                    class="fab fa-firefox mr-1"></i><span data-i18n="footer.firefox.developer">Firefox
+                    Developer</span></a>
               </div>
             </div>
-            
+
             <div class="footer-column">
               <h6 class="footer-heading" data-i18n="footer.release.schedules">Release Schedules</h6>
               <div class="footer-links">
                 <a href="https://learn.microsoft.com/en-us/deployedge/microsoft-edge-release-schedule" target="_blank"
-                  class="footer-link"><i class="fas fa-calendar-alt mr-1"></i><span data-i18n="footer.edge.schedule">Edge Schedule</span></a>
-                <a href="https://chromereleases.googleblog.com/" target="_blank" 
-                  class="footer-link"><i class="fas fa-calendar-alt mr-1"></i><span data-i18n="footer.chrome.releases">Chrome Releases</span></a>
-                <a href="https://www.mozilla.org/en-US/firefox/releases/" target="_blank" 
-                  class="footer-link"><i class="fas fa-calendar-alt mr-1"></i><span data-i18n="footer.firefox.releases">Firefox Releases</span></a>
+                  class="footer-link"><i class="fas fa-calendar-alt mr-1"></i><span
+                    data-i18n="footer.edge.schedule">Edge Schedule</span></a>
+                <a href="https://chromereleases.googleblog.com/" target="_blank" class="footer-link"><i
+                    class="fas fa-calendar-alt mr-1"></i><span data-i18n="footer.chrome.releases">Chrome
+                    Releases</span></a>
+                <a href="https://www.mozilla.org/en-US/firefox/releases/" target="_blank" class="footer-link"><i
+                    class="fas fa-calendar-alt mr-1"></i><span data-i18n="footer.firefox.releases">Firefox
+                    Releases</span></a>
               </div>
             </div>
-            
+
             <div class="footer-column">
               <h6 class="footer-heading" data-i18n="footer.resources">Resources</h6>
               <div class="footer-links">
-                <a href="https://github.com/zafrullakhan001/BrowserLauncherPro2" target="_blank" 
-                  class="footer-link"><i class="fab fa-github mr-1"></i><span data-i18n="footer.github">GitHub</span></a>
-                <a href="https://browserlauncherpro.blogspot.com/" target="_blank" 
-                  class="footer-link"><i class="fas fa-globe mr-1"></i><span data-i18n="footer.website">Website</span></a>
-                <a href="mailto:support@browserlauncherpro.com" 
-                  class="footer-link"><i class="fas fa-envelope mr-1"></i><span data-i18n="footer.support">Support</span></a>
+                <a href="https://github.com/zafrullakhan001/BrowserLauncherPro2" target="_blank" class="footer-link"><i
+                    class="fab fa-github mr-1"></i><span data-i18n="footer.github">GitHub</span></a>
+                <a href="https://browserlauncherpro.blogspot.com/" target="_blank" class="footer-link"><i
+                    class="fas fa-globe mr-1"></i><span data-i18n="footer.website">Website</span></a>
+                <a href="mailto:support@browserlauncherpro.com" class="footer-link"><i
+                    class="fas fa-envelope mr-1"></i><span data-i18n="footer.support">Support</span></a>
               </div>
             </div>
           </div>
@@ -970,18 +1120,21 @@
             </p>
             <div class="footer-meta">
               <span class="meta-item">
-                <i class="fas fa-code mr-1"></i><span data-i18n="footer.made.with.love">Made with &hearts; for developers</span>
+                <i class="fas fa-code mr-1"></i><span data-i18n="footer.made.with.love">Made with &hearts; for
+                  developers</span>
               </span>
               <span class="meta-divider">&bull;</span>
               <span class="meta-item">
-                <i class="fas fa-users mr-1"></i><span data-i18n="footer.trusted.users">Trusted by OpenSource lovers</span>
+                <i class="fas fa-users mr-1"></i><span data-i18n="footer.trusted.users">Trusted by OpenSource
+                  lovers</span>
               </span>
             </div>
           </div>
-          
+
           <div id="trial-footer" class="trial-notice" style="display: none;">
             <i class="fas fa-clock mr-1"></i>
-            <strong data-i18n="footer.trial.version">TRIAL VERSION</strong> - <span id="trial-days-remaining">60</span> <span data-i18n="footer.days.remaining">DAYS REMAINING</span>
+            <strong data-i18n="footer.trial.version">TRIAL VERSION</strong> - <span id="trial-days-remaining">60</span>
+            <span data-i18n="footer.days.remaining">DAYS REMAINING</span>
           </div>
         </div>
 
@@ -989,8 +1142,9 @@
         <div class="footer-disclaimer">
           <p class="disclaimer-text">
             <i class="fas fa-info-circle mr-1"></i>
-            <span data-i18n="footer.disclaimer">Browser icons and trademarks are the property of their respective companies. 
-            We are not affiliated with Microsoft, Google, Mozilla, Opera, or any other browser company.</span>
+            <span data-i18n="footer.disclaimer">Browser icons and trademarks are the property of their respective
+              companies.
+              We are not affiliated with Microsoft, Google, Mozilla, Opera, or any other browser company.</span>
             <a href="#" id="view-eula-footer" class="disclaimer-link" data-i18n="settings.view.eula">View EULA</a>
           </p>
         </div>
@@ -1021,7 +1175,8 @@
             <button type="button" class="footer-action-btn" id="footer-refresh-btn" title="Refresh Extension">
               <i class="fas fa-sync-alt"></i>
             </button>
-            <button type="button" class="footer-action-btn" id="footer-healthcheck-btn" title="Check Native Messaging Health">
+            <button type="button" class="footer-action-btn" id="footer-healthcheck-btn"
+              title="Check Native Messaging Health">
               <i class="fas fa-heartbeat"></i>
             </button>
             <button type="button" class="footer-action-btn" id="footer-settings-btn" title="Quick Settings">
@@ -1030,16 +1185,17 @@
           </div>
         </div>
       </footer>
-      
 
-      
+
+
       <!-- License Management Modal -->
       <div class="modal fade" id="license-modal" tabindex="-1" role="dialog" aria-labelledby="licenseModalLabel">
         <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="licenseModalLabel">License Management</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="license-modal-close" title="Close">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="license-modal-close"
+                title="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -1048,7 +1204,7 @@
               <div id="modal-license-status" class="license-status mb-4">
                 <p><strong>Loading license information...</strong></p>
               </div>
-              
+
               <!-- License Information Section -->
               <div class="hardware-info mb-3">
                 <div class="card bg-light">
@@ -1056,24 +1212,27 @@
                     <h6 class="card-title">Hardware ID</h6>
                     <div class="hardware-id-container">
                       <p class="card-text font-monospace mb-2" id="modal-hardware-id">Loading...</p>
-                      <button class="btn btn-sm btn-outline-secondary copy-button btn-block" id="copy-hardware-id" title="Copy to clipboard">
+                      <button class="btn btn-sm btn-outline-secondary copy-button btn-block" id="copy-hardware-id"
+                        title="Copy to clipboard">
                         <i class="fas fa-copy"></i> Copy Hardware ID
                       </button>
                     </div>
-                    <small class="text-muted">Your license key is tied to this hardware ID. Please provide this ID when purchasing a license.</small>
+                    <small class="text-muted">Your license key is tied to this hardware ID. Please provide this ID when
+                      purchasing a license.</small>
                   </div>
                 </div>
               </div>
-              
+
               <!-- License key input -->
               <div class="form-group mb-3">
                 <label for="modal-license-key">License Key:</label>
-                <input type="text" class="form-control" id="modal-license-key" placeholder="Enter your license key here">
+                <input type="text" class="form-control" id="modal-license-key"
+                  placeholder="Enter your license key here">
               </div>
-              
+
               <!-- Error/Success Messages -->
               <div id="modal-license-message" style="display: none;" role="alert"></div>
-              
+
               <!-- Hidden fields for license data - not visible to user but used to store data -->
               <div style="display:none;">
                 <input type="hidden" id="modal-licensee-name">
@@ -1085,11 +1244,14 @@
               <div class="container-fluid p-0">
                 <div class="row">
                   <div class="col-md-6 text-left">
-                    <button type="button" class="btn btn-danger" id="deactivate-license-btn" disabled>Deactivate License</button>
+                    <button type="button" class="btn btn-danger" id="deactivate-license-btn" disabled>Deactivate
+                      License</button>
                   </div>
                   <div class="col-md-6 text-right">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="license-modal-cancel" data-i18n="buttons.close">Close</button>
-                    <button type="button" class="btn btn-primary" id="activate-license-btn" data-i18n="buttons.activate">Activate License</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="license-modal-cancel"
+                      data-i18n="buttons.close">Close</button>
+                    <button type="button" class="btn btn-primary" id="activate-license-btn"
+                      data-i18n="buttons.activate">Activate License</button>
                   </div>
                 </div>
               </div>
@@ -1116,12 +1278,13 @@
                   <input type="password" class="form-control" id="password-input" placeholder="Enter your password">
                 </div>
               </div>
-              
+
               <!-- Change password mode with all fields -->
               <div id="change-password-mode" style="display: none;">
                 <div class="form-group">
                   <label for="current-password-input">Current Password:</label>
-                  <input type="password" class="form-control" id="current-password-input" placeholder="Enter your current password">
+                  <input type="password" class="form-control" id="current-password-input"
+                    placeholder="Enter your current password">
                   <div class="verify-button-container">
                     <button type="button" class="verify-button-standalone" id="verify-current-password-btn">
                       <i class="fas fa-check"></i> Verify Current Password
@@ -1131,25 +1294,28 @@
                 </div>
                 <div class="form-group">
                   <label for="new-password-input">New Password:</label>
-                  <input type="password" class="form-control" id="new-password-input" placeholder="Enter new password (min 8 chars with 1 number)" disabled>
+                  <input type="password" class="form-control" id="new-password-input"
+                    placeholder="Enter new password (min 8 chars with 1 number)" disabled>
                   <small class="form-text text-muted">Minimum 8 characters with at least one number</small>
                 </div>
                 <div class="form-group">
                   <label for="confirm-password-input">Confirm New Password:</label>
-                  <input type="password" class="form-control" id="confirm-password-input" placeholder="Confirm your new password" disabled>
+                  <input type="password" class="form-control" id="confirm-password-input"
+                    placeholder="Confirm your new password" disabled>
                 </div>
               </div>
-              
+
               <div id="password-message" style="display: none;" role="alert"></div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal" id="password-modal-cancel" data-i18n="buttons.cancel">Cancel</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" id="password-modal-cancel"
+                data-i18n="buttons.cancel">Cancel</button>
               <button type="button" class="btn btn-primary" id="password-modal-ok" data-i18n="buttons.ok">OK</button>
             </div>
           </div>
         </div>
       </div>
-      
+
       <script src="popup.js"></script>
       <script src="import-settings.js"></script>
       <script src="license.js"></script>

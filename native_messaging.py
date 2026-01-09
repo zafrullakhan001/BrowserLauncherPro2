@@ -526,24 +526,60 @@ def load_config(config_file: str = "config.ini") -> configparser.ConfigParser:
 def run_command_with_url(command: str, url: Optional[str], timeout: int = 30) -> str:
     """Runs a shell command with a URL and handles 'runas' for privilege elevation."""
     try:
+        logging.info("=" * 80)
+        logging.info("[Custom Browser Debug] run_command_with_url called")
+        logging.info(f"[Custom Browser Debug] Input command: {command}")
+        logging.info(f"[Custom Browser Debug] Input URL: {url}")
+        logging.info(f"[Custom Browser Debug] Command length: {len(command)}")
+        logging.info(f"[Custom Browser Debug] URL in command: {url in command if url else 'N/A'}")
+        
         # Check if the command requires `runas.exe`
         if command.startswith("runas"):
             full_command = command  # runas command should be passed as-is
+            logging.info("[Custom Browser Debug] Detected runas command, using as-is")
         else:
             if command.startswith("cmd /c start powershell.exe"):
                 full_command = command  # Don't add URL for PowerShell
+                logging.info("[Custom Browser Debug] Detected PowerShell command, using as-is")
             elif "wsl" in command.lower():
+                logging.info("[Custom Browser Debug] Detected WSL command")
                 # Special handling for browsers in WSL
                 if "firefox" in command.lower():
+                    logging.info("[Custom Browser Debug] Detected Firefox in WSL")
                     # Firefox needs special handling with DISPLAY environment variable
                     # Use -new-tab to ensure the URL opens in a new tab if Firefox is already running
-                    full_command = f'{command} -new-tab "{url}"' if url else command
+                    # Check if URL is already in command
+                    if url and url not in command:
+                        full_command = f'{command} -new-tab "{url}"'
+                        logging.info("[Custom Browser Debug] Added -new-tab and URL to Firefox command")
+                    else:
+                        full_command = command
+                        logging.info("[Custom Browser Debug] URL already in command or no URL provided")
                 elif "chrome" in command.lower() or "edge" in command.lower():
+                    logging.info("[Custom Browser Debug] Detected Chrome/Edge in WSL")
                     # Add --no-sandbox for Chrome and Edge in WSL
-                    full_command = f'{command} --no-sandbox "{url}"' if url else f'{command} --no-sandbox'
+                    # Check if URL is already in command
+                    if url and url not in command:
+                        full_command = f'{command} --no-sandbox "{url}"'
+                        logging.info("[Custom Browser Debug] Added --no-sandbox and URL")
+                    elif url:
+                        full_command = command  # URL already included
+                        logging.info("[Custom Browser Debug] URL already in command, using as-is")
+                    else:
+                        full_command = f'{command} --no-sandbox'
+                        logging.info("[Custom Browser Debug] No URL, added --no-sandbox only")
                 else:
-                    full_command = f'{command} "{url}"' if url else command
+                    logging.info("[Custom Browser Debug] Generic WSL browser")
+                    # Generic WSL browser handling
+                    # Check if URL is already in command
+                    if url and url not in command:
+                        full_command = f'{command} "{url}"'
+                        logging.info("[Custom Browser Debug] Added URL to command")
+                    else:
+                        full_command = command
+                        logging.info("[Custom Browser Debug] Using command as-is")
             elif command.strip().lower() == "windowssandbox":
+                logging.info("[Custom Browser Debug] Detected Windows Sandbox")
                 # Always use the open_in_sandbox function which now handles already running instances
                 if url:
                     return open_in_sandbox(url)
@@ -552,11 +588,26 @@ def run_command_with_url(command: str, url: Optional[str], timeout: int = 30) ->
                     sandbox_path = os.path.expandvars(r"%windir%\system32\WindowsSandbox.exe")
                     full_command = f'"{sandbox_path}"'
             else:
-                # For Windows local browsers, ensure proper quoting
-                if command.endswith('.exe') or command.endswith('.EXE'):
+                logging.info("[Custom Browser Debug] Processing Windows/generic command")
+                # For Windows local browsers and custom browsers
+                # Check if the URL is already included in the command
+                # This handles custom browsers where we pre-format the command with URL
+                if url and url in command:
+                    # URL is already in the command, use as-is
+                    full_command = command
+                    logging.info("[Custom Browser Debug] URL already present in command, using command as-is")
+                    logging.info(f"[Custom Browser Debug] URL found at position: {command.find(url)}")
+                elif command.endswith('.exe') or command.endswith('.EXE'):
+                    # Standard .exe browser, add URL if provided
                     full_command = f'"{command}" "{url}"' if url else f'"{command}"'
+                    logging.info(f"[Custom Browser Debug] .exe file detected, wrapped in quotes and added URL: {bool(url)}")
                 else:
+                    # Generic command handling
                     full_command = f'{command} "{url}"' if url else command
+                    logging.info(f"[Custom Browser Debug] Generic command, added URL: {bool(url)}")
+
+        logging.info(f"[Custom Browser Debug] Final command: {full_command}")
+        logging.info(f"[Custom Browser Debug] Final command length: {len(full_command)}")
 
         logging.debug(f"Running command: {full_command}")
         
@@ -577,25 +628,35 @@ def run_command_with_url(command: str, url: Optional[str], timeout: int = 30) ->
                 stderr=subprocess.PIPE, 
                 shell=True
             )
-            
+        
+        logging.info("[Custom Browser Debug] Starting subprocess execution...")
+        
         try:
             stdout, stderr = process.communicate(timeout=timeout)
+            logging.info(f"[Custom Browser Debug] Process completed with return code: {process.returncode}")
+            logging.info(f"[Custom Browser Debug] stdout length: {len(stdout)}")
+            logging.info(f"[Custom Browser Debug] stderr length: {len(stderr)}")
         except subprocess.TimeoutExpired:
+            logging.error(f"[Custom Browser Debug] Process timed out after {timeout} seconds")
             process.kill()
             stdout, stderr = process.communicate()
             return f"Command timed out after {timeout} seconds"
 
         if process.returncode != 0 and stderr:
             error_text = stderr.decode("utf-8", errors="replace").strip()
-            logging.error(f"Command failed with exit code {process.returncode}: {error_text}")
+            logging.error(f"[Custom Browser Debug] Command failed with exit code {process.returncode}")
+            logging.error(f"[Custom Browser Debug] Error text: {error_text}")
             return f"Error: Command failed with exit code {process.returncode}: {error_text}"
             
         result = stdout.decode("utf-8", errors="replace").strip()
-        logging.debug(f"Command result: {result}")
+        logging.info(f"[Custom Browser Debug] Command executed successfully")
+        logging.info(f"[Custom Browser Debug] Result: {result[:200] if result else '(empty)'}...")
+        logging.info("=" * 80)
         return result
     except Exception as e:
         error_message = f"Error running command: {str(e)}"
-        logging.error(error_message, exc_info=True)
+        logging.error(f"[Custom Browser Debug] Exception occurred: {error_message}", exc_info=True)
+        logging.error("=" * 80)
         return error_message
 
 def execute_powershell_script(script_path: str) -> str:

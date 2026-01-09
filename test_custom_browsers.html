@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Custom Browser Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            margin: 10px 0;
+        }
+
+        .success {
+            background: #e8f5e9;
+            border-left-color: #4CAF50;
+        }
+
+        .error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+
+        pre {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        a {
+            color: #2196F3;
+            font-size: 18px;
+            display: block;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 Custom Browser Test Page</h1>
+
+    <div class="card">
+        <h2>Step 1: Check Storage</h2>
+        <button onclick="checkStorage()">Check Custom Browsers in Storage</button>
+        <div id="storage-result"></div>
+    </div>
+
+    <div class="card">
+        <h2>Step 2: Save Comet Browser Directly</h2>
+        <button onclick="saveComet()">Save Comet Browser to Storage</button>
+        <div id="save-result"></div>
+    </div>
+
+    <div class="card">
+        <h2>Step 3: Test Links</h2>
+        <p>Right-click on these links and select your Comet browser:</p>
+        <a href="https://www.google.com" target="_blank">Google</a>
+        <a href="https://www.github.com" target="_blank">GitHub</a>
+        <a href="https://www.youtube.com" target="_blank">YouTube</a>
+    </div>
+
+    <div class="card">
+        <h2>Console Output</h2>
+        <div class="info">
+            Press F12 to open DevTools Console and see detailed logs
+        </div>
+        <div id="console-output"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('console-output');
+            const div = document.createElement('div');
+            div.className = 'info ' + type;
+            div.innerHTML = '<pre>' + message + '</pre>';
+            output.appendChild(div);
+            console.log(message);
+        }
+
+        function checkStorage() {
+            console.clear();
+            log('Checking custom browsers in storage...', 'info');
+
+            chrome.storage.local.get(['customBrowsers'], function (result) {
+                const resultDiv = document.getElementById('storage-result');
+
+                if (!result.customBrowsers || result.customBrowsers.length === 0) {
+                    resultDiv.innerHTML = '<div class="info error">❌ No custom browsers found in storage!</div>';
+                    log('❌ NO CUSTOM BROWSERS FOUND', 'error');
+                } else {
+                    let html = '<div class="info success">✅ Found ' + result.customBrowsers.length + ' custom browser(s):</div>';
+                    html += '<pre>' + JSON.stringify(result.customBrowsers, null, 2) + '</pre>';
+                    resultDiv.innerHTML = html;
+
+                    log('✅ Found ' + result.customBrowsers.length + ' custom browser(s)', 'success');
+                    result.customBrowsers.forEach((browser, i) => {
+                        log(`Browser ${i + 1}: ${browser.name} (${browser.platform}) - ${browser.enabled ? 'Enabled' : 'Disabled'}`, 'success');
+                    });
+                }
+            });
+        }
+
+        function saveComet() {
+            log('Saving Comet browser directly to storage...', 'info');
+
+            const cometBrowser = {
+                name: "Comet",
+                platform: "windows",
+                path: "C:\\Users\\zafru\\AppData\\Local\\Perplexity\\Comet\\Application\\comet.exe",
+                icon: "🌐",
+                enabled: true,
+                id: "custom-comet-windows"
+            };
+
+            chrome.storage.local.set({ customBrowsers: [cometBrowser] }, function () {
+                const resultDiv = document.getElementById('save-result');
+                resultDiv.innerHTML = '<div class="info success">✅ Comet browser saved successfully!</div><pre>' + JSON.stringify(cometBrowser, null, 2) + '</pre>';
+
+                log('✅ Comet browser saved to storage', 'success');
+                log(JSON.stringify(cometBrowser, null, 2), 'success');
+
+                // Refresh context menus
+                chrome.runtime.sendMessage({ action: 'refreshContextMenus' }, function (response) {
+                    if (chrome.runtime.lastError) {
+                        log('❌ Error refreshing menus: ' + chrome.runtime.lastError.message, 'error');
+                    } else {
+                        log('✅ Context menus refreshed successfully', 'success');
+                        alert('✅ Comet browser saved!\n\nNow right-click on any link above and look for:\n🌐 Comet (Windows)');
+                    }
+                });
+            });
+        }
+
+        // Auto-check storage on page load
+        window.addEventListener('load', function () {
+            setTimeout(checkStorage, 500);
+        });
+    </script>
+</body>
+
+</html>
